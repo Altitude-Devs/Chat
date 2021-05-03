@@ -139,16 +139,29 @@ public final class Config {
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
+    public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
+    public static List<String> GCCOMMANDALIASES = new ArrayList<>();
     public static String MESSAGESENDER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(Me -> <gray><receiver></gray>) <message></light_purple>";
     public static String MESSAGERECIEVER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(<gray><receiver></gray> on <server> -> Me) <message></light_purple>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
+        REPLYCOMMANDALIASES.clear();
         getList("commands.message.aliases", new ArrayList<String>(){{
             add("msg");
             add("whisper");
             add("tell");
         }}).forEach(key -> {
             MESSAGECOMMANDALIASES.add(key.toString());
+        });
+        getList("commands.reply.aliases", new ArrayList<String>(){{
+            add("r");
+        }}).forEach(key -> {
+            REPLYCOMMANDALIASES.add(key.toString());
+        });
+        getList("commands.globalchat.aliases", new ArrayList<String>(){{
+            add("gc");
+        }}).forEach(key -> {
+            GCCOMMANDALIASES.add(key.toString());
         });
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);

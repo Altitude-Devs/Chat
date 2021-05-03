@@ -1,8 +1,12 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.api.MessageEvent;
 import com.alttd.chat.config.Config;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -12,16 +16,23 @@ import java.util.Map;
 
 public class ChatListener {
 
-    @Subscribe
+    private ChatPlugin plugin;
+
+    public ChatListener() {
+        plugin = ChatPlugin.getPlugin();
+    }
+
+    @Subscribe(order = PostOrder.FIRST)
     public void onMessage(MessageEvent event) {
         String senderName;
         String receiverName;
-
-        if (event.getSender() instanceof Player) {
+        CommandSource commandSource = event.getSender();
+        if (commandSource instanceof Player) {
             Player sender = (Player) event.getSender();
             senderName = sender.getUsername();
+            plugin.getChatHandler().getChatPlayer(sender.getUniqueId()).setReplyTarget(event.getRecipient().getUniqueId()); // TODO this needs to be cleaner
         } else {
-            senderName = "UNKNOWN";
+            senderName = "Console"; // TODO console name from config
         }
         receiverName = event.getRecipient().getUsername();
 
@@ -40,4 +51,11 @@ public class ChatListener {
         event.getSender().sendMessage(senderMessage);
         event.getRecipient().sendMessage(receiverMessage);
     }
+
+    @Subscribe(order = PostOrder.FIRST)
+    public void onPlayerChat(PlayerChatEvent event) {
+        // do stuff
+    }
+
+
 }

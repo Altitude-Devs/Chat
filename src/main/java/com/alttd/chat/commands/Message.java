@@ -9,14 +9,9 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class Message {
@@ -43,6 +38,8 @@ public class Message {
                                         proxyServer.getEventManager().fire(new MessageEvent(context.getSource(), receiver, context.getArgument("message", String.class)));
 
                                         return 1;
+                                    } else {
+                                        // TODO NOBODY TO REPLY TO
                                     }
                                     return 0;
                                 })

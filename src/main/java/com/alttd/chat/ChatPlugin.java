@@ -1,6 +1,7 @@
 package com.alttd.chat;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -27,6 +28,8 @@ public class ChatPlugin {
     private final Path dataDirectory;
     private LuckPerms luckPerms;
 
+    private ChatHandler chatHandler;
+
     @Inject
     public ChatPlugin(ProxyServer proxyServer, Logger proxylogger, @DataDirectory Path proxydataDirectory) {
         plugin = this;
@@ -39,6 +42,7 @@ public class ChatPlugin {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Config.init(getDataDirectory());
         loadCommands();
+        chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
         //statusTask = new StatusTask();
         //statusTask.init();
@@ -48,7 +52,7 @@ public class ChatPlugin {
         return dataDirectory.toFile();
     }
 
-    public static ChatPlugin getInstance() {
+    public static ChatPlugin getPlugin() {
         return plugin;
     }
 
@@ -68,5 +72,9 @@ public class ChatPlugin {
 
     public void loadCommands() {
         // all commands go here
+    }
+
+    public ChatHandler getChatHandler() {
+        return chatHandler;
     }
 }
