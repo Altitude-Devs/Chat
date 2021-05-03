@@ -1,11 +1,12 @@
 package com.alttd.chat.handlers;
 
+import com.alttd.chat.config.Config;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ChatHandler {
 
@@ -41,8 +42,24 @@ public class ChatHandler {
     }
 
     public void globalChat(CommandSource source, String message) {
+        String senderName, serverName;
+        Map<String, String> map = new HashMap<>();
+
+        if (source instanceof Player) {
+            Player sender = (Player) source;
+            senderName = sender.getUsername();
+            serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
+        } else {
+            senderName = "Console"; // TODO console name from config
+            serverName = "Altitude";
+        }
+        map.put("sender", senderName);
+        map.put("message", message);
+        map.put("server", serverName);
+
         for(ChatPlayer p: chatPlayers) {
             if(p.isGlobalChatEnabled());
+                p.getPlayer().sendMessage(MiniMessage.get().parse(Config.GCFORMAT, map));
                 //TODO send global chat with format from config
         }
     }

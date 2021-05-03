@@ -11,7 +11,7 @@ public class PlayerListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerLogin(LoginEvent event) {
-        ChatPlugin.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
+        ChatPlugin.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer()));
     }
 
     @Subscribe

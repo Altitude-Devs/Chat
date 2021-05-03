@@ -140,7 +140,6 @@ public final class Config {
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
     public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
-    public static List<String> GCCOMMANDALIASES = new ArrayList<>();
     public static String MESSAGESENDER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(Me -> <gray><receiver></gray>) <message></light_purple>";
     public static String MESSAGERECIEVER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(<gray><receiver></gray> on <server> -> Me) <message></light_purple>";
     private static void messageCommand() {
@@ -158,12 +157,18 @@ public final class Config {
         }}).forEach(key -> {
             REPLYCOMMANDALIASES.add(key.toString());
         });
+        MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
+        MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
+    }
+
+    public static List<String> GCCOMMANDALIASES = new ArrayList<>();
+    public static String GCFORMAT = "[&d{luckperms_prefix_element_highest}&f] &7{cmi_user_display_name} &eto Global&7: {message}";
+    private static void globalChat() {
+        MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
         getList("commands.globalchat.aliases", new ArrayList<String>(){{
             add("gc");
         }}).forEach(key -> {
             GCCOMMANDALIASES.add(key.toString());
         });
-        MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
-        MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
 }

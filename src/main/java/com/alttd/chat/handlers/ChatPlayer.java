@@ -1,20 +1,28 @@
 package com.alttd.chat.handlers;
 
+import com.velocitypowered.api.proxy.Player;
+
 import java.util.UUID;
 
 public class ChatPlayer {
 
     private UUID uuid;
+    private Player player;
     private UUID replyTarget;
     private boolean globalChatEnabled;
 
-    public ChatPlayer(UUID uuid) {
-        this.uuid = uuid;
-        this.replyTarget = null;
+    public ChatPlayer(Player p) {
+        player = p;
+        uuid = p.getUniqueId();
+        replyTarget = null;
     }
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public boolean isGlobalChatEnabled() {
