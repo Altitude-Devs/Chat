@@ -1,5 +1,8 @@
 package com.alttd.chat.config;
 
+import com.google.common.reflect.TypeToken;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+
 import java.util.regex.Pattern;
 
 public final class ServerConfig {
@@ -28,6 +31,14 @@ public final class ServerConfig {
     private static void set(String path, Object def) {
         if(Config.config.getNode(splitPath(path)).isVirtual()) {
             Config.config.getNode(splitPath(path)).setValue(def);
+        }
+    }
+
+    private static void setString(String path, String def) {
+        try {
+            if(Config.config.getNode(splitPath(path)).isVirtual())
+                Config.config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
+        } catch(ObjectMappingException ex) {
         }
     }
 

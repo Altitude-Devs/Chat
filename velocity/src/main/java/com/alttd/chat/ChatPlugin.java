@@ -1,11 +1,15 @@
 package com.alttd.chat;
 
+import com.alttd.chat.commands.GlobalAdminChat;
+import com.alttd.chat.commands.GlobalChat;
+import com.alttd.chat.commands.GlobalChatToggle;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -18,7 +22,8 @@ import java.nio.file.Path;
 
 @Plugin(id = "chatplugin", name = "ChatPlugin", version = "1.0.0",
         description = "A chat plugin for Altitude Minecraft Server",
-        authors = {"destro174", "teri"}
+        authors = {"destro174", "teri"},
+        dependencies = {@Dependency(id = "luckperms")}
         )
 public class ChatPlugin {
 
@@ -26,15 +31,15 @@ public class ChatPlugin {
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
-    private LuckPerms luckPerms;
 
+    private ChatAPI chatAPI;
     private ChatHandler chatHandler;
 
     @Inject
-    public ChatPlugin(ProxyServer proxyServer, Logger proxylogger, @DataDirectory Path proxydataDirectory) {
+    public ChatPlugin(ProxyServer proxyServer, Logger proxyLogger, @DataDirectory Path proxydataDirectory) {
         plugin = this;
         server = proxyServer;
-        logger = proxylogger;
+        logger = proxyLogger;
         dataDirectory = proxydataDirectory;
     }
 
@@ -42,10 +47,9 @@ public class ChatPlugin {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Config.init(getDataDirectory());
         loadCommands();
+        chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
-        //statusTask = new StatusTask();
-        //statusTask.init();
     }
 
     public File getDataDirectory() {
@@ -56,11 +60,6 @@ public class ChatPlugin {
         return plugin;
     }
 
-    public LuckPerms getLuckPerms() {
-        if(luckPerms == null)
-            luckPerms = LuckPermsProvider.get();
-        return luckPerms;
-    }
 
     public Logger getLogger() {
         return logger;
@@ -71,7 +70,14 @@ public class ChatPlugin {
     }
 
     public void loadCommands() {
+        new GlobalAdminChat(server);
+        new GlobalChatToggle(server);
+        new GlobalChat(server);
         // all commands go here
+    }
+
+    public ChatAPI API() {
+        return chatAPI;
     }
 
     public ChatHandler getChatHandler() {

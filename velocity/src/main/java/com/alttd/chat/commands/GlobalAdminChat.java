@@ -1,6 +1,6 @@
 package com.alttd.chat.commands;
 
-import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.api.GlobalStaffChatEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -11,20 +11,19 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 
-public class GlobalChat {
+public class GlobalAdminChat {
 
-    public GlobalChat(ProxyServer proxyServer) {
+    public GlobalAdminChat(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
-                .<CommandSource>literal("globalchat")
-                .requires(ctx -> ctx.hasPermission("command.proxy.globalchat"))// TODO permission system? load permissions from config?
+                .<CommandSource>literal("globaladminchat")
+                .requires(ctx -> ctx.hasPermission("command.proxy.globaladminchat"))// TODO permission system? load permissions from config?
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
-                            ChatPlugin.getPlugin().getChatHandler().globalChat(context.getSource(), context.getArgument("message", String.class));
+                            proxyServer.getEventManager().fire(new GlobalStaffChatEvent(context.getSource(), context.getArgument("message", String.class)));
                             return 1;
-                        })
+                        }) // TODO call in the same way as gc?
                 )
-                .executes(context -> 0)
                 .executes(context -> 0)
                 .build();
 
@@ -32,7 +31,7 @@ public class GlobalChat {
 
         CommandMeta.Builder metaBuilder = proxyServer.getCommandManager().metaBuilder(brigadierCommand);
 
-        for (String alias : Config.GCCOMMANDALIASES) {
+        for (String alias : Config.GACECOMMANDALIASES) {
             metaBuilder.aliases(alias);
         }
 

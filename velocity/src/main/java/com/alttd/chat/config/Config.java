@@ -1,6 +1,8 @@
 package com.alttd.chat.config;
 
+import com.alttd.chat.ChatPlugin;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -34,11 +36,17 @@ public final class Config {
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
                 .build();
         if (!CONFIG_FILE.getParentFile().exists()) {
-            CONFIG_FILE.getParentFile().mkdirs();
+            if(!CONFIG_FILE.getParentFile().mkdirs()) {
+                ChatPlugin.getPlugin().getLogger().error("Could create config and/or directory");
+                return;
+            }
         }
         if (!CONFIG_FILE.exists()) {
             try {
-                CONFIG_FILE.createNewFile();
+                if(!CONFIG_FILE.createNewFile()) {
+                    ChatPlugin.getPlugin().getLogger().error("Could create config and/or directory");
+                    return;
+                }
             } catch (IOException error) {
                 error.printStackTrace();
             }
@@ -71,9 +79,8 @@ public final class Config {
                     try {
                         method.setAccessible(true);
                         method.invoke(instance);
-                    } catch (InvocationTargetException ex) {
+                    } catch (InvocationTargetException | IllegalAccessException ex) {
                         throw Throwables.propagate(ex.getCause());
-                    } catch (Exception ex) {
                     }
                 }
             }
@@ -81,15 +88,15 @@ public final class Config {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
+            throw Throwables.propagate(ex.getCause());
         }
     }
 
-    public static boolean saveConfig() {
+    public static void saveConfig() {
         try {
             configLoader.save(config);
-            return true;
         } catch (IOException ex) {
-            return false;
+            throw Throwables.propagate(ex.getCause());
         }
     }
 
@@ -100,6 +107,14 @@ public final class Config {
     private static void set(String path, Object def) {
         if(config.getNode(splitPath(path)).isVirtual())
             config.getNode(splitPath(path)).setValue(def);
+    }
+
+    private static void setString(String path, String def) {
+        try {
+            if(config.getNode(splitPath(path)).isVirtual())
+                config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
+        } catch(ObjectMappingException ex) {
+        }
     }
 
     private static boolean getBoolean(String path, boolean def) {
@@ -118,7 +133,7 @@ public final class Config {
     }
 
     private static String getString(String path, String def) {
-        set(path, def);
+        setString(path, def);
         return config.getNode(splitPath(path)).getString(def);
     }
 
@@ -127,7 +142,7 @@ public final class Config {
         return config.getNode(splitPath(path)).getLong(def);
     }
 
-    private static <T> List getList(String path, T def) {
+    private static <T> List<String> getList(String path, T def) {
         try {
             set(path, def);
             return config.getNode(splitPath(path)).getList(TypeToken.of(String.class));
@@ -137,38 +152,39 @@ public final class Config {
     }
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
+    public static List<String> PREFIXGROUPS = new ArrayList<>();
+    private static void settings() {
+        PREFIXGROUPS = getList("settings.prefix-groups",
+                Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
+    }
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
     public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
-    public static String MESSAGESENDER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(Me -> <gray><receiver></gray>) <message></light_purple>";
-    public static String MESSAGERECIEVER = "<hover:show_text:'Click to reply'><click:suggest_command:'/msg <receiver> '><light_purple>(<gray><receiver></gray> on <server> -> Me) <message></light_purple>";
+    public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receiver> ><light_purple>(Me -> <gray><receiver></gray>) <message></light_purple>";
+    public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><light_purple>(<gray><sender></gray> on <server> -> Me) <message></light_purple>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
-        getList("commands.message.aliases", new ArrayList<String>(){{
-            add("msg");
-            add("whisper");
-            add("tell");
-        }}).forEach(key -> {
-            MESSAGECOMMANDALIASES.add(key.toString());
-        });
-        getList("commands.reply.aliases", new ArrayList<String>(){{
-            add("r");
-        }}).forEach(key -> {
-            REPLYCOMMANDALIASES.add(key.toString());
-        });
+        MESSAGECOMMANDALIASES = getList("commands.message.aliases", Lists.newArrayList("msg", "whisper", "tell"));
+        REPLYCOMMANDALIASES = getList("commands.reply.aliases", Lists.newArrayList("r"));
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
 
     public static List<String> GCCOMMANDALIASES = new ArrayList<>();
-    public static String GCFORMAT = "[&d{luckperms_prefix_element_highest}&f] &7{cmi_user_display_name} &eto Global&7: {message}";
+    public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message></gray></white>";
+    public static String GCPERMISSION = "proxy.globalchat";
     private static void globalChat() {
         MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
-        getList("commands.globalchat.aliases", new ArrayList<String>(){{
-            add("gc");
-        }}).forEach(key -> {
-            GCCOMMANDALIASES.add(key.toString());
-        });
+        GCPERMISSION = getString("commands.globalchat.view-chat-permission", GCPERMISSION);
+        GCCOMMANDALIASES = getList("commands.globalchat.aliases", Lists.newArrayList("gc"));
     }
+
+    public static List<String> GACECOMMANDALIASES = new ArrayList<>();
+    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><yellow>(<sender> on <server> -> Team) <message></yellow>";
+    private static void globalAdminChat() {
+        GACECOMMANDALIASES = getList("commands.globaladminchat.aliases", Lists.newArrayList("acg"));
+        GACFORMAT = getString("commands.globaladminchat.format", GACFORMAT);
+    }
+
 }
