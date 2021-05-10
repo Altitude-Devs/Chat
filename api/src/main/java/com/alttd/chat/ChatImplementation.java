@@ -1,8 +1,11 @@
 package com.alttd.chat;
 
+import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+
+import java.io.File;
 
 public class ChatImplementation implements ChatAPI{
 
@@ -13,6 +16,7 @@ public class ChatImplementation implements ChatAPI{
 
     ChatImplementation() {
         instance = this;
+        Config.init(new File(System.getProperty("user.home")));
         // init database
         // init depends//or set them the first time they are called?
     }
