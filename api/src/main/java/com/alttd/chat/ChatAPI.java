@@ -1,12 +1,13 @@
 package com.alttd.chat;
 
+import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 
 public interface ChatAPI {
 
-    /*public static ChatAPI get() {
-        return ChatImplementation.INSTANCE;
-    }*/
+    ChatAPI get();
 
     LuckPerms getLuckPerms();
+
+    DatabaseConnection getDataBase();
 }

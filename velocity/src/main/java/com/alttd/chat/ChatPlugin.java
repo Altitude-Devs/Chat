@@ -4,6 +4,7 @@ import com.alttd.chat.commands.GlobalAdminChat;
 import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.commands.GlobalChatToggle;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.google.inject.Inject;
@@ -13,8 +14,6 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -33,6 +32,7 @@ public class ChatPlugin {
     private final Path dataDirectory;
 
     private ChatAPI chatAPI;
+    private DatabaseConnection databaseConnection;
     private ChatHandler chatHandler;
 
     @Inject
@@ -48,6 +48,11 @@ public class ChatPlugin {
         Config.init(getDataDirectory());
         loadCommands();
         chatAPI = new ChatImplementation();
+        databaseConnection = chatAPI.getDataBase();
+        if (!databaseConnection.initialize()) {
+            // todo should we do this in the API or in the implementation?
+            return;
+        }
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
     }
@@ -79,6 +84,8 @@ public class ChatPlugin {
     public ChatAPI API() {
         return chatAPI;
     }
+
+
 
     public ChatHandler getChatHandler() {
         return chatHandler;
