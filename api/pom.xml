@@ -47,6 +47,11 @@
             <version>5.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency><!--TODO update to version 4.0.0-->
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>3.7.1</version>
+        </dependency>
     </dependencies>
     
 </project>
