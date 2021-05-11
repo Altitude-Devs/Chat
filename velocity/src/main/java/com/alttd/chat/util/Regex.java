@@ -17,6 +17,8 @@ public class Regex {
         cancelRegex.put(Pattern.compile("\\b([R]+[^\\w]?[4A]+[^\\w]?[P]+(([^\\w]?[E3]+[^\\w]?[DT]*)|([^\\w]?[I!1]+[^\\w]?[S5]+[^\\w]?[T7]+)|([^\\w]?[I!1]+[^\\w]?[N]+[^\\w]?[G69]+)))\\b"), new ArrayList<>());
         //TODO load data from config (a regex string and what to replace it with)
         replaceRegex.put(":pirate:", "pirate");
+
+        //TODO we might just be able to throw it all in one list and just go through it and check the type to see what to do if there is a match :eyes:
     }
 
     public static boolean violatesFilter(String text) {
