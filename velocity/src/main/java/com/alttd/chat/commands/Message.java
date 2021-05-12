@@ -1,6 +1,7 @@
 package com.alttd.chat.commands;
 
-import com.alttd.chat.api.MessageEvent;
+import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -9,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
@@ -35,8 +37,13 @@ public class Message {
 
                                     if (playerOptional.isPresent()) {
                                         Player receiver = playerOptional.get();
-                                        proxyServer.getEventManager().fire(new MessageEvent(context.getSource(), receiver, context.getArgument("message", String.class)));
-
+                                        proxyServer.getEventManager().fire(new PrivateMessageEvent(context.getSource(), receiver, context.getArgument("message", String.class))).thenAccept((event) -> {
+                                            if(event.getResult() == ResultedEvent.GenericResult.allowed()) {
+                                                ChatPlugin.getPlugin().getChatHandler().privateMessage(event);
+                                            }
+                                            // event has finished firing
+                                            // do some logic dependent on the result
+                                        });
                                         return 1;
                                     } else {
                                         // TODO NOBODY TO REPLY TO

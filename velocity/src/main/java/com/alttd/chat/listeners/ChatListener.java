@@ -1,8 +1,8 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.api.GlobalStaffChatEvent;
-import com.alttd.chat.api.MessageEvent;
+import com.alttd.chat.api.GlobalAdminChatEvent;
+import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;
@@ -24,37 +24,12 @@ public class ChatListener {
     }
 
     @Subscribe(order = PostOrder.FIRST)
-    public void onMessage(MessageEvent event) {
-        String senderName;
-        String receiverName;
-        CommandSource commandSource = event.getSender();
-        if (commandSource instanceof Player) {
-            Player sender = (Player) event.getSender();
-            senderName = sender.getUsername();
-            plugin.getChatHandler().getChatPlayer(sender.getUniqueId()).setReplyTarget(event.getRecipient().getUniqueId()); // TODO this needs to be cleaner
-        } else {
-            senderName = "Console"; // TODO console name from config
-        }
-        receiverName = event.getRecipient().getUsername();
-
-        MiniMessage miniMessage = MiniMessage.get();
-
-        Map<String, String> map = new HashMap<>();
-
-        map.put("sender", senderName);
-        map.put("receiver", receiverName);
-        map.put("message", event.getMessage());
-        map.put("server", event.getRecipient().getCurrentServer().isPresent() ? event.getRecipient().getCurrentServer().get().getServerInfo().getName() : "Altitude");
-
-        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, map);
-        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, map);
-
-        event.getSender().sendMessage(senderMessage);
-        event.getRecipient().sendMessage(receiverMessage);
+    public void onMessage(PrivateMessageEvent event) {
+        // TODO check muted, etc
     }
 
     @Subscribe(order = PostOrder.FIRST)
-    public void onGlobalStaffChat(GlobalStaffChatEvent event) {
+    public void onGlobalStaffChat(GlobalAdminChatEvent event) {
         String senderName;
         String serverName;
         CommandSource commandSource = event.getSender();

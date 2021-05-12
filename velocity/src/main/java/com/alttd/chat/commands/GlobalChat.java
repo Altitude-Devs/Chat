@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 
 public class GlobalChat {
 
+    // todo move to server implementation and send plugin event to allowed servers, this means we can implement [i] in here
     public GlobalChat(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("globalchat")

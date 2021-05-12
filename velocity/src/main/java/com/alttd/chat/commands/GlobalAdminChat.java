@@ -1,6 +1,6 @@
 package com.alttd.chat.commands;
 
-import com.alttd.chat.api.GlobalStaffChatEvent;
+import com.alttd.chat.api.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -20,7 +20,7 @@ public class GlobalAdminChat {
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
-                            proxyServer.getEventManager().fire(new GlobalStaffChatEvent(context.getSource(), context.getArgument("message", String.class)));
+                            proxyServer.getEventManager().fire(new GlobalAdminChatEvent(context.getSource(), context.getArgument("message", String.class)));
                             return 1;
                         }) // TODO call in the same way as gc?
                 )
