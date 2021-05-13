@@ -148,6 +148,13 @@ public final class Config {
         return new ArrayList<>();
     }
 
+    private static ConfigurationNode getNode(String path) {
+        if(config.getNode(splitPath(path)).isVirtual()) {
+            new RegexConfig("Dummy");
+        }
+        return config.getNode(splitPath(path));
+    }
+
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
     public static String CONSOLENAME = "Console";
@@ -187,6 +194,11 @@ public final class Config {
     public static String MESSAGECHANNEL = "altitude:chatplugin";
     private static void messageChannels() {
         MESSAGECHANNEL = getString("settings.message-channel", MESSAGECHANNEL);
+    }
+
+    public static ConfigurationNode REGEXNODE = null;
+    private static void RegexNOde() {
+        REGEXNODE = getNode("regex-settings");
     }
 
 }

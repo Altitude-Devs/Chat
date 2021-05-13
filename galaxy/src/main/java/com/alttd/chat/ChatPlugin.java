@@ -5,9 +5,13 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Map;
 
 public class ChatPlugin extends JavaPlugin {
 
@@ -29,7 +33,6 @@ public class ChatPlugin extends JavaPlugin {
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
         getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, new PluginMessage());
-
     }
 
     @Override

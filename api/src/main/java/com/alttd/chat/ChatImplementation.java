@@ -1,11 +1,13 @@
 package com.alttd.chat;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
+import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,9 +25,12 @@ public class ChatImplementation implements ChatAPI{
         Config.init();
 
         luckPerms = getLuckPerms();
-        //databaseConnection = getDataBase();
-        // init database
-        // init depends//or set them the first time they are called?
+        //databaseConnection = getDataBase(); // TODO fix database on proxy, shade sql, add defaults to config
+
+        // LOAD REGEXES, sad way of doing it:(
+        for(ConfigurationNode node : Config.REGEXNODE.getChildrenMap().values()) {
+            new RegexConfig(node.getString());
+        }
     }
 
     @Override
