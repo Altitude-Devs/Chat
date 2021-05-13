@@ -14,9 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatHandler {
 
@@ -60,7 +58,7 @@ public class ChatHandler {
     }
 
     public Component itemComponent(ItemStack item) {
-        Component component = Component.text("[i]"); // todo config stuff
+        Component component = Component.text("[i]");
         if(item.getType().equals(Material.AIR))
             return component;
         boolean dname = item.hasItemMeta() && item.getItemMeta().hasDisplayName();

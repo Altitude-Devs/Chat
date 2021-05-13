@@ -26,11 +26,6 @@ public class ChatImplementation implements ChatAPI{
 
         luckPerms = getLuckPerms();
         //databaseConnection = getDataBase(); // TODO fix database on proxy, shade sql, add defaults to config
-
-        // LOAD REGEXES, sad way of doing it:(
-        for(ConfigurationNode node : Config.REGEXNODE.getChildrenMap().values()) {
-            new RegexConfig(node.getString());
-        }
     }
 
     @Override
