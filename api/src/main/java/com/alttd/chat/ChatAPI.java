@@ -1,6 +1,6 @@
-package com.alttd.velocitychat;
+package com.alttd.chat;
 
-import com.alttd.velocitychat.database.DatabaseConnection;
+import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 
 import java.util.UUID;

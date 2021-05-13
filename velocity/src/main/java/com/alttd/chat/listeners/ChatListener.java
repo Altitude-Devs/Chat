@@ -1,8 +1,8 @@
-package com.alttd.velocitychat.listeners;
+package com.alttd.chat.listeners;
 
-import com.alttd.velocitychat.ChatPlugin;
-import com.alttd.velocitychat.api.GlobalAdminChatEvent;
-import com.alttd.velocitychat.api.PrivateMessageEvent;
+import com.alttd.chat.VelocityChat;
+import com.alttd.chat.api.GlobalAdminChatEvent;
+import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;
@@ -17,10 +17,10 @@ import java.util.Map;
 // TODO code CLEANUP
 public class ChatListener {
 
-    private ChatPlugin plugin;
+    private VelocityChat plugin;
 
     public ChatListener() {
-        plugin = ChatPlugin.getPlugin();
+        plugin = VelocityChat.getPlugin();
     }
 
     @Subscribe(order = PostOrder.FIRST)

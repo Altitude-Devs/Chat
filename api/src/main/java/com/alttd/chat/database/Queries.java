@@ -1,7 +1,7 @@
-package com.alttd.velocitychat.database;
+package com.alttd.chat.database;
 
-import com.alttd.velocitychat.objects.Party;
-import com.alttd.velocitychat.objects.PartyUser;
+import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.PartyUser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

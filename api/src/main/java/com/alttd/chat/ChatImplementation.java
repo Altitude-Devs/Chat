@@ -1,7 +1,7 @@
-package com.alttd.velocitychat;
+package com.alttd.chat;
 
-import com.alttd.velocitychat.config.Config;
-import com.alttd.velocitychat.database.DatabaseConnection;
+import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;

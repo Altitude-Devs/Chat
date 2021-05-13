@@ -1,4 +1,4 @@
-package com.alttd.velocitychat.commands;
+package com.alttd.chat.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

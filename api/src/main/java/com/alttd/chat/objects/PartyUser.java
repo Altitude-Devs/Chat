@@ -1,6 +1,6 @@
-package com.alttd.velocitychat.objects;
+package com.alttd.chat.objects;
 
-import com.alttd.velocitychat.database.Queries;
+import com.alttd.chat.database.Queries;
 
 import java.util.UUID;
 

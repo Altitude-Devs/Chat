@@ -1,7 +1,7 @@
-package com.alttd.velocitychat.handlers;
+package com.alttd.chat.handlers;
 
-import com.alttd.velocitychat.ChatPlugin;
-import com.alttd.velocitychat.api.PrivateMessageEvent;
+import com.alttd.chat.VelocityChat;
+import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.objects.ChatPlayer;
 import com.velocitypowered.api.command.CommandSource;
@@ -101,7 +101,7 @@ public class ChatHandler {
 
         Component component = miniMessage.parse(Config.GCFORMAT, map);
 
-        for(Player p: ChatPlugin.getPlugin().getProxy().getAllPlayers()) {
+        for(Player p: VelocityChat.getPlugin().getProxy().getAllPlayers()) {
             if(p.hasPermission(Config.GCPERMISSION));
                 p.sendMessage(component);
                 //TODO send global chat with format from config
@@ -129,7 +129,7 @@ public class ChatHandler {
     public String getPrefix(Player player, boolean highest) {
         // TODO cache these components on load, and return them here?
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatPlugin.getPlugin().API().getLuckPerms();
+        LuckPerms luckPerms = VelocityChat.getPlugin().API().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(player.getUniqueId());
         if(user == null) return "";
         if(!highest) {

@@ -1,14 +1,12 @@
-package com.alttd.velocitychat;
+package com.alttd.chat;
 
-import com.alttd.chat.ChatAPI;
-import com.alttd.chat.ChatImplementation;
-import com.alttd.velocitychat.commands.GlobalAdminChat;
-import com.alttd.velocitychat.commands.GlobalChat;
-import com.alttd.velocitychat.commands.GlobalChatToggle;
+import com.alttd.chat.commands.GlobalAdminChat;
+import com.alttd.chat.commands.GlobalChat;
+import com.alttd.chat.commands.GlobalChatToggle;
 import com.alttd.chat.database.DatabaseConnection;
-import com.alttd.velocitychat.handlers.ChatHandler;
-import com.alttd.velocitychat.listeners.ChatListener;
-import com.alttd.velocitychat.listeners.PluginMessageListener;
+import com.alttd.chat.handlers.ChatHandler;
+import com.alttd.chat.listeners.ChatListener;
+import com.alttd.chat.listeners.PluginMessageListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -28,9 +26,9 @@ import java.nio.file.Path;
         authors = {"destro174", "teri"},
         dependencies = {@Dependency(id = "luckperms")}
         )
-public class ChatPlugin {
+public class VelocityChat {
 
-    private static ChatPlugin plugin;
+    private static VelocityChat plugin;
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
@@ -43,7 +41,7 @@ public class ChatPlugin {
             MinecraftChannelIdentifier.from("customplugin:mychannel");
 
     @Inject
-    public ChatPlugin(ProxyServer proxyServer, Logger proxyLogger, @DataDirectory Path proxydataDirectory) {
+    public VelocityChat(ProxyServer proxyServer, Logger proxyLogger, @DataDirectory Path proxydataDirectory) {
         plugin = this;
         server = proxyServer;
         logger = proxyLogger;
@@ -71,7 +69,7 @@ public class ChatPlugin {
         return dataDirectory.toFile();
     }
 
-    public static ChatPlugin getPlugin() {
+    public static VelocityChat getPlugin() {
         return plugin;
     }
 

@@ -1,6 +1,6 @@
-package com.alttd.velocitychat.commands;
+package com.alttd.chat.commands;
 
-import com.alttd.velocitychat.api.GlobalAdminChatEvent;
+import com.alttd.chat.api.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

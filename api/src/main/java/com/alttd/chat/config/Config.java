@@ -1,4 +1,4 @@
-package com.alttd.velocitychat.config;
+package com.alttd.chat.config;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;

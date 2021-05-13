@@ -1,7 +1,7 @@
-package com.alttd.velocitychat.commands;
+package com.alttd.chat.commands;
 
-import com.alttd.velocitychat.ChatPlugin;
-import com.alttd.velocitychat.api.PrivateMessageEvent;
+import com.alttd.chat.VelocityChat;
+import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -39,7 +39,7 @@ public class Message {
                                         Player receiver = playerOptional.get();
                                         proxyServer.getEventManager().fire(new PrivateMessageEvent(context.getSource(), receiver, context.getArgument("message", String.class))).thenAccept((event) -> {
                                             if(event.getResult() == ResultedEvent.GenericResult.allowed()) {
-                                                ChatPlugin.getPlugin().getChatHandler().privateMessage(event);
+                                                VelocityChat.getPlugin().getChatHandler().privateMessage(event);
                                             }
                                             // event has finished firing
                                             // do some logic dependent on the result

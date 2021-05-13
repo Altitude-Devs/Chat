@@ -1,6 +1,5 @@
-package com.alttd.velocitychat.config;
+package com.alttd.chat.config;
 
-import com.alttd.chat.config.Config;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 

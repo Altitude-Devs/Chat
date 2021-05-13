@@ -1,6 +1,6 @@
-package com.alttd.velocitychat.commands;
+package com.alttd.chat.commands;
 
-import com.alttd.velocitychat.ChatPlugin;
+import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -24,7 +24,7 @@ public class GlobalChatToggle {
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
-                            LuckPerms luckPerms = ChatPlugin.getPlugin().API().getLuckPerms();
+                            LuckPerms luckPerms = VelocityChat.getPlugin().API().getLuckPerms();
                             Player player = (Player) context;
                             luckPerms.getUserManager().modifyUser(player.getUniqueId(), user -> {
                                 if(player.hasPermission(Config.GCPERMISSION)) { //TODO THIS MUST BE A CONSTANT FROM CONFIG?
