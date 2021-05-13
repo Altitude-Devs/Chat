@@ -1,7 +1,7 @@
-package com.alttd.chat.database;
+package com.alttd.velocitychat.database;
 
-import com.alttd.chat.objects.Party;
-import com.alttd.chat.objects.PartyUser;
+import com.alttd.velocitychat.objects.Party;
+import com.alttd.velocitychat.objects.PartyUser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,8 +64,8 @@ public class Queries {
 
     //Ignore
 
-    public static void getIgnoredUsers() { //TODO store this in a user object or something?
-        HashMap<UUID, ArrayList<UUID>> ignoredUsers = new HashMap<>(); //TODO Replace with a proper way/location to store this in
+    public static void getIgnoredUsers() { //TODO store this in a user object or something? -> ChatPlayer
+        HashMap<UUID, ArrayList<UUID>> ignoredUsers = new HashMap<>(); //TODO Replace with a proper way/location to store this in -> a list<UUID> in ChatPlayer?
         String query = "SELECT * FROM ignored_users";
 
         try {

@@ -1,4 +1,4 @@
-package com.alttd.chat.util;
+package com.alttd.velocitychat.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

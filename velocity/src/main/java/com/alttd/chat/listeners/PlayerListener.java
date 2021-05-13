@@ -1,7 +1,7 @@
-package com.alttd.chat.listeners;
+package com.alttd.velocitychat.listeners;
 
-import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.handlers.ChatPlayer;
+import com.alttd.velocitychat.ChatPlugin;
+import com.alttd.chat.objects.ChatPlayer;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -11,7 +11,7 @@ public class PlayerListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerLogin(LoginEvent event) {
-        ChatPlugin.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer()));
+        ChatPlugin.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
     }
 
     @Subscribe

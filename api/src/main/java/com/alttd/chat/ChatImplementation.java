@@ -1,11 +1,15 @@
-package com.alttd.chat;
+package com.alttd.velocitychat;
 
-import com.alttd.chat.config.Config;
-import com.alttd.chat.database.DatabaseConnection;
+import com.alttd.velocitychat.config.Config;
+import com.alttd.velocitychat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.user.User;
 
-import java.io.File;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.UUID;
 
 public class ChatImplementation implements ChatAPI{
 
@@ -14,9 +18,9 @@ public class ChatImplementation implements ChatAPI{
     private LuckPerms luckPerms;
     private DatabaseConnection databaseConnection;
 
-    ChatImplementation() {
+    public ChatImplementation() {
         instance = this;
-        Config.init(new File(System.getProperty("user.home")));
+        Config.init();
         // init database
         // init depends//or set them the first time they are called?
     }
@@ -40,6 +44,37 @@ public class ChatImplementation implements ChatAPI{
         if(databaseConnection == null)
             databaseConnection = new DatabaseConnection();
         return databaseConnection;
+    }
+
+    @Override
+    public String getPrefix(UUID uuid) {
+        return getPrefix(uuid, false);
+    }
+
+    @Override
+    public String getPrefix(UUID uuid, boolean all) {
+        // TODO cache these components on load, and return them here?
+        StringBuilder prefix = new StringBuilder();
+        LuckPerms luckPerms = getLuckPerms();
+        User user = luckPerms.getUserManager().getUser(uuid);
+        if(user == null) return "";
+        if(all) {
+            Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
+            inheritedGroups.stream()
+                    .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
+                    .forEach(group -> {
+                        if (Config.PREFIXGROUPS.contains(group.getName())) {
+                            prefix.append("<white>[").append(group.getCachedData().getMetaData().getPrefix()).append("]</white>");
+                        }
+                    });
+        }
+        prefix.append("<white>[").append(user.getCachedData().getMetaData().getPrefix()).append("]</white>");
+        return prefix.toString();
+    }
+
+    @Override
+    public String getStaffPrefix(UUID uuid) {
+        return "";
     }
 
 

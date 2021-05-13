@@ -1,4 +1,4 @@
-package com.alttd.chat.objects;
+package com.alttd.velocitychat.objects;
 
 import java.util.UUID;
 

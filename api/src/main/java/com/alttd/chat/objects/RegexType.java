@@ -1,4 +1,4 @@
-package com.alttd.chat.objects;
+package com.alttd.velocitychat.objects;
 
 public enum RegexType {
     REPLACE("replace"),

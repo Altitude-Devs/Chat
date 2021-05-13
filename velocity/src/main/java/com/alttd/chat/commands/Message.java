@@ -1,7 +1,7 @@
-package com.alttd.chat.commands;
+package com.alttd.velocitychat.commands;
 
-import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.api.PrivateMessageEvent;
+import com.alttd.velocitychat.ChatPlugin;
+import com.alttd.velocitychat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

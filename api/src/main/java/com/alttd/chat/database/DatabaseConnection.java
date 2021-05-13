@@ -1,4 +1,4 @@
-package com.alttd.chat.database;
+package com.alttd.velocitychat.database;
 
 
 import java.sql.Connection;

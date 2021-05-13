@@ -1,8 +1,9 @@
-package com.alttd.chat.handlers;
+package com.alttd.velocitychat.handlers;
 
-import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.api.PrivateMessageEvent;
+import com.alttd.velocitychat.ChatPlugin;
+import com.alttd.velocitychat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.objects.ChatPlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;

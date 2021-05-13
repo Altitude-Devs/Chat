@@ -1,0 +1,11 @@
+name: ChatPlugin
+version: ${project.version}
+main: com.alttd.chat.ChatPlugin
+api-version: 1.16
+authors: [Destro, Teriuihi]
+depend: [LuckPerms]
+commands:
+  globalchat:
+    permission: command.globalchat
+    permission-message: You do not have permission!
+    aliases: gc

@@ -1,12 +1,14 @@
-package com.alttd.chat;
+package com.alttd.velocitychat;
 
-import com.alttd.chat.commands.GlobalAdminChat;
-import com.alttd.chat.commands.GlobalChat;
-import com.alttd.chat.commands.GlobalChatToggle;
-import com.alttd.chat.config.Config;
+import com.alttd.chat.ChatAPI;
+import com.alttd.chat.ChatImplementation;
+import com.alttd.velocitychat.commands.GlobalAdminChat;
+import com.alttd.velocitychat.commands.GlobalChat;
+import com.alttd.velocitychat.commands.GlobalChatToggle;
 import com.alttd.chat.database.DatabaseConnection;
-import com.alttd.chat.handlers.ChatHandler;
-import com.alttd.chat.listeners.ChatListener;
+import com.alttd.velocitychat.handlers.ChatHandler;
+import com.alttd.velocitychat.listeners.ChatListener;
+import com.alttd.velocitychat.listeners.PluginMessageListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -14,6 +16,8 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -35,6 +39,9 @@ public class ChatPlugin {
     private DatabaseConnection databaseConnection;
     private ChatHandler chatHandler;
 
+    private final ChannelIdentifier channelIdentifier =
+            MinecraftChannelIdentifier.from("customplugin:mychannel");
+
     @Inject
     public ChatPlugin(ProxyServer proxyServer, Logger proxyLogger, @DataDirectory Path proxydataDirectory) {
         plugin = this;
@@ -45,8 +52,7 @@ public class ChatPlugin {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        Config.init(getDataDirectory());
-        loadCommands();
+        //Config.init(getDataDirectory());
         chatAPI = new ChatImplementation();
         databaseConnection = chatAPI.getDataBase();
         if (!databaseConnection.initialize()) {
@@ -55,6 +61,10 @@ public class ChatPlugin {
         }
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
+
+        server.getEventManager().register(this, new PluginMessageListener(channelIdentifier));
+
+        loadCommands();
     }
 
     public File getDataDirectory() {
@@ -65,6 +75,9 @@ public class ChatPlugin {
         return plugin;
     }
 
+    public DatabaseConnection getDatabaseConnection() {
+        return databaseConnection;
+    }
 
     public Logger getLogger() {
         return logger;

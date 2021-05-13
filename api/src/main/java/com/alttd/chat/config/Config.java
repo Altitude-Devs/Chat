@@ -1,4 +1,4 @@
-package com.alttd.chat.config;
+package com.alttd.velocitychat.config;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -28,8 +28,8 @@ public final class Config {
     static int version;
     static boolean verbose;
 
-    public static void init(File path) {
-        CONFIG_FILE = new File(path, "config.yml");;
+    public static void init() {
+        CONFIG_FILE = new File(new File(System.getProperty("user.home")), "config.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -150,9 +150,11 @@ public final class Config {
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
+    public static String CONSOLENAME = "Console";
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
+        CONSOLENAME = getString("settings.console-name", CONSOLENAME);
     }
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
@@ -168,13 +170,11 @@ public final class Config {
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
 
-    public static List<String> GCCOMMANDALIASES = new ArrayList<>();
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message></gray></white>";
     public static String GCPERMISSION = "proxy.globalchat";
     private static void globalChat() {
         MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
         GCPERMISSION = getString("commands.globalchat.view-chat-permission", GCPERMISSION);
-        GCCOMMANDALIASES = getList("commands.globalchat.aliases", Lists.newArrayList("gc"));
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();

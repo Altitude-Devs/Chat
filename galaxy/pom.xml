@@ -13,20 +13,46 @@
         <groupId>com.alttd.chat</groupId>
         <artifactId>Chat</artifactId>
         <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>galaxy-chat</artifactId>
     <packaging>jar</packaging>
 
     <build>
+        <defaultGoal>clean package</defaultGoal>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>net.kyori:adventure-text-minimessage</include>
+                            <include>com.alttd.chat:chat-api</include>
+                            <include>org.spongepowered:configurate-yaml</include>
+                            <include>org.spongepowered:configurate-core</include>
+                        </includes>
+                        <excludes>
+                            <exclude>META-INF/*.MF</exclude>
+                        </excludes>
+                    </artifactSet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -55,6 +81,11 @@
             <artifactId>chat-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency><!--TODO update to version 4.0.0-->
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>3.7.1</version>
         </dependency>
     </dependencies>
 </project>
