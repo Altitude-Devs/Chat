@@ -1,28 +1,22 @@
-package com.alttd.chat.handlers;
-
-import com.velocitypowered.api.proxy.Player;
+package com.alttd.chat.objects;
 
 import java.util.UUID;
 
 public class ChatPlayer {
+    // todo merge partyuser here, or make party user extend this?
+    // todo gctoggle?
 
     private UUID uuid;
-    private Player player;
     private UUID replyTarget;
-    private boolean globalChatEnabled;
+    private boolean globalChatEnabled; // this vs permission?
 
-    public ChatPlayer(Player p) {
-        player = p;
-        uuid = p.getUniqueId();
+    public ChatPlayer(UUID p) {
+        uuid = p;
         replyTarget = null;
     }
 
     public UUID getUuid() {
         return uuid;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     public boolean isGlobalChatEnabled() {
@@ -34,7 +28,7 @@ public class ChatPlayer {
     }
 
     public void setReplyTarget(UUID uuid) {
-        if(!replyTarget.equals(uuid))
+        if (!replyTarget.equals(uuid))
             replyTarget = uuid;
     }
 }
