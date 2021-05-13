@@ -2,8 +2,6 @@ package com.alttd.chat.database;
 
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.PartyUser;
-import com.alttd.chat.objects.Regex;
-import com.alttd.chat.objects.RegexType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +18,6 @@ public class Queries {
 
     public static void createTables() {
         List<String> tables = new ArrayList<>();
-        tables.add("CREATE TABLE IF NOT EXISTS regex (`id` INT NOT NULL AUTO_INCREMENT, `regex` VARCHAR(2048) NOT NULL, `type` VARCHAR(32) NOT NULL, `replacement` VARCHAR(256) NULL, PRIMARY KEY (`id`))");
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
         tables.add("CREATE TABLE IF NOT EXISTS party_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', PRIMARY KEY (`uuid`), FOREIGN KEY (party_id) REFERENCES parties(id) ON DELETE CASCADE)");
@@ -38,40 +35,28 @@ public class Queries {
 
     //-----------------------------------------
 
-    //Regex
+    //Nicknames
 
-    public static Regex getRegex() {
-        String query = "SELECT * FROM regex";
+    public static String getNickname(UUID uuid) {
+        //TODO use separate connection so it actually uses the nickname db...
+        String query = "SELECT nickname FROM nicknames WHERE uuid = ?";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
 
-            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
+            PreparedStatement statement = connection.prepareStatement(query);
 
-            while (resultSet.next()) {
-                String regex = resultSet.getString("regex");
-                RegexType type = RegexType.getType(resultSet.getString("type"));
+            statement.setString(1, uuid.toString());
 
-                if (regex.isEmpty() || type == null) {
-                    //TODO log this properly
-                    System.out.println("INCORRECT LOGGING: regex was empty or type was invalid when getting from the database");
-                    continue;
-                }
+            ResultSet resultSet = statement.executeQuery();
 
-                if (type.equals(RegexType.REPLACE)) {
-                    String replacement = resultSet.getString("replacement");
-                    //TODO Add to list in util\Regex.java
-                    new Regex(regex, type, replacement);
-                } else {
-                    //TODO Add to list in util\Regex.java
-                    new Regex(regex, type);
-                }
+            if (resultSet.next()) {
+                return resultSet.getString("nickname");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
