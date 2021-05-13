@@ -21,6 +21,9 @@ public class ChatImplementation implements ChatAPI{
     public ChatImplementation() {
         instance = this;
         Config.init();
+
+        luckPerms = getLuckPerms();
+        //databaseConnection = getDataBase();
         // init database
         // init depends//or set them the first time they are called?
     }

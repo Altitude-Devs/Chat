@@ -184,4 +184,9 @@ public final class Config {
         GACFORMAT = getString("commands.globaladminchat.format", GACFORMAT);
     }
 
+    public static String MESSAGECHANNEL = "altitude:chatplugin";
+    private static void messageChannels() {
+        MESSAGECHANNEL = getString("settings.message-channel", MESSAGECHANNEL);
+    }
+
 }

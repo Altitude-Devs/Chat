@@ -68,4 +68,8 @@ public final class ServerConfig {
 
     /** DO NOT EDIT ANYTHING ABOVE **/
 
+    public boolean GLOBALCHAT = true; // TODO change to false on release
+    private void ServerSettings() {
+        GLOBALCHAT = getBoolean("global-chat-enabled", GLOBALCHAT);
+    }
 }

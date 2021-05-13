@@ -1,10 +1,10 @@
 package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalAdminChat;
-import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.commands.GlobalChatToggle;
-import com.alttd.chat.database.DatabaseConnection;
+import com.alttd.chat.config.Config;
 import com.alttd.chat.handlers.ChatHandler;
+import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PluginMessageListener;
 import com.google.inject.Inject;
@@ -34,11 +34,10 @@ public class VelocityChat {
     private final Path dataDirectory;
 
     private ChatAPI chatAPI;
-    private DatabaseConnection databaseConnection;
     private ChatHandler chatHandler;
+    private ServerHandler serverHandler;
 
-    private final ChannelIdentifier channelIdentifier =
-            MinecraftChannelIdentifier.from("customplugin:mychannel");
+    private ChannelIdentifier channelIdentifier;
 
     @Inject
     public VelocityChat(ProxyServer proxyServer, Logger proxyLogger, @DataDirectory Path proxydataDirectory) {
@@ -50,16 +49,14 @@ public class VelocityChat {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        //Config.init(getDataDirectory());
         chatAPI = new ChatImplementation();
-        databaseConnection = chatAPI.getDataBase();
-        if (!databaseConnection.initialize()) {
-            // todo should we do this in the API or in the implementation?
-            return;
-        }
+
+        serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
-
+        String[] channels = Config.MESSAGECHANNEL.split(":");// todo add a check for this?
+        channelIdentifier = MinecraftChannelIdentifier.create(channels[0], channels[1]);
+        server.getChannelRegistrar().register(channelIdentifier);
         server.getEventManager().register(this, new PluginMessageListener(channelIdentifier));
 
         loadCommands();
@@ -73,10 +70,6 @@ public class VelocityChat {
         return plugin;
     }
 
-    public DatabaseConnection getDatabaseConnection() {
-        return databaseConnection;
-    }
-
     public Logger getLogger() {
         return logger;
     }
@@ -88,17 +81,18 @@ public class VelocityChat {
     public void loadCommands() {
         new GlobalAdminChat(server);
         new GlobalChatToggle(server);
-        new GlobalChat(server);
-        // all commands go here
+        // all (proxy)commands go here
     }
 
     public ChatAPI API() {
         return chatAPI;
     }
 
-
-
     public ChatHandler getChatHandler() {
         return chatHandler;
+    }
+
+    public ServerHandler getServerHandler() {
+        return serverHandler;
     }
 }

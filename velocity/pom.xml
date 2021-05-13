@@ -37,11 +37,17 @@
                         <includes>
                             <include>net.kyori:adventure-text-minimessage</include>
                             <include>com.alttd.chat:chat-api</include>
+                            <include>mysql:mysql-connector-java</include>
                         </includes>
                         <excludes>
                             <exclude>META-INF/*.MF</exclude>
                         </excludes>
                     </artifactSet>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/services/java.sql.Driver</resource>
+                        </transformer>
+                    </transformers>
                 </configuration>
                 <executions>
                     <execution>

@@ -6,6 +6,8 @@ public class ChatPlayer {
     // todo merge partyuser here, or make party user extend this?
     // todo gctoggle?
 
+    // todo cache prefixes?
+
     private UUID uuid;
     private UUID replyTarget;
     private boolean globalChatEnabled; // this vs permission?

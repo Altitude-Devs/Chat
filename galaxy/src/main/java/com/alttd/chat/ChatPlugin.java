@@ -1,8 +1,10 @@
 package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalChat;
+import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.PlayerListener;
+import com.alttd.chat.listeners.PluginMessage;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,6 +16,8 @@ public class ChatPlugin extends JavaPlugin {
     private ChatAPI chatAPI;
     private ChatHandler chatHandler;
 
+    private String messageChannel;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -21,6 +25,11 @@ public class ChatPlugin extends JavaPlugin {
         chatHandler = new ChatHandler();
         registerListener(new PlayerListener());
         registerCommand("globalchat", new GlobalChat());
+
+        messageChannel = Config.MESSAGECHANNEL;
+        getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
+        getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, new PluginMessage());
+
     }
 
     @Override

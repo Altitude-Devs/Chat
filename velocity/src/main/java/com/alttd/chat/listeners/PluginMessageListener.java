@@ -1,5 +1,6 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.VelocityChat;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
@@ -10,6 +11,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 
 public class PluginMessageListener {
 
+    //todo add an extra listener for nicknames?
     private final ChannelIdentifier identifier;
 
     public PluginMessageListener(ChannelIdentifier identifier){
@@ -22,13 +24,21 @@ public class PluginMessageListener {
             event.setResult(PluginMessageEvent.ForwardResult.handled());
 
             if(event.getSource() instanceof Player){
-
+                // if this happens there's an oopsie
             }
             if(event.getSource() instanceof ServerConnection){
                 // Read the data written to the message
                 ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
-                String message = in.readUTF();
-
+                String channel = in.readUTF();
+                VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
+                switch (channel) {
+                    case "globalchat":
+                        VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF());
+                        break;
+                    default:
+                        VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
+                        break;
+                }
             }
         }
     }
