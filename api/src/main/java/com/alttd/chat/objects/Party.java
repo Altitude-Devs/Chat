@@ -11,7 +11,7 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private ArrayList<PartyUser> partyUsers; //TODO might need to be a map?
+    private ArrayList<ChatUser> partyUsers; //TODO might need to be a map?
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
@@ -21,16 +21,16 @@ public class Party {
         partyUsers = new ArrayList<>();
     }
 
-    public void addUser(ArrayList<PartyUser> partyUsers) {
+    public void addUser(ArrayList<ChatUser> partyUsers) {
         this.partyUsers.addAll(partyUsers);
     }
 
-    public void addUser(PartyUser partyUser) {
+    public void addUser(ChatUser partyUser) {
         this.partyUsers.add(partyUser);
         Queries.addUser(partyUser);
     }
 
-    public void removeUser(PartyUser partyUser) {
+    public void removeUser(ChatUser partyUser) {
         partyUsers.remove(partyUser);
         Queries.removeUser(partyUser.getUuid());
     }
@@ -70,11 +70,11 @@ public class Party {
         return !partyPassword.isEmpty();
     }
 
-    public ArrayList<PartyUser> getPartyUsers() {
+    public ArrayList<ChatUser> getPartyUsers() {
         return partyUsers;
     }
 
-    public void setPartyUsers(ArrayList<PartyUser> partyUsers) {
+    public void setPartyUsers(ArrayList<ChatUser> partyUsers) {
         this.partyUsers = partyUsers;
     }
 }

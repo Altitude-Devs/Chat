@@ -1,7 +1,7 @@
 package com.alttd.chat.database;
 
 import com.alttd.chat.objects.Party;
-import com.alttd.chat.objects.PartyUser;
+import com.alttd.chat.objects.ChatUser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -156,7 +156,7 @@ public class Queries {
             e.printStackTrace();
         }
 
-        getPartyUsers(parties); //TODO This parameter should be temporary, it should access the actual list of parties normally
+        getChatUsers(parties); //TODO This parameter should be temporary, it should access the actual list of parties normally
     }
 
     public static Party addParty(UUID partyOwner, String partyName, String password) {
@@ -247,10 +247,10 @@ public class Queries {
 
     //-----------------------------------------
 
-    //Party Users
+    //Chat Users
 
-    private static void getPartyUsers(HashMap<Integer, Party> parties) {
-        String query = "SELECT * FROM party_users";
+    private static void getChatUsers(HashMap<Integer, Party> parties) { //TODO Get parties from cache somewhere
+        String query = "SELECT * FROM chat_users";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -264,15 +264,19 @@ public class Queries {
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
                 boolean force_tp = resultSet.getInt("force_tp") == 1;
 
+                if (partyId == 0) {
+                    continue;
+                }
+
                 Party party = parties.get(partyId);
+
                 if (party == null) {
                     //TODO log this properly
                     System.out.println("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
                     continue;
                 }
 
-                party.addUser(new PartyUser(uuid, partyId, toggled_chat, force_tp));
-
+                party.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp));
             }
 
         } catch (SQLException e) {
@@ -280,7 +284,7 @@ public class Queries {
         }
     }
 
-    public static void addUser(PartyUser user) {
+    public static void addUser(ChatUser user) {
         String query = "INSERT INTO party_users (uuid, party_id, toggled_chat, force_tp) VALUES (?, ?, ?, ?)";
 
         try {
