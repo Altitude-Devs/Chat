@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
+import com.alttd.chat.util.ALogger;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,7 @@ public class ChatPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new ALogger(this.getSLF4JLogger());
         chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
         registerListener(new PlayerListener());

@@ -8,6 +8,7 @@ import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.ProxyPlayerListener;
 import com.alttd.chat.listeners.PluginMessageListener;
+import com.alttd.chat.util.ALogger;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -50,6 +51,7 @@ public class VelocityChat {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        new ALogger(logger);
         chatAPI = new ChatImplementation();
 
         serverHandler = new ServerHandler();

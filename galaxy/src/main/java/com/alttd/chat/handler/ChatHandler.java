@@ -25,6 +25,7 @@ public class ChatHandler {
     }
 
     public void globalChat(CommandSender source, String message) {
+        // Check if the player has global chat enabled, if not warn them
         String senderName, prefix = "";
 
         Player sender = (Player) source;

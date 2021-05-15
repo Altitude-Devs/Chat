@@ -2,6 +2,7 @@ package com.alttd.chat.database;
 
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.ALogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -273,6 +274,7 @@ public class Queries {
 
                 if (party == null) {
                     //TODO log this properly
+                    ALogger.error("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
                     System.out.println("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
                     continue;
                 }
@@ -286,7 +288,7 @@ public class Queries {
     }
 
     public static void addUser(ChatUser user) {
-        String query = "INSERT INTO party_users (uuid, party_id, toggled_chat, force_tp, toggled_gc) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, force_tp, toggled_gc) VALUES (?, ?, ?, ?, ?)";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -305,11 +307,11 @@ public class Queries {
     }
 
     public static void setChatState(boolean toggledChat, UUID uuid) {
-        setBitWhereId("UPDATE party_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
+        setBitWhereId("UPDATE chat_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
     }
 
     public static void setForceTpState(boolean forceTp, UUID uuid) {
-        setBitWhereId("UPDATE party_users set force_tp = ? WHERE uuid = ?", forceTp, uuid);
+        setBitWhereId("UPDATE chat_users set force_tp = ? WHERE uuid = ?", forceTp, uuid);
     }
 
     private static void setBitWhereId(String query, boolean bool, UUID uuid) {
@@ -327,7 +329,7 @@ public class Queries {
     }
 
     public static void removeUser(UUID uuid) {
-        String query = "DELETE FROM party_users WHERE uuid = ?";
+        String query = "DELETE FROM chat_users WHERE uuid = ?";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
