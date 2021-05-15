@@ -1,6 +1,7 @@
 package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
+import com.alttd.chat.util.Utility;
 
 import java.util.UUID;
 
@@ -21,13 +22,17 @@ public class ChatUser {
         this.toggledChat = toggled_chat;
         this.forceTp = force_tp;
 
-        //TODO Get the user somehow and use that to check their prefixes
         displayName = Queries.getNickname(uuid);
         if (displayName == null) {
-            //TODO displayName = player.getName() or something
+            displayName = Utility.getDisplayName(uuid);
         }
 
-        //TODO Get the user somehow and use that to check the toggleGc permission
+        prefix = Utility.getPrefix(uuid, true);
+        staffPrefix = Utility.getStaffPrefix(uuid);
+
+        prefixAll = prefix + staffPrefix; //TODO test what this does cus I barely understand lp api
+
+        toggleGc = Utility.checkPermission(uuid, "chat.gc"); //TODO put the actual permission here, I don't know what it is...
     }
 
     public UUID getUuid() {
@@ -90,6 +95,7 @@ public class ChatUser {
 
     public void toggleGc() {
         toggleGc = !toggleGc;
+        Utility.setPermission(uuid, "chat.gc", toggleGc); //TODO put the actual permission here, I don't know what it is...
     }
 
     public boolean isGcOn() {
