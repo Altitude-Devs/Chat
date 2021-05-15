@@ -42,12 +42,10 @@ public class ChatHandler {
                 Template.of("sender", senderName),
                 Template.of("prefix", prefix),
                 Template.of("message", message),
-                Template.of("server", Bukkit.getServerName()),
-                Template.of("[i]", itemComponent(sender.getInventory().getItemInMainHand()))));
+                Template.of("server", Bukkit.getServerName())/*,
+                Template.of("[i]", itemComponent(sender.getInventory().getItemInMainHand()))*/));
 
         Component component = miniMessage.parse(Config.GCFORMAT, templates);
-
-        Bukkit.broadcast(miniMessage.serialize(component), Config.GCPERMISSION);
 
         //todo make a method for this, it'll be used more then onc
 
@@ -55,7 +53,6 @@ public class ChatHandler {
         out.writeUTF("globalchat");
         out.writeUTF(miniMessage.serialize(component));
         sender.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
-
     }
 
     public Component itemComponent(ItemStack item) {
