@@ -43,10 +43,10 @@ public class Utility {
         StringBuilder prefix = new StringBuilder();
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
-        if(user == null) return "";
-        if(!Config.STAFFGROUPS.contains(user.getPrimaryGroup())) return "";
-        prefix.append("<white>[").append(user.getCachedData().getMetaData().getPrefix()).append("]</white>");
-
+        if(user == null) return prefix.toString();
+        if(user.getCachedData().getPermissionData().checkPermission("group." + Config.MINIMIUMSTAFFRANK).asBoolean()) {
+            prefix.append("<white>[").append(user.getCachedData().getMetaData().getPrefix()).append("]</white>");
+        }
         return prefix.toString();
     }
 
