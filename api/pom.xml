@@ -20,16 +20,33 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency><!--TODO update to version 4.0.0-->
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>1.1.5</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
             <version>5.3</version>
             <scope>provided</scope>
         </dependency>
-        <dependency><!--TODO update to version 4.0.0-->
-            <groupId>org.spongepowered</groupId>
-            <artifactId>configurate-yaml</artifactId>
-            <version>3.7.1</version>
+        <dependency>
+            <groupId>com.alttd.chat</groupId>
+            <artifactId>velocity-chat</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>

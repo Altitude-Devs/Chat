@@ -157,10 +157,13 @@ public final class Config {
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
+    public static List<String> STAFFGROUPS = new ArrayList<>();
     public static String CONSOLENAME = "Console";
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
+        STAFFGROUPS = getList("settings.staff-groups",
+                Lists.newArrayList("trainee", "moderator", "headmod", "admin", "manager", "owner"));
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);
     }
 
