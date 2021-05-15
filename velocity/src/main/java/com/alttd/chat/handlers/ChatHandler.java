@@ -1,51 +1,46 @@
 package com.alttd.chat.handlers;
 
-import com.alttd.chat.VelocityChat;
 import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.objects.ChatPlayer;
+import com.alttd.chat.objects.ChatUser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.group.Group;
-import net.luckperms.api.model.user.User;
 
 import java.util.*;
 
 public class ChatHandler {
 
-    private List<ChatPlayer> chatPlayers;
+    private List<ChatUser> chatUsers;
 
     public ChatHandler() {
-        chatPlayers = new ArrayList<>();
+        chatUsers = new ArrayList<>();
     }
 
-    public void addPlayer(ChatPlayer chatPlayer) {
-        chatPlayers.add(chatPlayer);
+    public void addPlayer(ChatUser chatuser) {
+        chatUsers.add(chatuser);
     }
 
-    public void removePlayer(ChatPlayer chatPlayer) {
-        if(chatPlayer != null)
-            chatPlayers.remove(chatPlayer);
+    public void removePlayer(ChatUser chatUser) {
+        if(chatUser != null)
+            chatUsers.remove(chatUser);
     }
 
     public void removePlayer(UUID uuid) {
-        removePlayer(getChatPlayer(uuid));
+        removePlayer(getChatUser(uuid));
     }
 
-    public ChatPlayer getChatPlayer(UUID uuid) {
-        for(ChatPlayer p: chatPlayers) {
+    public ChatUser getChatUser(UUID uuid) {
+        for(ChatUser p: chatUsers) {
             if(p.getUuid() == uuid)
                 return p;
         }
         return null;
     }
 
-    public List<ChatPlayer> getChatPlayers() {
-        return Collections.unmodifiableList(chatPlayers);
+    public List<ChatUser> getChatPlayers() {
+        return Collections.unmodifiableList(chatUsers);
     }
 
     public void privateMessage(PrivateMessageEvent event) {
