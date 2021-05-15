@@ -1,6 +1,8 @@
 package com.alttd.chat.database;
 
 
+import com.alttd.chat.config.Config;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,14 +18,12 @@ public class DatabaseConnection {
      */
     public DatabaseConnection() {
 
-        /*this.drivers = Config.drivers;
-        this.ip = Config.ip;
-        this.port = Config.port;
-        this.database = Config.database;
-        this.username = Config.username;
-        this.password = Config.password;*/
-        // temp to make compile, remove when config is added
-        this.drivers = this.ip = this.port = this.database = this.username = this.password = "";
+        this.drivers = Config.DRIVER;
+        this.ip = Config.IP;
+        this.port = Config.PORT;
+        this.database = Config.DATABASE;
+        this.username = Config.USERNAME;
+        this.password = Config.PASSWORD;
         instance = this;
 
         try {

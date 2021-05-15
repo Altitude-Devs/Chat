@@ -204,4 +204,31 @@ public final class Config {
         REGEXNODE = getNode("regex-settings");
     }
 
+    public static String SERVERSWTICHMESSAGEFROM = "&7* {player} comes from {from_server}..."; // TODO CONVERT THESE TO MINIMESSAGE
+    public static String SERVERSWTICHMESSAGETO = "&7* {player} leaves to {to_server}...";
+    public static String SERVERJOINMESSAGE = "&a* {player} appears from thin air...";
+    public static String SERVERLEAVEMESSAGE = "&c* {player} vanishes in the mist...";
+    private static void JoinLeaveMessages() {
+        SERVERSWTICHMESSAGEFROM = getString("messages.switch-server-from", SERVERSWTICHMESSAGEFROM);
+        SERVERSWTICHMESSAGETO = getString("messages.switch-server-to", SERVERSWTICHMESSAGETO);
+        SERVERJOINMESSAGE = getString("messages.join-server", SERVERJOINMESSAGE);
+        SERVERLEAVEMESSAGE = getString("messages.leave-server", SERVERLEAVEMESSAGE);
+
+    }
+
+    public static String DRIVER = "databasedriver";
+    public static String IP = "0.0.0.0";
+    public static String PORT = "3306";
+    public static String DATABASE = "database";
+    public static String USERNAME = "root";
+    public static String PASSWORD = "root";
+    private static void database() {
+        DRIVER = getString("database.driver" , DRIVER);
+        IP = getString("database.ip", IP);
+        PORT = getString("database.port", PORT);
+        DATABASE = getString("database.name", DATABASE);
+        USERNAME = getString("database.username", USERNAME);
+        PASSWORD = getString("database.password", PASSWORD);
+    }
+
 }
