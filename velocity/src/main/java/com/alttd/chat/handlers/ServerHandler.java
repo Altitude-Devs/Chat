@@ -44,4 +44,13 @@ public class ServerHandler {
     {
         return Collections.unmodifiableList(servers);
     }
+
+    public ServerWrapper getWrapper(String serverName) {
+        for(ServerWrapper wrapper : getServers()) {
+            if(wrapper.serverName().equalsIgnoreCase(serverName)) {
+                return wrapper;
+            }
+        }
+        return null;
+    }
 }
