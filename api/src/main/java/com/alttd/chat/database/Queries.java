@@ -20,7 +20,7 @@ public class Queries {
         List<String> tables = new ArrayList<>();
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
-        tables.add("CREATE TABLE IF NOT EXISTS party_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', PRIMARY KEY (`uuid`), FOREIGN KEY (party_id) REFERENCES parties(id) ON DELETE CASCADE)");
+        tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`), FOREIGN KEY (party_id) REFERENCES parties(id) ON DELETE CASCADE)");
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -38,7 +38,7 @@ public class Queries {
     //Nicknames
 
     public static String getNickname(UUID uuid) {
-        //TODO use separate connection so it actually uses the nickname db...
+        // View has been created.
         String query = "SELECT nickname FROM nicknames WHERE uuid = ?";
 
         try {
@@ -263,6 +263,7 @@ public class Queries {
                 int partyId = resultSet.getInt("party_id");
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
                 boolean force_tp = resultSet.getInt("force_tp") == 1;
+                boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
 
                 if (partyId == 0) {
                     continue;
@@ -276,7 +277,7 @@ public class Queries {
                     continue;
                 }
 
-                party.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp));
+                party.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp, toggle_Gc));
             }
 
         } catch (SQLException e) {
@@ -285,7 +286,7 @@ public class Queries {
     }
 
     public static void addUser(ChatUser user) {
-        String query = "INSERT INTO party_users (uuid, party_id, toggled_chat, force_tp) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO party_users (uuid, party_id, toggled_chat, force_tp, toggled_gc) VALUES (?, ?, ?, ?, ?)";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -295,6 +296,7 @@ public class Queries {
             statement.setInt(2, user.getPartyId());
             statement.setInt(3, user.toggledChat() ? 1 : 0);
             statement.setInt(4, user.ForceTp() ? 1 : 0);
+            statement.setInt(5, user.isGcOn() ? 1 : 0);
 
             statement.execute();
         } catch (SQLException e) {

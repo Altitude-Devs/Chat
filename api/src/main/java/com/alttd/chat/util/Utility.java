@@ -1,6 +1,7 @@
 package com.alttd.chat.util;
 
-import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.ChatAPI;
+import com.alttd.chat.ChatImplementation;
 import com.alttd.chat.config.Config;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -18,7 +19,7 @@ public class Utility {
 
     public static String getPrefix(UUID uuid, boolean highest) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatPlugin.getPlugin().API().getLuckPerms();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         if(!highest) {
@@ -37,9 +38,10 @@ public class Utility {
         return prefix.toString();
     }
 
+    // @teri you don't reference the plugin instance from the API instance, this creates a circular reference and breaks on compile and will never run
     public static String getStaffPrefix(UUID uuid) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatPlugin.getPlugin().API().getLuckPerms();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         if(!Config.STAFFGROUPS.contains(user.getPrimaryGroup())) return "";
@@ -48,25 +50,13 @@ public class Utility {
         return prefix.toString();
     }
 
-    public static boolean checkPermission(UUID uuid, String permission) {
-        ProxyServer proxy = ChatPlugin.getPlugin().getProxy();
-        if (proxy.getPlayer(uuid).isEmpty()) return false;
-        Player player = proxy.getPlayer(uuid).get();
-
-        return player.hasPermission(permission);
-    }
-
     public static String getDisplayName(UUID uuid) {
-        ProxyServer proxy = ChatPlugin.getPlugin().getProxy();
+        // todo add a <T> PlayerWrapper<T> @Destro
+        /*ProxyServer proxy = ChatPlugin.getPlugin().getProxy();
         if (proxy.getPlayer(uuid).isEmpty()) return "";
         Player player = proxy.getPlayer(uuid).get();
-        return player.getUsername();
+        return player.getUsername();*/
+        return "";
     }
 
-    public static void setPermission(UUID uuid, String permission, boolean toggleGc) {
-        LuckPerms luckPerms = ChatPlugin.getPlugin().API().getLuckPerms();
-        luckPerms.getUserManager().modifyUser(uuid, user -> {
-            user.data().add(Node.builder(permission).value(toggleGc).build());
-        });
-    }
 }

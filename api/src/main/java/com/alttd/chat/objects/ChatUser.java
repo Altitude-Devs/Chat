@@ -16,7 +16,7 @@ public class ChatUser {
     private String prefixAll;
     private boolean toggleGc;
 
-    public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp) {
+    public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
         this.uuid = uuid;
         this.partyId = partyId;
         this.toggledChat = toggled_chat;
@@ -31,8 +31,8 @@ public class ChatUser {
         staffPrefix = Utility.getStaffPrefix(uuid);
 
         prefixAll = prefix + staffPrefix; //TODO test what this does cus I barely understand lp api
-
-        toggleGc = Utility.checkPermission(uuid, "chat.gc"); //TODO put the actual permission here, I don't know what it is...
+        // a boolean is lighter then a permission check, it's what I'd suggest doing here
+        toggleGc = toggle_Gc;//Utility.checkPermission(uuid, "chat.gc"); //TODO put the actual permission here, I don't know what it is...
     }
 
     public UUID getUuid() {
@@ -95,7 +95,6 @@ public class ChatUser {
 
     public void toggleGc() {
         toggleGc = !toggleGc;
-        Utility.setPermission(uuid, "chat.gc", toggleGc); //TODO put the actual permission here, I don't know what it is...
     }
 
     public boolean isGcOn() {

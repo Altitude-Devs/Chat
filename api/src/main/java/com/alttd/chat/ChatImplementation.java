@@ -1,13 +1,11 @@
 package com.alttd.chat;
 
 import com.alttd.chat.config.Config;
-import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
-import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -15,7 +13,7 @@ import java.util.UUID;
 
 public class ChatImplementation implements ChatAPI{
 
-    private ChatAPI instance;
+    private static ChatAPI instance;
 
     private LuckPerms luckPerms;
     private DatabaseConnection databaseConnection;
@@ -25,11 +23,10 @@ public class ChatImplementation implements ChatAPI{
         Config.init();
 
         luckPerms = getLuckPerms();
-        //databaseConnection = getDataBase(); // TODO fix database on proxy, shade sql, add defaults to config
+        databaseConnection = getDataBase();
     }
 
-    @Override
-    public ChatAPI get() {
+    public static ChatAPI get() {
         if(instance == null)
             instance = new ChatImplementation();
         return instance;

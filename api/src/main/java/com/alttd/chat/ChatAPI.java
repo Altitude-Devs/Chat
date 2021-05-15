@@ -7,7 +7,9 @@ import java.util.UUID;
 
 public interface ChatAPI {
 
-    ChatAPI get();
+    static ChatAPI get() {
+        return ChatImplementation.get();
+    }
 
     LuckPerms getLuckPerms();
 
