@@ -15,6 +15,10 @@ public class GlobalChat implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
+        if(args.length == 0) return false;
+        if(args[0].equalsIgnoreCase("toggle")) {
+            // todo is this how we want to toggle or use a /togglegc command? or /toggle chatoptions?
+        }
         String message = StringUtils.join(args, " ", 0, args.length);
         ChatPlugin.getInstance().getChatHandler().globalChat(player, message);
         return false;
