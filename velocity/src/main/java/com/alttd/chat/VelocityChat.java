@@ -1,7 +1,6 @@
 package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalAdminChat;
-import com.alttd.chat.commands.GlobalChatToggle;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.handlers.ServerHandler;
@@ -84,7 +83,6 @@ public class VelocityChat {
 
     public void loadCommands() {
         new GlobalAdminChat(server);
-        new GlobalChatToggle(server);
         // all (proxy)commands go here
     }
 

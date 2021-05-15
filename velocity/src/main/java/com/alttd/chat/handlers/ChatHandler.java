@@ -12,37 +12,6 @@ import java.util.*;
 
 public class ChatHandler {
 
-    private List<ChatUser> chatUsers;
-
-    public ChatHandler() {
-        chatUsers = new ArrayList<>();
-    }
-
-    public void addPlayer(ChatUser chatuser) {
-        chatUsers.add(chatuser);
-    }
-
-    public void removePlayer(ChatUser chatUser) {
-        if(chatUser != null)
-            chatUsers.remove(chatUser);
-    }
-
-    public void removePlayer(UUID uuid) {
-        removePlayer(getChatUser(uuid));
-    }
-
-    public ChatUser getChatUser(UUID uuid) {
-        for(ChatUser p: chatUsers) {
-            if(p.getUuid() == uuid)
-                return p;
-        }
-        return null;
-    }
-
-    public List<ChatUser> getChatPlayers() {
-        return Collections.unmodifiableList(chatUsers);
-    }
-
     public void privateMessage(PrivateMessageEvent event) {
         String senderName;
         String receiverName;

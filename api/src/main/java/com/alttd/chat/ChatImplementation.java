@@ -2,6 +2,7 @@ package com.alttd.chat;
 
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
+import com.alttd.chat.managers.ChatUserManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
@@ -16,7 +17,7 @@ public class ChatImplementation implements ChatAPI{
     private static ChatAPI instance;
 
     private LuckPerms luckPerms;
-    private DatabaseConnection databaseConnection;
+    private DatabaseConnection databaseConnection; // todo this isn't needed can be removed
 
     public ChatImplementation() {
         instance = this;
@@ -24,6 +25,8 @@ public class ChatImplementation implements ChatAPI{
 
         luckPerms = getLuckPerms();
         databaseConnection = getDataBase();
+
+        ChatUserManager.initialize(); // loads all the users from the db and adds them.
     }
 
     public static ChatAPI get() {

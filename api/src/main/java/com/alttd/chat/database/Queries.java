@@ -1,5 +1,6 @@
 package com.alttd.chat.database;
 
+import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
@@ -249,7 +250,7 @@ public class Queries {
     //-----------------------------------------
 
     //Chat Users
-
+    //@teri what's this?
     private static void getChatUsers(HashMap<Integer, Party> parties) { //TODO Get parties from cache somewhere
         String query = "SELECT * FROM chat_users";
 
@@ -280,6 +281,30 @@ public class Queries {
                 }
 
                 party.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp, toggle_Gc));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadChatUsers() { //TODO Get parties from cache somewhere
+        String query = "SELECT * FROM chat_users";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
+
+            while (resultSet.next()) {
+
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                int partyId = resultSet.getInt("party_id");
+                boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
+                boolean force_tp = resultSet.getInt("force_tp") == 1;
+                boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
+                // could do a constructor for chatuser to accept the record?
+                ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp, toggle_Gc));
             }
 
         } catch (SQLException e) {

@@ -2,6 +2,8 @@ package com.alttd.chat.handler;
 
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.ChatUser;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -24,16 +26,22 @@ public class ChatHandler {
         plugin = ChatPlugin.getInstance();
     }
 
-    public void globalChat(CommandSender source, String message) {
+    public void globalChat(Player player, String message) {
+        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+        if(user == null) return;
+        if(!user.isGcOn()) {
+            player.sendMessage();// GC IS OFF INFORM THEM ABOUT THIS and cancel
+            return;
+        }
         // Check if the player has global chat enabled, if not warn them
         String senderName, prefix = "";
 
-        Player sender = (Player) source;
-        senderName = sender.getDisplayName(); // TODO this can be a component
-        prefix = plugin.getChatAPI().getPrefix(sender.getUniqueId());
+        senderName = player.getDisplayName();   // TODO this can be a component
+                                                // can also be cached in the chatuser object?
+        prefix = plugin.getChatAPI().getPrefix(player.getUniqueId());
 
         MiniMessage miniMessage = MiniMessage.get();
-        if(!source.hasPermission("chat.format"))
+        if(!player.hasPermission("chat.format"))
             message = miniMessage.stripTokens(message);
         if(message.contains("[i]"))
             message = message.replace("[i]", "<[i]>");
@@ -52,9 +60,10 @@ public class ChatHandler {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("globalchat");
         out.writeUTF(miniMessage.serialize(component));
-        sender.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
+        player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
 
+    // Start - move these to util
     public Component itemComponent(ItemStack item) {
         Component component = Component.text("[i]");
         if(item.getType().equals(Material.AIR))
@@ -91,4 +100,5 @@ public class ChatHandler {
 
         return sb.toString();
     }
+    // end - move these to util
 }
