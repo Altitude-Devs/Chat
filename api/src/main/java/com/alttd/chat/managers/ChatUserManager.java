@@ -2,9 +2,12 @@ package com.alttd.chat.managers;
 
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.Mail;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public final class ChatUserManager {
 
@@ -27,5 +30,11 @@ public final class ChatUserManager {
             }
         }
         return null;
+    }
+
+    public List<Mail> getUnReadMail(ChatUser user) {
+        return user.getMails().stream()
+                .filter(Mail::isUnRead)
+                .collect(Collectors.toList());
     }
 }

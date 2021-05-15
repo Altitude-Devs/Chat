@@ -3,6 +3,7 @@ package com.alttd.chat.objects;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.util.Utility;
 
+import java.util.LinkedList;
 import java.util.UUID;
 
 public class ChatUser {
@@ -15,8 +16,13 @@ public class ChatUser {
     private String staffPrefix;
     private String prefixAll;
     private boolean toggleGc;
-    private UUID replytarget;
+    private UUID replyTarget;
 
+    private LinkedList<Mail> mails;
+
+    /**
+     * Not all of the objects are relevant to proxy or server, so the saving should only update if the value has been changed?
+     */
     public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
         this.uuid = uuid;
         this.partyId = partyId;
@@ -34,7 +40,8 @@ public class ChatUser {
         prefixAll = prefix + staffPrefix; //TODO test what this does cus I barely understand lp api
         // a boolean is lighter then a permission check, it's what I'd suggest doing here
         toggleGc = toggle_Gc;//Utility.checkPermission(uuid, "chat.gc"); //TODO put the actual permission here, I don't know what it is...
-        replytarget = null;
+        replyTarget = null;
+        mails = new LinkedList<>(); // todo load mails
     }
 
     public UUID getUuid() {
@@ -103,11 +110,15 @@ public class ChatUser {
         return toggleGc;
     }
 
-    public UUID getReplytarget() {
-        return replytarget;
+    public UUID getReplyTarget() {
+        return replyTarget;
     }
 
-    public void setReplytarget(UUID replytarget) {
-        this.replytarget = replytarget;
+    public void setReplyTarget(UUID replyTarget) {
+        this.replyTarget = replyTarget;
+    }
+
+    public LinkedList<Mail> getMails() {
+        return mails;
     }
 }

@@ -51,12 +51,11 @@ public class Utility {
     }
 
     public static String getDisplayName(UUID uuid) {
-        // todo add a <T> PlayerWrapper<T> @Destro
-        /*ProxyServer proxy = ChatPlugin.getPlugin().getProxy();
-        if (proxy.getPlayer(uuid).isEmpty()) return "";
-        Player player = proxy.getPlayer(uuid).get();
-        return player.getUsername();*/
-        return "";
+        StringBuilder prefix = new StringBuilder();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        User user = luckPerms.getUserManager().getUser(uuid);
+        if(user == null) return "";
+        return user.getUsername();
     }
 
 }
