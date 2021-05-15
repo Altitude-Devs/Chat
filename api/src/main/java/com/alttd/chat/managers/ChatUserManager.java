@@ -4,14 +4,14 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
 
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class ChatUserManager {
 
-    private static CopyOnWriteArraySet<ChatUser> chatUsers;// not sure on this, could cause errors later on
+    private static CopyOnWriteArrayList<ChatUser> chatUsers;// not sure on this, could cause errors later on
 
     public static void initialize() {
-        chatUsers = new CopyOnWriteArraySet<>();
+        chatUsers = new CopyOnWriteArrayList<>();
         Queries.loadChatUsers();
     }
 
