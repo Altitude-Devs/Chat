@@ -10,7 +10,7 @@ public final class RegexConfig {
 
     private final String regexName;
     private final String configPath;
-
+    // TODO move this into regex.yml?
     public RegexConfig(String regexName) {
         this.regexName = regexName;
         this.configPath = "regex-settings." + this.regexName + ".";

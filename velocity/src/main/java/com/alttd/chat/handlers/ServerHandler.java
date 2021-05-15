@@ -46,7 +46,7 @@ public class ServerHandler {
     }
 
     public ServerWrapper getWrapper(String serverName) {
-        for(ServerWrapper wrapper : getServers()) {
+        for(ServerWrapper wrapper : servers) {
             if(wrapper.serverName().equalsIgnoreCase(serverName)) {
                 return wrapper;
             }

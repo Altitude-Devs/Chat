@@ -18,15 +18,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerListener {
-
-    private final ServerHandler serverHandler;
-    private final MiniMessage miniMessage;
-
-    public PlayerListener() {
-        serverHandler = VelocityChat.getPlugin().getServerHandler();
-        miniMessage = MiniMessage.get();
-    }
+public class ProxyPlayerListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerLogin(LoginEvent event) {
@@ -41,6 +33,8 @@ public class PlayerListener {
     // Server Join and Leave messages
     @Subscribe
     public void serverConnected(ServerConnectedEvent event) {
+        ServerHandler serverHandler = VelocityChat.getPlugin().getServerHandler();
+        MiniMessage miniMessage = MiniMessage.get();
         if (event.getPreviousServer().isPresent()) {
             RegisteredServer previousServer = event.getPreviousServer().get();
 
@@ -51,11 +45,11 @@ public class PlayerListener {
                     Template.of("from_server", previousServer.getServerInfo().getName()),
                     Template.of("to_server", event.getServer().getServerInfo().getName())));
             // todo Code clean up @Destro
-            ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().toString());
+            ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
                 wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERSWTICHMESSAGETO, templates));
             }
-            wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().toString());
+            wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
                 wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERSWTICHMESSAGEFROM, templates));
             }
@@ -63,7 +57,7 @@ public class PlayerListener {
             List<Template> templates = new ArrayList<>(List.of(
                     Template.of("player", event.getPlayer().getUsername())
             ));
-            ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().toString());
+            ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
                 wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERJOINMESSAGE, templates));
             }
@@ -72,6 +66,8 @@ public class PlayerListener {
 
     @Subscribe
     public void serverDisconnected(DisconnectEvent event) {
+        ServerHandler serverHandler = VelocityChat.getPlugin().getServerHandler();
+        MiniMessage miniMessage = MiniMessage.get();
         if (event.getLoginStatus().equals(DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) && event.getPlayer().getCurrentServer().isPresent()) {
             RegisteredServer registeredServer = event.getPlayer().getCurrentServer().get().getServer();
 
@@ -79,9 +75,9 @@ public class PlayerListener {
                     Template.of("player", event.getPlayer().getUsername()),
                     Template.of("from_server", registeredServer.getServerInfo().getName())));
 
-            ServerWrapper wrapper = serverHandler.getWrapper(registeredServer.getServerInfo().toString());
+            ServerWrapper wrapper = serverHandler.getWrapper(registeredServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERJOINMESSAGE, templates));
+                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERLEAVEMESSAGE, templates));
             }
         }
     }

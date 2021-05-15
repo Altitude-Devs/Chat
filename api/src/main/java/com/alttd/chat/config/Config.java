@@ -28,7 +28,7 @@ public final class Config {
     static int version;
     static boolean verbose;
 
-    public static void init() {
+    public static void init() { // todo setup share for the config
         CONFIG_FILE = new File(new File(System.getProperty("user.home")), "config.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
@@ -204,10 +204,10 @@ public final class Config {
         REGEXNODE = getNode("regex-settings");
     }
 
-    public static String SERVERSWTICHMESSAGEFROM = "&7* {player} comes from {from_server}..."; // TODO CONVERT THESE TO MINIMESSAGE
-    public static String SERVERSWTICHMESSAGETO = "&7* {player} leaves to {to_server}...";
-    public static String SERVERJOINMESSAGE = "&a* {player} appears from thin air...";
-    public static String SERVERLEAVEMESSAGE = "&c* {player} vanishes in the mist...";
+    public static String SERVERSWTICHMESSAGEFROM = "<gray>* <player> comes from <from_server>..."; // Confirm these are the correct ones @destro
+    public static String SERVERSWTICHMESSAGETO = "<gray>* <player> leaves to <to_server>...";
+    public static String SERVERJOINMESSAGE = "<green>* <player> appears from thin air...";
+    public static String SERVERLEAVEMESSAGE = "<red>* <player> vanishes in the mist...";
     private static void JoinLeaveMessages() {
         SERVERSWTICHMESSAGEFROM = getString("messages.switch-server-from", SERVERSWTICHMESSAGEFROM);
         SERVERSWTICHMESSAGETO = getString("messages.switch-server-to", SERVERSWTICHMESSAGETO);
@@ -216,7 +216,7 @@ public final class Config {
 
     }
 
-    public static String DRIVER = "databasedriver";
+    public static String DRIVER = "mysql";
     public static String IP = "0.0.0.0";
     public static String PORT = "3306";
     public static String DATABASE = "database";

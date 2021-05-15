@@ -6,6 +6,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
+import com.alttd.chat.listeners.ProxyPlayerListener;
 import com.alttd.chat.listeners.PluginMessageListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -54,6 +55,7 @@ public class VelocityChat {
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
+        server.getEventManager().register(this, new ProxyPlayerListener());
         String[] channels = Config.MESSAGECHANNEL.split(":");// todo add a check for this?
         channelIdentifier = MinecraftChannelIdentifier.create(channels[0], channels[1]);
         server.getChannelRegistrar().register(channelIdentifier);
