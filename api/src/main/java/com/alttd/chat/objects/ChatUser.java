@@ -9,7 +9,7 @@ import java.util.UUID;
 public class ChatUser {
     private final UUID uuid;
     private final int partyId;
-    private boolean toggledChat;
+    private boolean toggledPartyChat;
     private boolean forceTp;
     private String displayName;
     private String prefix;
@@ -26,7 +26,7 @@ public class ChatUser {
     public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
         this.uuid = uuid;
         this.partyId = partyId;
-        this.toggledChat = toggled_chat;
+        this.toggledPartyChat = toggled_chat;
         this.forceTp = force_tp;
 
         displayName = Queries.getNickname(uuid);
@@ -52,13 +52,13 @@ public class ChatUser {
         return partyId;
     }
 
-    public boolean toggledChat() {
-        return toggledChat;
+    public boolean toggledPartyChat() {
+        return toggledPartyChat;
     }
 
-    public void toggleChat() {
-        toggledChat = !toggledChat;
-        Queries.setChatState(toggledChat, uuid); //TODO: Async pls
+    public void togglePartyChat() {
+        toggledPartyChat = !toggledPartyChat;
+        Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls
     }
 
     public boolean ForceTp() {

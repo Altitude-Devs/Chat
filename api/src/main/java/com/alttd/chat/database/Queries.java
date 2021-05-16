@@ -321,7 +321,7 @@ public class Queries {
 
             statement.setString(1, user.getUuid().toString());
             statement.setInt(2, user.getPartyId());
-            statement.setInt(3, user.toggledChat() ? 1 : 0);
+            statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
             statement.setInt(4, user.ForceTp() ? 1 : 0);
             statement.setInt(5, user.isGcOn() ? 1 : 0);
 
@@ -331,7 +331,7 @@ public class Queries {
         }
     }
 
-    public static void setChatState(boolean toggledChat, UUID uuid) {
+    public static void setPartyChatState(boolean toggledChat, UUID uuid) {
         setBitWhereId("UPDATE chat_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
     }
 
