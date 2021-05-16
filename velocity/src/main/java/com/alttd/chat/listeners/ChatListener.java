@@ -4,6 +4,7 @@ import com.alttd.chat.VelocityChat;
 import com.alttd.chat.api.GlobalAdminChatEvent;
 import com.alttd.chat.api.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
@@ -30,16 +31,13 @@ public class ChatListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onGlobalStaffChat(GlobalAdminChatEvent event) {
-        String senderName;
-        String serverName;
+        String senderName = Config.CONSOLENAME;
+        String serverName = "Altitude";
         CommandSource commandSource = event.getSender();
         if (commandSource instanceof Player) {
             Player sender = (Player) event.getSender();
             senderName = sender.getUsername();
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
-        } else {
-            senderName = "Console"; // TODO console name from config
-            serverName = "Proxy";
         }
 
         MiniMessage miniMessage = MiniMessage.get();
@@ -47,7 +45,8 @@ public class ChatListener {
         Map<String, String> map = new HashMap<>();
 
         map.put("sender", senderName);
-        map.put("message", event.getMessage());
+        //map.put("message", event.getMessage());
+        map.put("message", Utility.parseColors(event.getMessage()));
         map.put("server", serverName);
 
         Component message = miniMessage.parse(Config.GACFORMAT, map);

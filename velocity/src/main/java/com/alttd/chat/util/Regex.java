@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class Regex {
 
+    // todo move this to API!
     private static final HashMap<Pattern, ArrayList<String>> cancelRegex = new HashMap<>();
     private static final HashMap<String, String> replaceRegex = new HashMap<>();
 
