@@ -25,12 +25,12 @@ public class GlobalChat implements CommandExecutor {
                 @Override
                 public void run() {
                     Objects.requireNonNull(ChatUserManager.getChatUser(((Player) sender).getUniqueId())).toggleGc();
-
-                    String message = StringUtils.join(args, " ", 0, args.length);
-                    ChatPlugin.getInstance().getChatHandler().globalChat(player, message);
                 }
             }.runTask(ChatPlugin.getInstance());
         }
+
+        String message = StringUtils.join(args, " ", 0, args.length);
+        ChatPlugin.getInstance().getChatHandler().globalChat(player, message);
         return false;
     }
 
