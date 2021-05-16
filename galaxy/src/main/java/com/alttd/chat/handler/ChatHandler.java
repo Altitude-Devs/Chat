@@ -4,6 +4,7 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -41,6 +42,7 @@ public class ChatHandler {
         prefix = plugin.getChatAPI().getPrefix(player.getUniqueId());
 
         MiniMessage miniMessage = MiniMessage.get();
+        message = Utility.parseColors(message);
         if(!player.hasPermission("chat.format"))
             message = miniMessage.stripTokens(message);
         if(message.contains("[i]"))
