@@ -1,17 +1,17 @@
 package com.alttd.chat.objects;
 
-public class Regex {
+public class ChatFilter {
 
     private final String regex;
     private final RegexType type;
     private String replacement = "";
 
-    public Regex(String regex, RegexType type) {
+    public ChatFilter(String regex, RegexType type) {
         this.regex = regex;
         this.type = type;
     }
 
-    public Regex(String regex, RegexType type, String replacement) {
+    public ChatFilter(String regex, RegexType type, String replacement) {
         this.regex = regex;
         this.type = type;
         this.replacement = replacement;

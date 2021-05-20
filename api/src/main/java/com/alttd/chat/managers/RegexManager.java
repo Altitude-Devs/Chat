@@ -1,8 +1,7 @@
-package com.alttd.chat.util;
+package com.alttd.chat.managers;
 
 import com.alttd.chat.config.Config;
 import com.alttd.chat.config.RegexConfig;
-import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.objects.RegexType;
 import com.google.common.collect.Lists;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -13,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Regex {
+public class RegexManager {
 
     // todo move this to API!
     private static final HashMap<Pattern, ArrayList<String>> cancelRegex = new HashMap<>();

@@ -3,6 +3,7 @@ package com.alttd.chat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.RegexManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
@@ -27,6 +28,7 @@ public class ChatImplementation implements ChatAPI{
         databaseConnection = getDataBase();
 
         ChatUserManager.initialize(); // loads all the users from the db and adds them.
+        RegexManager.initRegex(); // load the filters and regexes from config
     }
 
     public static ChatAPI get() {
