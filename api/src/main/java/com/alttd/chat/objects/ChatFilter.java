@@ -3,15 +3,15 @@ package com.alttd.chat.objects;
 public class ChatFilter {
 
     private final String regex;
-    private final RegexType type;
+    private final ChatFilterType type;
     private String replacement = "";
 
-    public ChatFilter(String regex, RegexType type) {
+    public ChatFilter(String regex, ChatFilterType type) {
         this.regex = regex;
         this.type = type;
     }
 
-    public ChatFilter(String regex, RegexType type, String replacement) {
+    public ChatFilter(String regex, ChatFilterType type, String replacement) {
         this.regex = regex;
         this.type = type;
         this.replacement = replacement;
@@ -21,7 +21,7 @@ public class ChatFilter {
         return regex;
     }
 
-    public RegexType getType() {
+    public ChatFilterType getType() {
         return type;
     }
 

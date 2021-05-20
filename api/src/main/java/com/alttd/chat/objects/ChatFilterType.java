@@ -1,17 +1,17 @@
 package com.alttd.chat.objects;
 
-public enum RegexType {
+public enum ChatFilterType {
     REPLACE("replace"),
     BLOCK("block");
 
     private final String name;
 
-    RegexType(String name) {
+    ChatFilterType(String name) {
         this.name = name;
     }
 
-    public static RegexType getType(String name) {
-        for (RegexType type : RegexType.values()) {
+    public static ChatFilterType getType(String name) {
+        for (ChatFilterType type : ChatFilterType.values()) {
             if (type.name.equalsIgnoreCase(name)) {
                 return type;
             }
