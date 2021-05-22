@@ -184,9 +184,14 @@ public final class Config {
 
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message></gray></white>";
     public static String GCPERMISSION = "proxy.globalchat";
+    public static List<String> GCALIAS = new ArrayList<>();
+    public static String GCNOTENABLED = "You don't have global chat enabled.";
     private static void globalChat() {
         MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
         GCPERMISSION = getString("commands.globalchat.view-chat-permission", GCPERMISSION);
+        GCALIAS.clear();
+        GCALIAS = getList("commands.globalchat.alias", Lists.newArrayList("gc", "global"));
+        GCNOTENABLED = getString("commands.globalchat.not-enabled", GCNOTENABLED);
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();

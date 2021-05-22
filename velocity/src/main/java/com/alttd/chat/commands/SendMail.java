@@ -1,7 +1,6 @@
 package com.alttd.chat.commands;
 
-import com.alttd.chat.api.GlobalAdminChatEvent;
-import com.alttd.chat.config.Config;
+import com.alttd.chat.VelocityChat;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -27,7 +26,7 @@ public class SendMail {
                                 .<CommandSource, String>argument("player", StringArgumentType.string())
                                 .suggests((context, builder) -> {
                                     Collection<String> possibleValues = new ArrayList<>();
-                                    for (Player player : proxyServer.getAllPlayers()) {
+                                    for (Player player : proxyServer.getAllPlayers()) { // todo all chatplayers? this can be heavy
                                         possibleValues.add(player.getGameProfile().getName());
                                     }
                                     if(possibleValues.isEmpty()) return Suggestions.empty();
@@ -43,13 +42,53 @@ public class SendMail {
                                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                                         .executes(context -> {
                                             // todo construct the mail and notify the player if online?
+                                            VelocityChat.getPlugin().getChatHandler().sendMail();
                                             return 1;
                                         })
                                 )
-                                .executes(context -> 0)
+                                .executes(context -> {
+
+                                    return 1;
+                                })
                         )
                 )
-                .executes(context -> 0)
+                .then(LiteralArgumentBuilder.<CommandSource>literal("list")
+                        // TODO list read, unread, all?
+                        .then(LiteralArgumentBuilder.<CommandSource>literal("read")
+                                .executes(context -> {
+
+                                    return 1;
+                                })
+                        )
+                        .then(LiteralArgumentBuilder.<CommandSource>literal("unread")
+                                .executes(context -> {
+
+                                    return 1;
+                                })
+                        )
+                        .then(LiteralArgumentBuilder.<CommandSource>literal("all")
+                                .executes(context -> {
+
+                                    return 1;
+                                })
+                        )
+                        .executes(context -> {
+
+                            return 1;
+                        })
+                )
+                .then(LiteralArgumentBuilder.<CommandSource>literal("admin")
+                        .requires(ctx -> ctx.hasPermission("command.proxy.mail.admin"))// TODO permission system? load permissions from config?
+                        // TODO admin command, remove, edit?
+                        .executes(context -> {
+
+                            return 1;
+                        })
+                )
+                .executes(context -> {
+                    // todo mail help message
+                    return 1;
+                })
                 .build();
 
         BrigadierCommand brigadierCommand = new BrigadierCommand(command);

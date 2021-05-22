@@ -2,7 +2,7 @@ package com.alttd.chat.managers;
 
 import com.alttd.chat.config.Config;
 import com.alttd.chat.config.RegexConfig;
-import com.alttd.chat.objects.ChatFilterType;
+import com.alttd.chat.objects.FilterType;
 import com.google.common.collect.Lists;
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO rebuild this class, All regexes go in a single list where we use the ChatFilter object and a matcher
 public class RegexManager {
 
     private static final HashMap<Pattern, ArrayList<String>> cancelRegex = new HashMap<>();
@@ -23,9 +24,9 @@ public class RegexManager {
         // maiby a REGEXobject and a list<Regex> would be better here?
         for(ConfigurationNode node : Config.REGEXNODE.getChildrenMap().values()) {
             RegexConfig regexConfig = new RegexConfig(node.getString());
-            if (ChatFilterType.getType(regexConfig.TYPE) == ChatFilterType.BLOCK) {
+            if (FilterType.getType(regexConfig.TYPE) == FilterType.BLOCK) {
                 cancelRegex.put(Pattern.compile(regexConfig.REGEX), Lists.newArrayList(regexConfig.REPLACEMENT));
-            } else if (ChatFilterType.getType(regexConfig.TYPE) == ChatFilterType.REPLACE) {
+            } else if (FilterType.getType(regexConfig.TYPE) == FilterType.REPLACE) {
                 replaceRegex.put(regexConfig.REGEX, regexConfig.REPLACEMENT);
             }
         }

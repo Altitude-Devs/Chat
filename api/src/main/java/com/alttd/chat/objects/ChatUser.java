@@ -20,9 +20,6 @@ public class ChatUser {
 
     private LinkedList<Mail> mails;
 
-    /**
-     * Not all of the objects are relevant to proxy or server, so the saving should only update if the value has been changed?
-     */
     public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
         this.uuid = uuid;
         this.partyId = partyId;
@@ -37,9 +34,9 @@ public class ChatUser {
         prefix = Utility.getPrefix(uuid, true);
         staffPrefix = Utility.getStaffPrefix(uuid);
 
-        prefixAll = prefix + staffPrefix; //TODO test what this does cus I barely understand lp api
-        // a boolean is lighter then a permission check, it's what I'd suggest doing here
-        toggleGc = toggle_Gc;//Utility.checkPermission(uuid, "chat.gc"); //TODO put the actual permission here, I don't know what it is...
+        prefixAll = Utility.getPrefix(uuid, false);
+
+        toggleGc = toggle_Gc;
         replyTarget = null;
         mails = new LinkedList<>(); // todo load mails
     }
@@ -58,7 +55,7 @@ public class ChatUser {
 
     public void togglePartyChat() {
         toggledPartyChat = !toggledPartyChat;
-        Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls
+        Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls - no CompleteableFuture<>!
     }
 
     public boolean ForceTp() {
@@ -67,7 +64,7 @@ public class ChatUser {
 
     public void toggleForceTp() {
         forceTp = !forceTp;
-        Queries.setForceTpState(forceTp, uuid); //TODO: Async pls
+        Queries.setForceTpState(forceTp, uuid); //TODO: Async pls - no CompleteableFuture<>!
     }
 
     public String getDisplayName() {
@@ -120,5 +117,9 @@ public class ChatUser {
 
     public LinkedList<Mail> getMails() {
         return mails;
+    }
+
+    public void addMail(Mail mail) {
+        mails.add(mail);
     }
 }

@@ -1,4 +1,4 @@
-package com.alttd.chat.api;
+package com.alttd.chat.events;
 
 
 import com.velocitypowered.api.command.CommandSource;

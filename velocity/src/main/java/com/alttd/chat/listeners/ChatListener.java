@@ -1,8 +1,8 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.VelocityChat;
-import com.alttd.chat.api.GlobalAdminChatEvent;
-import com.alttd.chat.api.PrivateMessageEvent;
+import com.alttd.chat.events.GlobalAdminChatEvent;
+import com.alttd.chat.events.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;

@@ -68,8 +68,8 @@ public final class ServerConfig {
 
     /** DO NOT EDIT ANYTHING ABOVE **/
 
-    public boolean GLOBALCHAT = true; // TODO change to false on release
-    public boolean JOINLEAVEMSSAGES = true; // TODO change to false on release
+    public boolean GLOBALCHAT = true; // TODO - @teri idk what servers need to have this enabled
+    public boolean JOINLEAVEMSSAGES = true; // TODO set to false on lobby
     private void ServerSettings() {
         GLOBALCHAT = getBoolean("global-chat-enabled", GLOBALCHAT);
         JOINLEAVEMSSAGES = getBoolean("joinleave-messages-enabled", JOINLEAVEMSSAGES);

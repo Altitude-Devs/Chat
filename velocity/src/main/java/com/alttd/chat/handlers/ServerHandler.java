@@ -4,6 +4,7 @@ import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.data.ServerWrapper;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ public class ServerHandler {
         }
     }
 
-    public void sendGlobalChat(String message) {
+    public void sendGlobalChat(Component message) {
         servers.stream()
                 .filter(serverWrapper -> serverWrapper.globalChat())
-                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(MiniMessage.get().parse(message)));
+                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(message));
     }
 
     public List<ServerWrapper> getServers()

@@ -33,7 +33,8 @@ public class PluginMessageListener {
                 VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
                 switch (channel) {
                     case "globalchat":
-                        VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF());
+                        // todo this is obsolete
+                        //VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF());
                         break;
                     default:
                         VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
