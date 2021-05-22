@@ -3,7 +3,7 @@
 .idea
 testserver
 run
-galaxy/
+galaxy
 
 # Compiled class file
 *.class
