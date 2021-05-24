@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     private static DatabaseConnection instance;
-    private Connection connection;
+    private static Connection connection;
 
     /**
      * Sets information for the database and opens the connection.

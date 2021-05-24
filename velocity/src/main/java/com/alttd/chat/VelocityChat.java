@@ -3,7 +3,11 @@ package com.alttd.chat;
 import com.alttd.chat.commands.GlobalAdminChat;
 import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.handlers.ChatHandler;
+import com.alttd.chat.handlers.ChatUserManager;
+import com.alttd.chat.handlers.RegexManager;
 import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.ProxyPlayerListener;
@@ -18,6 +22,8 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -35,7 +41,7 @@ public class VelocityChat {
     private final Logger logger;
     private final Path dataDirectory;
 
-    private ChatAPI chatAPI;
+    private LuckPerms luckPerms;
     private ChatHandler chatHandler;
     private ServerHandler serverHandler;
 
@@ -52,7 +58,11 @@ public class VelocityChat {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         new ALogger(logger);
-        chatAPI = new ChatImplementation(getDataDirectory());
+        Config.init(getDataDirectory());
+        Queries.createTables();
+
+        ChatUserManager.initialize(); // loads all the users from the db and adds them.
+        RegexManager.initRegex(); // load the filters and regexes from config
 
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();
@@ -88,8 +98,10 @@ public class VelocityChat {
         // all (proxy)commands go here
     }
 
-    public ChatAPI API() {
-        return chatAPI;
+    public LuckPerms getLuckPerms() {
+        if(luckPerms == null)
+            luckPerms = LuckPermsProvider.get();
+        return luckPerms;
     }
 
     public ChatHandler getChatHandler() {

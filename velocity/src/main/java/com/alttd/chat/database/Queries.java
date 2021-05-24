@@ -1,8 +1,9 @@
 package com.alttd.chat.database;
 
-import com.alttd.chat.managers.ChatUserManager;
-import com.alttd.chat.objects.Party;
-import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.data.ChatUser;
+import com.alttd.chat.data.Party;
+import com.alttd.chat.data.ServerWrapper;
+import com.alttd.chat.handlers.ChatUserManager;
 import com.alttd.chat.util.ALogger;
 
 import java.sql.Connection;

@@ -1,17 +1,8 @@
 package com.alttd.chat;
 
-import com.alttd.chat.config.Config;
-import com.alttd.chat.database.DatabaseConnection;
-import com.alttd.chat.database.Queries;
-import com.alttd.chat.managers.ChatUserManager;
-import com.alttd.chat.managers.RegexManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.group.Group;
-import net.luckperms.api.model.user.User;
 
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.UUID;
 
 public class ChatImplementation implements ChatAPI{
@@ -19,18 +10,12 @@ public class ChatImplementation implements ChatAPI{
     private static ChatAPI instance;
 
     private LuckPerms luckPerms;
-    private DatabaseConnection databaseConnection; // todo this isn't needed can be removed
 
     public ChatImplementation() {
         instance = this;
-        Config.init();
 
         luckPerms = getLuckPerms();
-        databaseConnection = getDataBase();
-        Queries.createTables();
 
-        ChatUserManager.initialize(); // loads all the users from the db and adds them.
-        RegexManager.initRegex(); // load the filters and regexes from config
     }
 
     public static ChatAPI get() {
@@ -47,36 +32,13 @@ public class ChatImplementation implements ChatAPI{
     }
 
     @Override
-    public DatabaseConnection getDataBase() {
-        if(databaseConnection == null)
-            databaseConnection = new DatabaseConnection();
-        return databaseConnection;
-    }
-
-    @Override
     public String getPrefix(UUID uuid) {
-        return getPrefix(uuid, false);
+        return "";
     }
 
     @Override
     public String getPrefix(UUID uuid, boolean all) {
-        // TODO cache these components on load, and return them here?
-        StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = getLuckPerms();
-        User user = luckPerms.getUserManager().getUser(uuid);
-        if(user == null) return "";
-        if(all) {
-            Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
-            inheritedGroups.stream()
-                    .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
-                    .forEach(group -> {
-                        if (Config.PREFIXGROUPS.contains(group.getName())) {
-                            prefix.append("<white>[").append(group.getCachedData().getMetaData().getPrefix()).append("]</white>");
-                        }
-                    });
-        }
-        prefix.append("<white>[").append(user.getCachedData().getMetaData().getPrefix()).append("]</white>");
-        return prefix.toString();
+        return "";
     }
 
     @Override

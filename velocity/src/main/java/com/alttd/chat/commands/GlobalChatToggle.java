@@ -25,7 +25,7 @@ public class GlobalChatToggle {
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
-                            LuckPerms luckPerms = VelocityChat.getPlugin().API().getLuckPerms();
+                            LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
                             Player player = (Player) context;
                             luckPerms.getUserManager().modifyUser(player.getUniqueId(), user -> {
                                 if(player.hasPermission(Config.GCPERMISSION)) { //TODO THIS MUST BE A CONSTANT FROM CONFIG?

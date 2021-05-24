@@ -1,8 +1,8 @@
-package com.alttd.chat.managers;
+package com.alttd.chat.handlers;
 
 import com.alttd.chat.config.Config;
 import com.alttd.chat.config.RegexConfig;
-import com.alttd.chat.objects.FilterType;
+import com.alttd.chat.data.FilterType;
 import com.google.common.collect.Lists;
 import ninja.leaping.configurate.ConfigurationNode;
 

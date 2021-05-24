@@ -1,4 +1,4 @@
-package com.alttd.chat.objects;
+package com.alttd.chat.data;
 
 import java.util.UUID;
 

@@ -1,8 +1,9 @@
-package com.alttd.chat.managers;
+package com.alttd.chat.handlers;
 
+import com.alttd.chat.data.ChatUser;
+import com.alttd.chat.data.Mail;
+import com.alttd.chat.data.ServerWrapper;
 import com.alttd.chat.database.Queries;
-import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.Mail;
 
 import java.util.List;
 import java.util.UUID;

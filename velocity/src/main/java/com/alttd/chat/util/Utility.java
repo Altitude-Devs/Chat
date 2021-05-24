@@ -1,6 +1,6 @@
 package com.alttd.chat.util;
 
-import com.alttd.chat.ChatAPI;
+import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
@@ -17,18 +17,18 @@ public class Utility {
     public static HashMap<String, String> colors;
     static { // this might be in minimessage already?
         colors = new HashMap<>(); // todo map all colors to minimessage
-        colors.put("&0", "<black"); // and confirm these are correct
-        colors.put("&1", "<dark_blue"); // could also add some default hex colors here?
-        colors.put("&2", "<dark_green");
-        colors.put("&3", "<dark_aqua");
-        colors.put("&4", "<dark_red");
-        colors.put("&5", "<dark_purple");
-        colors.put("&6", "<gold");
-        colors.put("&7", "<gray");
-        colors.put("&8", "<dark_gray");
-        colors.put("&9", "<blue");
-        colors.put("&a", "<green");
-        colors.put("&b", "<aqua");
+        colors.put("&0", "<black>"); // and confirm these are correct
+        colors.put("&1", "<dark_blue>"); // could also add some default hex colors here?
+        colors.put("&2", "<dark_green>");
+        colors.put("&3", "<dark_aqua>");
+        colors.put("&4", "<dark_red>");
+        colors.put("&5", "<dark_purple>");
+        colors.put("&6", "<gold>");
+        colors.put("&7", "<gray>");
+        colors.put("&8", "<dark_gray>");
+        colors.put("&9", "<blue>");
+        colors.put("&a", "<green>");
+        colors.put("&b", "<aqua>");
         colors.put("&c", "<red>");
         colors.put("&d", "<light_purple>");
         colors.put("&e", "<yellow>");
@@ -49,7 +49,7 @@ public class Utility {
 
     public static String getPrefix(UUID uuid, boolean highest) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         if(!highest) {
@@ -71,7 +71,7 @@ public class Utility {
     // @teri you don't reference the plugin instance from the API instance, this creates a circular reference and breaks on compile and will never run
     public static String getStaffPrefix(UUID uuid) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return prefix.toString();
         if(user.getCachedData().getPermissionData().checkPermission("group." + Config.MINIMIUMSTAFFRANK).asBoolean()) {
@@ -82,7 +82,7 @@ public class Utility {
 
     public static String getDisplayName(UUID uuid) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         return user.getUsername();

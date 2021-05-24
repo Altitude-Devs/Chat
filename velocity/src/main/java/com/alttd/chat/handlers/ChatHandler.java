@@ -2,9 +2,7 @@ package com.alttd.chat.handlers;
 
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.managers.ChatUserManager;
-import com.alttd.chat.managers.RegexManager;
-import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.data.ChatUser;
 import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
