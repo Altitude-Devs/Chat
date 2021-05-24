@@ -3,8 +3,11 @@ package com.alttd.chat.handlers;
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.data.ChatUser;
+import com.alttd.chat.events.GlobalAdminChatEvent;
 import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -87,6 +90,33 @@ public class ChatHandler {
 
         commandSource.sendMessage(senderMessage);
         recipient.sendMessage(receiverMessage);
+    }
+
+    public void globalAdminChat(CommandSource commandSource, String message) {
+        String senderName = Config.CONSOLENAME;
+        String serverName = "Altitude";
+        if (commandSource instanceof Player) {
+            Player sender = (Player) commandSource;
+            senderName = sender.getUsername();
+            serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
+        }
+
+        MiniMessage miniMessage = MiniMessage.get();
+
+        message = Utility.parseColors(message);
+
+        Map<String, String> map = new HashMap<>();
+
+        map.put("sender", senderName);
+        //map.put("message", event.getMessage());
+        map.put("message", Utility.parseColors(message));
+        map.put("server", serverName);
+
+        Component component = miniMessage.parse(Config.GACFORMAT, map);
+
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
+            target.sendMessage(component);
+        });
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.alttd.chat.commands;
 
+import com.alttd.chat.VelocityChat;
 import com.alttd.chat.events.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -9,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 public class GlobalAdminChat {
@@ -20,7 +22,7 @@ public class GlobalAdminChat {
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
-                            proxyServer.getEventManager().fire(new GlobalAdminChatEvent(context.getSource(), context.getArgument("message", String.class)));
+                            VelocityChat.getPlugin().getChatHandler().globalAdminChat(context.getSource(), context.getArgument("message", String.class));
                             return 1;
                         }) // TODO call in the same way as gc?
                 )

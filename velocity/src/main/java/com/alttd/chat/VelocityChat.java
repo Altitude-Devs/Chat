@@ -59,6 +59,7 @@ public class VelocityChat {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         new ALogger(logger);
         Config.init(getDataDirectory());
+        new DatabaseConnection();
         Queries.createTables();
 
         ChatUserManager.initialize(); // loads all the users from the db and adds them.
