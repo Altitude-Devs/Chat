@@ -1,7 +1,6 @@
 package com.alttd.chat.handlers;
 
 import com.alttd.chat.VelocityChat;
-import com.alttd.chat.events.PrivateMessageEvent;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
@@ -13,7 +12,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChatHandler {
 
@@ -93,8 +95,8 @@ public class ChatHandler {
      * constructs a mail object and notifies all involved players about it
      * / mail send playerA,playerB,playerC message
      */
-    public void sendMail() {
-
+    public void sendMail(CommandSource commandSource, String recipient, String message) {
+        // todo construct the mail and notify the player if online?
     }
 
     /**
@@ -106,6 +108,14 @@ public class ChatHandler {
         return "";
     }
 
-    public void sendMail(CommandSource source, String message, List<Player> targets) {
+
+    public void readMail(CommandSource commandSource, String targetPlayer, boolean unread) {
+
     }
+
+    public void readMail(CommandSource commandSource, boolean unread) {
+
+    }
+
+
 }

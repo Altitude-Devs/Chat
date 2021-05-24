@@ -46,7 +46,7 @@
     </build>-->
 
     <modules>
-        <module>api</module>
+        <!--<module>api</module>-->
         <module>velocity</module>
     </modules>
 

@@ -6,6 +6,7 @@ import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
@@ -14,6 +15,8 @@ import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 public class Message {
@@ -25,8 +28,16 @@ public class Message {
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("player", StringArgumentType.word())
                         .suggests((context, builder) -> {
-                            for (Player player : proxyServer.getAllPlayers()) {
-                                builder.suggest(player.getGameProfile().getName());
+                            Collection<String> possibleValues = new ArrayList<>();
+                            for (Player player : proxyServer.getAllPlayers()) { // todo all chatplayers? this can be heavy
+                                possibleValues.add(player.getGameProfile().getName());
+                            }
+                            if(possibleValues.isEmpty()) return Suggestions.empty();
+                            String remaining = builder.getRemaining().toLowerCase();
+                            for (String str : possibleValues) {
+                                if (str.toLowerCase().startsWith(remaining)) {
+                                    builder.suggest(str = StringArgumentType.escapeIfRequired(str));
+                                }
                             }
                             return builder.buildFuture();
                         })

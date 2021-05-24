@@ -28,8 +28,10 @@ public final class Config {
     static int version;
     static boolean verbose;
 
-    public static void init() { // todo setup share for the config
-        CONFIG_FILE = new File(new File(System.getProperty("user.home")), "config.yml");;
+    public static void init(File path) {
+        CONFIG_FILE = new File(path, "config.yml");;
+//    public static void init() { // todo setup share for the config
+//        CONFIG_FILE = new File(new File(System.getProperty("user.home")+File.separator+"ChatPlugin"), "config.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -181,7 +183,7 @@ public final class Config {
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
-
+///broadcast <white><light_purple><prefix></light_purple> <gray>Momlly</gray> <hover:show_text:on Atoll><yellow>to Global</yellow></hover><gray>: We Love <gold>Teri</gold> and <light_purple>Kappa</light_purple></gray></white>
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message></gray></white>";
     public static String GCPERMISSION = "proxy.globalchat";
     public static List<String> GCALIAS = new ArrayList<>();
@@ -195,7 +197,7 @@ public final class Config {
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();
-    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><yellow>(<sender> on <server> -> Team) <message></yellow>";
+    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team) <message></yellow>";
     private static void globalAdminChat() {
         GACECOMMANDALIASES = getList("commands.globaladminchat.aliases", Lists.newArrayList("acg"));
         GACFORMAT = getString("commands.globaladminchat.format", GACFORMAT);

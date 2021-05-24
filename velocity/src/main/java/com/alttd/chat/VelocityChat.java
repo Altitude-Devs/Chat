@@ -52,7 +52,7 @@ public class VelocityChat {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         new ALogger(logger);
-        chatAPI = new ChatImplementation();
+        chatAPI = new ChatImplementation(getDataDirectory());
 
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();

@@ -11,19 +11,11 @@ public class DatabaseConnection {
 
     private static DatabaseConnection instance;
     private Connection connection;
-    private final String drivers, ip, port, database, username, password;
 
     /**
      * Sets information for the database and opens the connection.
      */
     public DatabaseConnection() {
-
-        this.drivers = Config.DRIVER;
-        this.ip = Config.IP;
-        this.port = Config.PORT;
-        this.database = Config.DATABASE;
-        this.username = Config.USERNAME;
-        this.password = Config.PASSWORD;
         instance = this;
 
         try {
@@ -52,8 +44,8 @@ public class DatabaseConnection {
                 e.printStackTrace();
             }
             connection = DriverManager.getConnection(
-                    "jdbc:" + drivers + "://" + ip + ":" + port + "/" + database + "?autoReconnect=true", username,
-                    password);
+                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true",
+                    Config.USERNAME, Config.PASSWORD);
         }
     }
 

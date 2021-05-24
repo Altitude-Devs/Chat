@@ -22,7 +22,7 @@ public class Queries {
         List<String> tables = new ArrayList<>();
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
-        tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`), FOREIGN KEY (party_id) REFERENCES parties(id) ON DELETE CASCADE)");
+        tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`))");
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -249,8 +249,6 @@ public class Queries {
 
     //-----------------------------------------
 
-    //Chat Users
-    //@teri what's this?
     private static void getChatUsers(HashMap<Integer, Party> parties) { //TODO Get parties from cache somewhere
         String query = "SELECT * FROM chat_users";
 
