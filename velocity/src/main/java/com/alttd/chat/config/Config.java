@@ -172,8 +172,8 @@ public final class Config {
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
     public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
-    public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receiver> ><light_purple>(Me -> <gray><receiver></gray>) <message></light_purple>";
-    public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><light_purple>(<gray><sender></gray> on <server> -> Me) <message></light_purple>";
+    public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receiver> ><light_purple>(Me -> <gray><receiver></gray>) <message>";
+    public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><light_purple>(<gray><sender></gray> on <server> -> Me) <message>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
@@ -183,7 +183,7 @@ public final class Config {
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
 ///broadcast <white><light_purple><prefix></light_purple> <gray>Momlly</gray> <hover:show_text:on Atoll><yellow>to Global</yellow></hover><gray>: We Love <gold>Teri</gold> and <light_purple>Kappa</light_purple></gray></white>
-    public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message></gray></white>";
+    public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
     public static String GCPERMISSION = "proxy.globalchat";
     public static List<String> GCALIAS = new ArrayList<>();
     public static String GCNOTENABLED = "You don't have global chat enabled.";
@@ -196,7 +196,7 @@ public final class Config {
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();
-    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team) <message></yellow>";
+    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team) <message>";
     private static void globalAdminChat() {
         GACECOMMANDALIASES = getList("commands.globaladminchat.aliases", Lists.newArrayList("acg"));
         GACFORMAT = getString("commands.globaladminchat.format", GACFORMAT);
@@ -212,7 +212,7 @@ public final class Config {
         REGEXNODE = getNode("regex-settings");
     }
 
-    public static String SERVERSWTICHMESSAGEFROM = "<gray>* <player> comes from <from_server>..."; // Confirm these are the correct ones @destro
+    public static String SERVERSWTICHMESSAGEFROM = "<gray>* <player> comes from <from_server>...";
     public static String SERVERSWTICHMESSAGETO = "<gray>* <player> leaves to <to_server>...";
     public static String SERVERJOINMESSAGE = "<green>* <player> appears from thin air...";
     public static String SERVERLEAVEMESSAGE = "<red>* <player> vanishes in the mist...";
