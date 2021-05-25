@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
@@ -52,13 +53,10 @@ public final class Config {
         }
 
         try {
-            config = configLoader.load();
+            config = configLoader.load(ConfigurationOptions.defaults().setHeader(HEADER));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        configLoader.getDefaultOptions().setHeader(HEADER);
-        configLoader.getDefaultOptions().withShouldCopyDefaults(true);
 
         verbose = getBoolean("verbose", true);
         version = getInt("config-version", 1);
@@ -152,8 +150,9 @@ public final class Config {
 
     private static ConfigurationNode getNode(String path) {
         if(config.getNode(splitPath(path)).isVirtual()) {
-            new RegexConfig("Dummy");
+            //new RegexConfig("Dummy");
         }
+        config.getChildrenMap();
         return config.getNode(splitPath(path));
     }
 
