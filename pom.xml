@@ -24,7 +24,7 @@
         </repository>
     </distributionManagement>
 
-    <!--<build>
+    <build>
         <defaultGoal>install</defaultGoal>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -43,10 +43,11 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>-->
+    </build>
 
     <modules>
-        <!--<module>api</module>-->
+        <module>api</module>
+        <module>galaxy</module>
         <module>velocity</module>
     </modules>
 

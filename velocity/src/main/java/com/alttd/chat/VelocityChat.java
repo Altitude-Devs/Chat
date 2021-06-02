@@ -3,15 +3,12 @@ package com.alttd.chat;
 import com.alttd.chat.commands.GlobalAdminChat;
 import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.database.DatabaseConnection;
-import com.alttd.chat.database.Queries;
 import com.alttd.chat.handlers.ChatHandler;
-import com.alttd.chat.handlers.ChatUserManager;
-import com.alttd.chat.handlers.RegexManager;
 import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.ProxyPlayerListener;
 import com.alttd.chat.listeners.PluginMessageListener;
+import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.util.ALogger;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -59,10 +56,10 @@ public class VelocityChat {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         new ALogger(logger);
         Config.init(getDataDirectory());
-        new DatabaseConnection();
-        Queries.createTables();
+        //new DatabaseConnection();
+        //Queries.createTables();
 
-        ChatUserManager.initialize(); // loads all the users from the db and adds them.
+        //ChatUserManager.initialize(); // loads all the users from the db and adds them.
         RegexManager.initRegex(); // load the filters and regexes from config
 
         serverHandler = new ServerHandler();

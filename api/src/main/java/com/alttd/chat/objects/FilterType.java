@@ -1,4 +1,4 @@
-package com.alttd.chat.data;
+package com.alttd.chat.objects;
 
 public enum FilterType {
     REPLACE("replace"),

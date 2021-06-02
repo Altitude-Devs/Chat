@@ -1,4 +1,4 @@
-package com.alttd.chat.data;
+package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
 

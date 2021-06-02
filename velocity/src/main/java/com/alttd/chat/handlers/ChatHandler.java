@@ -2,12 +2,11 @@ package com.alttd.chat.handlers;
 
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.data.ChatUser;
-import com.alttd.chat.events.GlobalAdminChatEvent;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

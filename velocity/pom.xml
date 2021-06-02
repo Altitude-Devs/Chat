@@ -80,12 +80,12 @@
             <version>5.3</version>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>com.alttd.chat</groupId>
             <artifactId>chat-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>

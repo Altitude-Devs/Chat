@@ -1,6 +1,6 @@
 package com.alttd.chat.util;
 
-import com.alttd.chat.VelocityChat;
+import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
@@ -49,7 +49,7 @@ public class Utility {
 
     public static String getPrefix(UUID uuid, boolean highest) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         if(!highest) {
@@ -71,7 +71,7 @@ public class Utility {
     // @teri you don't reference the plugin instance from the API instance, this creates a circular reference and breaks on compile and will never run
     public static String getStaffPrefix(UUID uuid) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return prefix.toString();
         if(user.getCachedData().getPermissionData().checkPermission("group." + Config.MINIMIUMSTAFFRANK).asBoolean()) {
@@ -82,7 +82,7 @@ public class Utility {
 
     public static String getDisplayName(UUID uuid) {
         StringBuilder prefix = new StringBuilder();
-        LuckPerms luckPerms = VelocityChat.getPlugin().getLuckPerms();
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         return user.getUsername();

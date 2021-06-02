@@ -1,10 +1,4 @@
-package com.alttd.chat.handlers;
-
-import com.alttd.chat.config.Config;
-import com.alttd.chat.config.RegexConfig;
-import com.alttd.chat.data.FilterType;
-import com.google.common.collect.Lists;
-import ninja.leaping.configurate.ConfigurationNode;
+package com.alttd.chat.managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,16 +14,17 @@ public class RegexManager {
 
     // IDEA: Regex object -> RegexPattern, shatteredPattern, replacement, replacements
     public static void initRegex() {
+        //RegexConfig.init(VelocityChat.getPlugin().getDataDirectory()); // TODO setup the dir
         // LOAD REGEXES, sad way of doing it:(
         // maiby a REGEXobject and a list<Regex> would be better here?
-        for(ConfigurationNode node : Config.REGEXNODE.getChildrenMap().values()) {
+        /*for(ConfigurationNode node : Config.REGEXNODE.getChildrenMap().values()) {
             RegexConfig regexConfig = new RegexConfig(node.getString());
             if (FilterType.getType(regexConfig.TYPE) == FilterType.BLOCK) {
                 cancelRegex.put(Pattern.compile(regexConfig.REGEX), Lists.newArrayList(regexConfig.REPLACEMENT));
             } else if (FilterType.getType(regexConfig.TYPE) == FilterType.REPLACE) {
                 replaceRegex.put(regexConfig.REGEX, regexConfig.REPLACEMENT);
             }
-        }
+        }*/
 
         //TODO load data from config (a regex string, and it's exceptions if there are any)
         cancelRegex.put(Pattern.compile("\\b([R]+[^\\w]?[4A]+[^\\w]?[P]+(([^\\w]?[E3]+[^\\w]?[DT]*)|([^\\w]?[I!1]+[^\\w]?[S5]+[^\\w]?[T7]+)|([^\\w]?[I!1]+[^\\w]?[N]+[^\\w]?[G69]+)))\\b"), new ArrayList<>());

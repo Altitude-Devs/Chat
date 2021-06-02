@@ -1,7 +1,7 @@
 package com.alttd.chat.util;
 
 public class ALogger {
-    // static abuse
+
     private static org.slf4j.Logger logger;
 
     public ALogger(org.slf4j.Logger log) {

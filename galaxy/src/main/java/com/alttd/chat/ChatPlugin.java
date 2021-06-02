@@ -10,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-// Todo this is only needed to get some special usecases eg [i] -> get and return the item the player is holding over a SYNCRONIZED connection:/
 public class ChatPlugin extends JavaPlugin {
 
     private static ChatPlugin instance;

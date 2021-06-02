@@ -10,12 +10,12 @@ public class PluginMessage implements PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] bytes) {
-        if(!channel.equals(Config.MESSAGECHANNEL)) {
+        if (!channel.equals(Config.MESSAGECHANNEL)) {
             return;
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
-        switch(subChannel) {
+        switch (subChannel) {
             case "globalchat":
                 break;
             default:
@@ -23,6 +23,7 @@ public class PluginMessage implements PluginMessageListener {
         }
     }
 
+}
 /*    // todo implement AdvancedChatFilter for this like this
     //      send pluginmessage to backend server and return a shatteredcomponent to be reparsed by proxy
     // Start - move these to util

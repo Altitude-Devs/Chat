@@ -154,18 +154,31 @@ public final class RegexConfig {
 //        REPLACEMENT = getString("replacement", REPLACEMENT);
 //    }
 
+//    Options:
+//    Filter: the regexstring
+//    replacements:
+//    exclusions: ["list", "of", "words"]
     private void loadChatFilters() {
-        Map<String, Object> chProps = new HashMap<>();
-        config.getChildrenMap().forEach((key, value) -> {
-            if (value.hasMapChildren()) {
-                for (Map.Entry<Object, ? extends ConfigurationNode> vl : value.getChildrenMap().entrySet()) {
-                    chProps.put( vl.getKey().toString(), vl.getValue().getValue());
-                }
-            } else {
-                chProps.put(key.toString(), value.getValue());
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getChildrenMap().entrySet()) {
+            String name = entry.getKey().toString(); // the name in the config this filter has
+            String type = entry.getValue().getNode("type").getString(); // the type of filter, block or replace
+            String regex = "";
+            List<String> replacements = new ArrayList<>();
+            List<String> exclusions = new ArrayList<>();
+            Map<Object, ? extends ConfigurationNode> options = entry.getValue().getNode("options").getChildrenMap();
+            if (options.containsKey("filter")) {
+                regex = options.get("filter").getString();
             }
-        });
-        //UCChannel ch = new UCChannel(chProps);
-        //addChannel(ch);
+            if (options.containsKey("replacements")) {
+                options.get("replacements").getChildrenList().forEach(key -> {
+                    replacements.add(key.getString());
+                });
+            }
+            if (options.containsKey("exclusions")) {
+                options.get("exclusions").getChildrenList().forEach(key -> {
+                    exclusions.add(key.getString());
+                });
+            }
+        }
     }
 }
