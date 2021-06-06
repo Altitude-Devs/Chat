@@ -1,21 +1,30 @@
 package com.alttd.chat;
 
+import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
+import com.alttd.chat.database.Queries;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.RegexManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
-
-import java.util.UUID;
 
 public class ChatImplementation implements ChatAPI{
 
     private static ChatAPI instance;
 
     private LuckPerms luckPerms;
+    private DatabaseConnection databaseConnection; // todo this isn't needed can be removed
 
     public ChatImplementation() {
         instance = this;
+        Config.init();
 
         luckPerms = getLuckPerms();
+        databaseConnection = getDataBase();
+        Queries.createTables();
 
+        ChatUserManager.initialize(); // loads all the users from the db and adds them.
+        RegexManager.initialize(); // load the filters and regexes from config
     }
 
     public static ChatAPI get() {
@@ -32,19 +41,10 @@ public class ChatImplementation implements ChatAPI{
     }
 
     @Override
-    public String getPrefix(UUID uuid) {
-        return "";
+    public DatabaseConnection getDataBase() {
+        if(databaseConnection == null)
+            databaseConnection = new DatabaseConnection();
+        return databaseConnection;
     }
-
-    @Override
-    public String getPrefix(UUID uuid, boolean all) {
-        return "";
-    }
-
-    @Override
-    public String getStaffPrefix(UUID uuid) {
-        return "";
-    }
-
 
 }

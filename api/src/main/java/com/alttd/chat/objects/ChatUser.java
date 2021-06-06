@@ -17,6 +17,7 @@ public class ChatUser {
     private String prefixAll;
     private boolean toggleGc;
     private UUID replyTarget;
+    private long gcCooldown;
 
     private LinkedList<Mail> mails;
 
@@ -38,6 +39,7 @@ public class ChatUser {
 
         toggleGc = toggle_Gc;
         replyTarget = null;
+        gcCooldown = System.currentTimeMillis(); //
         mails = new LinkedList<>(); // todo load mails
     }
 
@@ -121,5 +123,9 @@ public class ChatUser {
 
     public void addMail(Mail mail) {
         mails.add(mail);
+    }
+
+    public long getGcCooldown() {
+        return gcCooldown;
     }
 }

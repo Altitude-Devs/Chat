@@ -1,11 +1,12 @@
 package com.alttd.chat.config;
 
+import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.objects.ChatFilter;
 import com.google.common.base.Throwables;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
@@ -35,8 +36,8 @@ public final class RegexConfig {
     static int version;
     static boolean verbose;
 
-    public static void init(File path) {
-        CONFIG_FILE = new File(path, "filters.yml");;
+    public static void init() {
+        CONFIG_FILE = new File(Config.CONFIGPATH, "filters.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -145,40 +146,43 @@ public final class RegexConfig {
         return new ArrayList<>();
     }
 
-//    public String REGEX = "REGEX";
-//    public String TYPE = "TYPE";
-//    public String REPLACEMENT = "REPLACEMENT";
-//    private void ServerSettings() {
-//        REGEX = getString("regex", REGEX);
-//        TYPE = getString("type", TYPE);
-//        REPLACEMENT = getString("replacement", REPLACEMENT);
-//    }
-
-//    Options:
-//    Filter: the regexstring
-//    replacements:
-//    exclusions: ["list", "of", "words"]
     private void loadChatFilters() {
-        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getChildrenMap().entrySet()) {
-            String name = entry.getKey().toString(); // the name in the config this filter has
-            String type = entry.getValue().getNode("type").getString(); // the type of filter, block or replace
-            String regex = "";
-            List<String> replacements = new ArrayList<>();
-            List<String> exclusions = new ArrayList<>();
-            Map<Object, ? extends ConfigurationNode> options = entry.getValue().getNode("options").getChildrenMap();
-            if (options.containsKey("filter")) {
-                regex = options.get("filter").getString();
+//        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getChildrenMap().entrySet()) {
+//            String name = entry.getKey().toString(); // the name in the config this filter has
+//            String type = entry.getValue().getNode("type").getString(); // the type of filter, block or replace
+//            String regex = "";
+//            List<String> replacements = new ArrayList<>();
+//            List<String> exclusions = new ArrayList<>();
+//            Map<Object, ? extends ConfigurationNode> options = entry.getValue().getNode("options").getChildrenMap();
+//            if (options.containsKey("filter")) {
+//                regex = options.get("filter").getString();
+//            }
+//            if (options.containsKey("replacements")) {
+//                options.get("replacements").getChildrenList().forEach(key -> {
+//                    replacements.add(key.getString());
+//                });
+//            }
+//            if (options.containsKey("exclusions")) {
+//                options.get("exclusions").getChildrenList().forEach(key -> {
+//                    exclusions.add(key.getString());
+//                });
+//            }
+//        }
+
+        Map<String, Object> properties = new HashMap<>();
+        config.getChildrenMap().forEach((key, value) -> {
+            if (value.hasMapChildren()) {
+                String rkey = key.toString();
+                properties.put("name", rkey);
+                for (Map.Entry<Object, ? extends ConfigurationNode> vl : value.getChildrenMap().entrySet()) {
+                    properties.put(rkey + "." + vl.getKey(), vl.getValue().getValue());
+                }
+            } else {
+                properties.put(key.toString(), value.getValue());
             }
-            if (options.containsKey("replacements")) {
-                options.get("replacements").getChildrenList().forEach(key -> {
-                    replacements.add(key.getString());
-                });
-            }
-            if (options.containsKey("exclusions")) {
-                options.get("exclusions").getChildrenList().forEach(key -> {
-                    exclusions.add(key.getString());
-                });
-            }
-        }
+        });
+
+        ChatFilter chatFilter = new ChatFilter(properties);
+        RegexManager.addFilter(chatFilter);
     }
 }

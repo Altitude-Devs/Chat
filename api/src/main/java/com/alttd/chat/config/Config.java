@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -29,10 +30,10 @@ public final class Config {
     static int version;
     static boolean verbose;
 
-    public static void init(File path) {
-        CONFIG_FILE = new File(path, "config.yml");;
-//    public static void init() { // todo setup share for the config
-//        CONFIG_FILE = new File(new File(System.getProperty("user.home")+File.separator+"ChatPlugin"), "config.yml");;
+    public static File CONFIGPATH;
+    public static void init() { // todo setup share for the config
+        CONFIGPATH = new File(System.getProperty("user.home")+File.separator+"ChatPlugin");
+        CONFIG_FILE = new File(CONFIGPATH, "config.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -186,13 +187,16 @@ public final class Config {
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
     public static String GCPERMISSION = "proxy.globalchat";
     public static List<String> GCALIAS = new ArrayList<>();
-    public static String GCNOTENABLED = "You don't have global chat enabled.";
+    public static String GCNOTENABLED = "You don't have global chat enabled."; // todo mini message formatting
+    public static String GCONCOOLDOWN = "You have to wait <cooldown> seconds before using this feature again."; // todo mini message formatting
+    public static int GCCOOLDOWN = 30;
     private static void globalChat() {
         MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
         GCPERMISSION = getString("commands.globalchat.view-chat-permission", GCPERMISSION);
         GCALIAS.clear();
         GCALIAS = getList("commands.globalchat.alias", Lists.newArrayList("gc", "global"));
         GCNOTENABLED = getString("commands.globalchat.not-enabled", GCNOTENABLED);
+        GCCOOLDOWN = getInt("commands.globalchat.cooldown", GCCOOLDOWN);
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();

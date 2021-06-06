@@ -74,7 +74,7 @@ public class ChatHandler {
 //                Template.of("prefix", user.getPrefix()),
 //                Template.of("message", message),
 //                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")
-//                /*,Template.of("[i]", itemComponent(sender.getInventory().getItemInMainHand()))*/ //Todo move this into ChatFilters
+//                /*,Template.of("[i]" , itemComponent(sender.getInventory().getItemInMainHand()))*/ //Todo move this into ChatFilters
 //        ));
 
         Map<String, String> map = new HashMap<>();
@@ -89,6 +89,16 @@ public class ChatHandler {
 
         commandSource.sendMessage(senderMessage);
         recipient.sendMessage(receiverMessage);
+    }
+
+    public void globalAdminChat(String message) {
+        MiniMessage miniMessage = MiniMessage.get();
+
+        Component component = miniMessage.parse(Config.GACFORMAT);
+
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
+            target.sendMessage(component);
+        });
     }
 
     public void globalAdminChat(CommandSource commandSource, String message) {

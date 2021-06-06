@@ -38,7 +38,7 @@ public class VelocityChat {
     private final Logger logger;
     private final Path dataDirectory;
 
-    private LuckPerms luckPerms;
+    private ChatAPI chatAPI;
     private ChatHandler chatHandler;
     private ServerHandler serverHandler;
 
@@ -55,12 +55,8 @@ public class VelocityChat {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         new ALogger(logger);
-        Config.init(getDataDirectory());
-        //new DatabaseConnection();
-        //Queries.createTables();
-
-        //ChatUserManager.initialize(); // loads all the users from the db and adds them.
-        RegexManager.initRegex(); // load the filters and regexes from config
+        //Config.init(getDataDirectory());
+        chatAPI = new ChatImplementation();
 
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();
@@ -94,12 +90,6 @@ public class VelocityChat {
         new GlobalAdminChat(server);
         new GlobalChat(server);
         // all (proxy)commands go here
-    }
-
-    public LuckPerms getLuckPerms() {
-        if(luckPerms == null)
-            luckPerms = LuckPermsProvider.get();
-        return luckPerms;
     }
 
     public ChatHandler getChatHandler() {

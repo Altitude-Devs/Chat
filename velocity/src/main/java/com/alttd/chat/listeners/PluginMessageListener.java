@@ -36,6 +36,9 @@ public class PluginMessageListener {
                         // todo this is obsolete
                         //VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF());
                         break;
+                    case "globaladminchat":
+                        VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
+                        break;
                     default:
                         VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
                         break;

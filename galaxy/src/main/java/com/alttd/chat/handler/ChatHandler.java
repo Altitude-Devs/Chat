@@ -12,36 +12,44 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ChatHandler {
 
-    private ChatPlugin plugin;
+    private final ChatPlugin plugin;
+
+    private final MiniMessage miniMessage;
+    private final Component GCNOTENABLED;
 
     public ChatHandler() {
         plugin = ChatPlugin.getInstance();
+        miniMessage = MiniMessage.get();
+        GCNOTENABLED = miniMessage.parse(Config.GCNOTENABLED);
     }
 
     public void globalChat(Player player, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         if(user == null) return;
         if(!user.isGcOn()) {
-            player.sendMessage();// GC IS OFF INFORM THEM ABOUT THIS and cancel
+            player.sendMessage(GCNOTENABLED);// GC IS OFF INFORM THEM ABOUT THIS and cancel
             return;
         }
-        // Check if the player has global chat enabled, if not warn them
+        long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
+        if(timeLeft <= Config.GCCOOLDOWN) { // player is on cooldown and should wait x seconds
+            player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", timeLeft+"")));
+            return;
+        }
         String senderName, prefix = "";
 
         senderName = player.getDisplayName();   // TODO this can be a component
                                                 // can also be cached in the chatuser object?
-        prefix = plugin.getChatAPI().getPrefix(player.getUniqueId());
+        prefix = user.getPrefix();
 
-        MiniMessage miniMessage = MiniMessage.get();
         message = Utility.parseColors(message);
         if(!player.hasPermission("chat.format"))
             message = miniMessage.stripTokens(message);
@@ -52,18 +60,58 @@ public class ChatHandler {
                 Template.of("sender", senderName),
                 Template.of("prefix", prefix),
                 Template.of("message", message),
-                Template.of("server", Bukkit.getServerName())/*,
-                Template.of("[i]", itemComponent(sender.getInventory().getItemInMainHand()))*/));
+                Template.of("server", Bukkit.getServerName()),
+                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse(Config.GCFORMAT, templates);
 
-        //todo make a method for this, it'll be used more then onc
+        sendPluginMessage(player, "globalchat", component);
+    }
 
+    private void sendPluginMessage(Player player, String channel, Component component) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("globalchat");
-        out.writeUTF(miniMessage.serialize(component));
+        out.writeUTF(channel);
+        out.writeUTF(miniMessage.serialize(component)); // todo use a better component serializer ~ look into kyori
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
 
+    // Start - move these to util
+    public Component itemComponent(ItemStack item) {
+        Component component = Component.text("[i]");
+        if(item.getType().equals(Material.AIR))
+            return component;
+        boolean dname = item.hasItemMeta() && item.getItemMeta().hasDisplayName();
+        if(dname) {
+            component = component.append(item.getItemMeta().displayName());
+        } else {
+            component = Component.text(materialToName(item.getType()));
+        }
+        component = component.hoverEvent(item.asHoverEvent());
+        return component;
+    }
+
+    private static String materialToName(Material m) {
+        if (m.equals(Material.TNT)) {
+            return "TNT";
+        }
+        String orig = m.toString().toLowerCase();
+        String[] splits = orig.split("_");
+        StringBuilder sb = new StringBuilder(orig.length());
+        int pos = 0;
+        for (String split : splits) {
+            sb.append(split);
+            int loc = sb.lastIndexOf(split);
+            char charLoc = sb.charAt(loc);
+            if (!(split.equalsIgnoreCase("of") || split.equalsIgnoreCase("and") ||
+                    split.equalsIgnoreCase("with") || split.equalsIgnoreCase("on")))
+                sb.setCharAt(loc, Character.toUpperCase(charLoc));
+            if (pos != splits.length - 1)
+                sb.append(' ');
+            ++pos;
+        }
+
+        return sb.toString();
+    }
+    // end - move these to util
 
 }

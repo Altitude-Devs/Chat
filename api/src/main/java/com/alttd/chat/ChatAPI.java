@@ -1,5 +1,6 @@
 package com.alttd.chat;
 
+import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 
 import java.util.UUID;
@@ -12,10 +13,6 @@ public interface ChatAPI {
 
     LuckPerms getLuckPerms();
 
-    String getPrefix(UUID uuid);
-
-    String getPrefix(UUID uuid, boolean all);
-
-    String getStaffPrefix(UUID uuid);
+    DatabaseConnection getDataBase();
 
 }
