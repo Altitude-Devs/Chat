@@ -20,6 +20,7 @@ public class ChatUser {
     private long gcCooldown;
 
     private LinkedList<Mail> mails;
+    private LinkedList<UUID> ignoredPlayers;
 
     public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
         this.uuid = uuid;
@@ -39,8 +40,9 @@ public class ChatUser {
 
         toggleGc = toggle_Gc;
         replyTarget = null;
-        gcCooldown = System.currentTimeMillis(); //
+        gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = new LinkedList<>(); // todo load mails
+        ignoredPlayers = new LinkedList<>(); // todo load ignoredPlayers
     }
 
     public UUID getUuid() {
@@ -125,7 +127,19 @@ public class ChatUser {
         mails.add(mail);
     }
 
+    public LinkedList<UUID> getIgnoredPlayers() {
+        return ignoredPlayers;
+    }
+
+    public void addIgnoredPlayers(UUID uuid) {
+        ignoredPlayers.add(uuid);
+    }
+
     public long getGcCooldown() {
         return gcCooldown;
+    }
+
+    public void setGcCooldown(long time) {
+        this.gcCooldown = time;
     }
 }
