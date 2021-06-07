@@ -22,7 +22,7 @@ public class Queries {
         List<String> tables = new ArrayList<>();
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
-        tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `force_tp` BIT(1) DEFAULT b'1', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`))");
+        tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`))");
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -262,7 +262,6 @@ public class Queries {
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 int partyId = resultSet.getInt("party_id");
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
-                boolean force_tp = resultSet.getInt("force_tp") == 1;
                 boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
 
                 if (partyId == 0) {
@@ -278,7 +277,7 @@ public class Queries {
                     continue;
                 }
 
-                party.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp, toggle_Gc));
+                party.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
             }
 
         } catch (SQLException e) {
@@ -299,10 +298,9 @@ public class Queries {
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 int partyId = resultSet.getInt("party_id");
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
-                boolean force_tp = resultSet.getInt("force_tp") == 1;
                 boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
                 // could do a constructor for chatuser to accept the record?
-                ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, force_tp, toggle_Gc));
+                ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
             }
 
         } catch (SQLException e) {
@@ -311,7 +309,7 @@ public class Queries {
     }
 
     public static void addUser(ChatUser user) {
-        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, force_tp, toggled_gc) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, toggled_gc) VALUES (?, ?, ?, ?)";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -320,7 +318,6 @@ public class Queries {
             statement.setString(1, user.getUuid().toString());
             statement.setInt(2, user.getPartyId());
             statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
-            statement.setInt(4, user.ForceTp() ? 1 : 0);
             statement.setInt(5, user.isGcOn() ? 1 : 0);
 
             statement.execute();
@@ -331,10 +328,6 @@ public class Queries {
 
     public static void setPartyChatState(boolean toggledChat, UUID uuid) {
         setBitWhereId("UPDATE chat_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
-    }
-
-    public static void setForceTpState(boolean forceTp, UUID uuid) {
-        setBitWhereId("UPDATE chat_users set force_tp = ? WHERE uuid = ?", forceTp, uuid);
     }
 
     private static void setBitWhereId(String query, boolean bool, UUID uuid) {

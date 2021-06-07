@@ -10,7 +10,6 @@ public class ChatUser {
     private final UUID uuid; // player uuid
     private final int partyId; // the party they are in
     private boolean toggledPartyChat; // should chat messages instantly go to party chat when added, idk if this should be saved
-    private boolean forceTp; // idk ask teri
     private String displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
     private String prefix; // doesn't need saving, we get this from luckperms
     private String staffPrefix; // doesn't need saving, we get this from luckperms
@@ -23,11 +22,10 @@ public class ChatUser {
     private LinkedList<UUID> ignoredPlayers; // a list of UUID, a new table non unique, where one is is the player select * from ignores where ignoredby = thisplayer? where the result is the uuid of the player ignored by this player?
     private LinkedList<UUID> ignoredBy; // a list of UUID, same table as above but select * from ignores where ignored = thisplayer? result should be the other user that ignored this player?
 
-    public ChatUser(UUID uuid, int partyId, boolean toggled_chat, boolean force_tp, boolean toggle_Gc) {
+    public ChatUser(UUID uuid, int partyId, boolean toggledChat, boolean toggleGc) {
         this.uuid = uuid;
         this.partyId = partyId;
-        this.toggledPartyChat = toggled_chat;
-        this.forceTp = force_tp;
+        this.toggledPartyChat = toggledChat;
 
         displayName = Queries.getNickname(uuid);
         if (displayName == null) {
@@ -39,7 +37,7 @@ public class ChatUser {
 
         prefixAll = Utility.getPrefix(uuid, false);
 
-        toggleGc = toggle_Gc;
+        this.toggleGc = toggleGc;
         replyTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = new LinkedList<>(); // todo load mails
@@ -62,15 +60,6 @@ public class ChatUser {
     public void togglePartyChat() {
         toggledPartyChat = !toggledPartyChat;
         Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls - no CompleteableFuture<>!
-    }
-
-    public boolean ForceTp() {
-        return forceTp;
-    }
-
-    public void toggleForceTp() {
-        forceTp = !forceTp;
-        Queries.setForceTpState(forceTp, uuid); //TODO: Async pls - no CompleteableFuture<>!
     }
 
     public String getDisplayName() {
