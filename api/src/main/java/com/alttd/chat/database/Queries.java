@@ -250,7 +250,7 @@ public class Queries {
     //-----------------------------------------
 
     private static void getChatUsers(HashMap<Integer, Party> parties) { //TODO Get parties from cache somewhere
-        String query = "SELECT * FROM chat_users";
+        String query = "SELECT * FROM chat_users WHERE party_id != -1";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -278,6 +278,7 @@ public class Queries {
                 }
 
                 party.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
+                //TODO maybe add to the cache as well?
             }
 
         } catch (SQLException e) {
