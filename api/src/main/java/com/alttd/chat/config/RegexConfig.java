@@ -2,11 +2,11 @@ package com.alttd.chat.config;
 
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatFilter;
+import com.alttd.chat.util.ALogger;
 import com.google.common.base.Throwables;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
@@ -32,9 +32,6 @@ public final class RegexConfig {
     private static File CONFIG_FILE;
     public static ConfigurationNode config;
     public static YAMLConfigurationLoader configLoader;
-
-    static int version;
-    static boolean verbose;
 
     public static void init() {
         CONFIG_FILE = new File(Config.CONFIGPATH, "filters.yml");;
@@ -64,10 +61,7 @@ public final class RegexConfig {
             e.printStackTrace();
         }
 
-        verbose = getBoolean("verbose", true);
-        version = getInt("config-version", 1);
-
-        readConfig(Config.class, null);
+        readConfig(RegexConfig.class, null);
         try {
             configLoader.save(config);
         } catch (IOException e) {
@@ -146,7 +140,9 @@ public final class RegexConfig {
         return new ArrayList<>();
     }
 
-    private void loadChatFilters() {
+    public static List<String> ChatFilters = new ArrayList<>();
+    private static void loadChatFilters() {
+        ALogger.info("loading filters");
 //        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getChildrenMap().entrySet()) {
 //            String name = entry.getKey().toString(); // the name in the config this filter has
 //            String type = entry.getValue().getNode("type").getString(); // the type of filter, block or replace
@@ -170,19 +166,18 @@ public final class RegexConfig {
 //        }
 
         Map<String, Object> properties = new HashMap<>();
-        config.getChildrenMap().forEach((key, value) -> {
-            if (value.hasMapChildren()) {
-                String rkey = key.toString();
-                properties.put("name", rkey);
-                for (Map.Entry<Object, ? extends ConfigurationNode> vl : value.getChildrenMap().entrySet()) {
-                    properties.put(rkey + "." + vl.getKey(), vl.getValue().getValue());
-                }
-            } else {
-                properties.put(key.toString(), value.getValue());
+        config.getChildrenMap().entrySet().forEach(entry -> {
+            try {
+                String name = entry.getKey().toString();
+                String type = entry.getValue().getNode("type").getString();
+                String regex = entry.getValue().getNode("regex").getString();
+                String replacement = entry.getValue().getNode("replacement").getString();
+                List<String> exclusions = entry.getValue().getNode("exclusions").getList(TypeToken.of(String.class), new ArrayList<>());
+                ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions);
+                RegexManager.addFilter(chatFilter);
+            } catch(ObjectMappingException ex) {
             }
         });
 
-        ChatFilter chatFilter = new ChatFilter(properties);
-        RegexManager.addFilter(chatFilter);
     }
 }

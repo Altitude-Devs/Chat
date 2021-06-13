@@ -3,6 +3,7 @@ package com.alttd.chat.handler;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
@@ -10,6 +11,7 @@ import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,17 +46,21 @@ public class ChatHandler {
             player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", timeLeft+"")));
             return;
         }
-        String senderName, prefix = "";
 
-        senderName = player.getDisplayName();   // TODO this can be a component
-                                                // can also be cached in the chatuser object?
-        prefix = user.getPrefix();
+        Component senderName = player.displayName();
+        String prefix = user.getPrefix();
 
-        message = Utility.parseColors(message);
-        if(!player.hasPermission("chat.format"))
+        message = RegexManager.replaceText(message); // todo a better way for this
+        if(message == null) return; // the message was blocked
+
+        if(!player.hasPermission("chat.format")) {
             message = miniMessage.stripTokens(message);
+        } else {
+            message = Utility.parseColors(message);
+        }
+
         if(message.contains("[i]"))
-            message = message.replace("[i]", "<[i]>");
+            message = message.replace("[i]", "<[i]>"); // end of todo
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),
@@ -71,14 +77,14 @@ public class ChatHandler {
     private void sendPluginMessage(Player player, String channel, Component component) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
-        out.writeUTF(miniMessage.serialize(component)); // todo use a better component serializer ~ look into kyori
+        out.writeUTF(GsonComponentSerializer.gson().serialize(component)); // todo use a better component serializer ~ look into kyori
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
 
     // Start - move these to util
-    public Component itemComponent(ItemStack item) {
+    public static Component itemComponent(ItemStack item) {
         Component component = Component.text("[i]");
-        if(item.getType().equals(Material.AIR))
+        if(item.getType().equals(Material.AIR)) // do we want to show the <players hand>?
             return component;
         boolean dname = item.hasItemMeta() && item.getItemMeta().hasDisplayName();
         if(dname) {

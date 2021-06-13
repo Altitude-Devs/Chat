@@ -2,6 +2,8 @@ package com.alttd.chat.objects;
 
 public enum FilterType {
     REPLACE("replace"),
+    CHAT("chat"),
+    REPLACEMATCHER("replacematcher"),
     BLOCK("block");
 
     private final String name;

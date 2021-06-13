@@ -1,48 +1,45 @@
 package com.alttd.chat.objects;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatFilter {
 
-    private final Properties properties = new Properties();
-    private final Pattern pattern;
+    private final String name;
     private final FilterType filterType;
+    private final String regex;
+    private final Pattern pattern;
+    private final String replacement;
+    private final List<String> exclusions;
 
-    public ChatFilter(Map<String, Object> props) {
-        addDefaults();
-        properties.keySet().stream().filter(props::containsKey).forEach((nkey) -> properties.put(nkey, props.get(nkey)));
-        pattern = Pattern.compile(getRegex());
-        filterType = FilterType.getType((String) properties.get("type"));
+    public ChatFilter(String name, String type, String regex, String replacement, List<String> exclusions) {
+        this.name = name;
+        this.filterType = FilterType.getType(type);
+        this.regex = regex;
+        this.pattern = Pattern.compile(getRegex());
+        this.replacement = replacement;
+        this.exclusions = exclusions;
     }
 
-    private void addDefaults() {
-        properties.put("name", "");
-        properties.put("type", null);
-        properties.put("regex", "");
-        properties.put("replacement", "");
-        properties.put("exclusions", new ArrayList<String>());
+    public String getName() {
+        return this.name;
     }
 
     public String getRegex() {
-        return (String) properties.get("regex");
+        return this.regex;
     }
 
     public FilterType getType() {
-        return filterType;
+        return this.filterType;
     }
 
     public String getReplacement() {
-        return (String) properties.get("replacement");
+        return this.replacement;
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getExclusions() {
-        return (List<String>) properties.get("exclusions");
+        return this.exclusions;
     }
 
     public boolean matches(String input) {
@@ -53,8 +50,8 @@ public class ChatFilter {
     public String replaceText(String input) {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
-            String group = matcher.group();
-            if(!getExclusions().contains(group)) { // doesn't work well with capitals, use a stream filter?
+            String group = matcher.group(); // todo debug
+            if(getExclusions().stream().noneMatch(s -> s.equalsIgnoreCase(group))) { // idk how heavy this is:/
                 input = input.replace(group, getReplacement());
             }
         }

@@ -2,7 +2,7 @@ package com.alttd.chat.managers;
 
 import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.objects.ChatFilter;
-import com.alttd.chat.objects.FilterType;
+import com.alttd.chat.util.ALogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,22 +18,15 @@ public class RegexManager {
     }
 
     public static void addFilter(ChatFilter filter) {
+        ALogger.info("Adding " + filter.getName());
         chatFilters.add(filter);
     }
-//    public static boolean violatesFilter(String text) {
-//        for (Map.Entry<Pattern, ArrayList<String>> entry : cancelRegex.entrySet()) {
-//            Matcher matcher = entry.getKey().matcher(text);
-//            while (matcher.find()) {
-//                if (!entry.getValue().contains(matcher.group())) return true;
-//            }
-//        }
-//        return false;
-//    }
 
     public static String replaceText(String text) { // TODO loop all objects in the list and check if they violate based on the MATCHER
         for(ChatFilter chatFilter : chatFilters) {
-
             switch (chatFilter.getType()) {
+                case CHAT:
+                    break;
                 case REPLACE:
                     text = chatFilter.replaceText(text);
                     break;
@@ -44,9 +37,6 @@ public class RegexManager {
                     break;
             }
         }
-//        for (Map.Entry<String, String> entry : replaceRegex.entrySet()) {
-//            text = text.replaceAll(entry.getKey(), entry.getValue());
-//        }
         return text;
     }
 

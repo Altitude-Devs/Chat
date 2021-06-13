@@ -4,6 +4,7 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,25 +12,27 @@ import java.util.stream.Collectors;
 
 public final class ChatUserManager {
 
-    private static CopyOnWriteArrayList<ChatUser> chatUsers;// not sure on this, could cause errors later on
+    private static ArrayList<ChatUser> chatUsers;// not sure on this, could cause errors later on
 
     public static void initialize() {
-        chatUsers = new CopyOnWriteArrayList<>();
-        Queries.loadChatUsers();
+        chatUsers = new ArrayList<>();
+        //Queries.loadChatUsers(); // todo fix sql
     }
 
     public static void addUser(ChatUser user) {
-        if(getChatUser(user.getUuid()) != null)
+        if(getChatUser(user.getUuid()) == null)
             chatUsers.add(user);
     }
 
     public static ChatUser getChatUser(UUID uuid) {
         for(ChatUser user : chatUsers) {
-            if(user.getUuid() == uuid) {
+            if(uuid.compareTo(user.getUuid()) == 0) {
                 return user;
             }
         }
-        return null;
+        ChatUser user = new ChatUser(uuid, -1, false, false);
+        chatUsers.add(user);
+        return user; // create a new user?
     }
 
     public List<Mail> getUnReadMail(ChatUser user) {

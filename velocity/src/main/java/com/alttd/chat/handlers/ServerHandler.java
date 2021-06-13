@@ -6,6 +6,7 @@ import com.alttd.chat.data.ServerWrapper;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,10 +37,12 @@ public class ServerHandler {
         }
     }
 
-    public void sendGlobalChat(Component message) {
+    public void sendGlobalChat(String message) {
+        Component component = GsonComponentSerializer.gson().deserialize(message);
+
         servers.stream()
                 .filter(serverWrapper -> serverWrapper.globalChat())
-                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(message));
+                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(component));
     }
 
     public List<ServerWrapper> getServers()

@@ -17,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public final class Config {
@@ -162,12 +163,14 @@ public final class Config {
     public static List<String> STAFFGROUPS = new ArrayList<>();
     public static String MINIMIUMSTAFFRANK = "trainee";
     public static String CONSOLENAME = "Console";
+    public static UUID CONSOLEUUID = UUID.randomUUID();
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
         STAFFGROUPS = getList("settings.staff-groups",
                 Lists.newArrayList("trainee", "moderator", "headmod", "admin", "manager", "owner"));
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);
+        CONSOLEUUID = UUID.fromString(getString("settings.console-uuid", CONSOLEUUID.toString()));
         MINIMIUMSTAFFRANK = getString("settings.minimum-staff-rank", MINIMIUMSTAFFRANK);
     }
 

@@ -39,12 +39,12 @@ public class DatabaseConnection {
                 return;
             }
             try {
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             connection = DriverManager.getConnection(
-                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true",
+                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true&enabledTLSProtocols=TLSv1.1",
                     Config.USERNAME, Config.PASSWORD);
         }
     }

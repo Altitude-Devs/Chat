@@ -3,7 +3,6 @@ package com.alttd.chat.database;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
-import com.alttd.chat.util.ALogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -272,7 +271,6 @@ public class Queries {
 
                 if (party == null) {
                     //TODO log this properly
-                    ALogger.error("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
                     System.out.println("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
                     continue;
                 }

@@ -24,7 +24,7 @@ public class GlobalAdminChat {
                         .executes(context -> {
                             VelocityChat.getPlugin().getChatHandler().globalAdminChat(context.getSource(), context.getArgument("message", String.class));
                             return 1;
-                        }) // TODO call in the same way as gc?
+                        })
                 )
                 .executes(context -> 0)
                 .build();

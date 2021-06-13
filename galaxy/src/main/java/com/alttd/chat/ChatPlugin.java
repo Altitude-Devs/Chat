@@ -3,6 +3,7 @@ package com.alttd.chat;
 import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
+import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
 import com.alttd.chat.util.ALogger;
@@ -22,10 +23,10 @@ public class ChatPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        new ALogger(this.getSLF4JLogger());
+        ALogger.init(getSLF4JLogger());
         chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
-        registerListener(new PlayerListener());
+        registerListener(new PlayerListener(), new ChatListener());
         registerCommand("globalchat", new GlobalChat());
 
         messageChannel = Config.MESSAGECHANNEL;

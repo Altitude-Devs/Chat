@@ -3,8 +3,6 @@ package com.alttd.chat;
 import com.alttd.chat.database.DatabaseConnection;
 import net.luckperms.api.LuckPerms;
 
-import java.util.UUID;
-
 public interface ChatAPI {
 
     static ChatAPI get() {

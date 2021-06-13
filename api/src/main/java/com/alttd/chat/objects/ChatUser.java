@@ -27,10 +27,10 @@ public class ChatUser {
         this.partyId = partyId;
         this.toggledPartyChat = toggledChat;
 
-        displayName = Queries.getNickname(uuid);
-        if (displayName == null) {
+        //displayName = Queries.getNickname(uuid); // todo fix sql
+        //if (displayName == null) {
             displayName = Utility.getDisplayName(uuid);
-        }
+        //}
 
         prefix = Utility.getPrefix(uuid, true);
         staffPrefix = Utility.getStaffPrefix(uuid);

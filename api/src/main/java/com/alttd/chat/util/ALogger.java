@@ -4,7 +4,7 @@ public class ALogger {
 
     private static org.slf4j.Logger logger;
 
-    public ALogger(org.slf4j.Logger log) {
+    public static void init(org.slf4j.Logger log) {
         logger = log;
     }
 
