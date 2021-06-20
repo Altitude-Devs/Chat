@@ -1,7 +1,6 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.VelocityChat;
-import com.alttd.chat.events.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -10,7 +9,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 public class GlobalAdminChat {
