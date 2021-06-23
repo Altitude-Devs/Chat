@@ -1,6 +1,8 @@
 package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalChat;
+import com.alttd.chat.commands.Message;
+import com.alttd.chat.commands.Reply;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
@@ -28,6 +30,8 @@ public class ChatPlugin extends JavaPlugin {
         chatHandler = new ChatHandler();
         registerListener(new PlayerListener(), new ChatListener());
         registerCommand("globalchat", new GlobalChat());
+        registerCommand("message", new Message());
+        registerCommand("reply", new Reply());
 
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
