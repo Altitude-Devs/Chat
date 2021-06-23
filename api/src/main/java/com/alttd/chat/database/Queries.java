@@ -8,10 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Queries {
 
@@ -65,33 +62,33 @@ public class Queries {
 
     //Ignore
 
-    public static void getIgnoredUsers() { //TODO store this in a user object or something? -> ChatPlayer
-        HashMap<UUID, ArrayList<UUID>> ignoredUsers = new HashMap<>(); //TODO Replace with a proper way/location to store this in -> a list<UUID> in ChatPlayer?
-        String query = "SELECT * FROM ignored_users";
+    /**
+     * returns the UUID of all players this player has ignored.
+     *
+     * @param uuid the player who ignored the other players
+     * @return LinkedList<UUID>
+     */
+    public static LinkedList<UUID> getIgnoredUsers(UUID uuid) {
+        LinkedList<UUID> uuids = new LinkedList<>();
+        String query = "SELECT * FROM ignored_users WHERE uuid = ?";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
 
-            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
+            statement.setString(1, uuid.toString());
+
+            ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 UUID ignoredUuid = UUID.fromString(resultSet.getString("ignored_uuid"));
-                ArrayList<UUID> uuids;
-
-                if (ignoredUsers.containsKey(uuid)) {
-                    uuids = ignoredUsers.get(uuid);
-                } else {
-                    uuids = new ArrayList<>();
-                }
-
                 uuids.add(ignoredUuid);
-                ignoredUsers.put(uuid, uuids);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return uuids;
     }
 
     public static void ignoreUser(UUID uuid, UUID ignoredUuid) {
@@ -299,7 +296,7 @@ public class Queries {
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
                 boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
                 // could do a constructor for chatuser to accept the record?
-                ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
+                //ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
             }
 
         } catch (SQLException e) {

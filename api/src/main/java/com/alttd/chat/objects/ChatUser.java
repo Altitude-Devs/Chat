@@ -41,7 +41,7 @@ public class ChatUser {
         replyTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = new LinkedList<>(); // todo load mails
-        ignoredPlayers = new LinkedList<>(); // todo load ignoredPlayers
+        ignoredPlayers = Queries.getIgnoredUsers(uuid);
         ignoredBy = new LinkedList<>(); // todo load ignoredPlayers
     }
 
