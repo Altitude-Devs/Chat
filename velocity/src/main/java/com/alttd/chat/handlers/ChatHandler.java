@@ -37,8 +37,6 @@ public class ChatHandler {
                 Template.of("message", message),
                 Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
 
-        Component component = miniMessage.parse("<message>", templates);
-
         Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, templates);
         Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, templates);
 
