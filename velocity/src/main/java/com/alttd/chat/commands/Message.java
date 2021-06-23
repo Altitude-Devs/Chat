@@ -21,7 +21,7 @@ import java.util.Optional;
 
 public class Message {
 
-    public Message(ProxyServer proxyServer) {
+    /*public Message(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("message")
                 .requires(ctx -> ctx.hasPermission("command.proxy.message"))// TODO permission system? load permissions from config?
@@ -29,7 +29,7 @@ public class Message {
                         .<CommandSource, String>argument("player", StringArgumentType.word())
                         .suggests((context, builder) -> {
                             Collection<String> possibleValues = new ArrayList<>();
-                            for (Player player : proxyServer.getAllPlayers()) { // todo all chatplayers? this can be heavy
+                            for (Player player : proxyServer.getAllPlayers()) {
                                 possibleValues.add(player.getGameProfile().getName());
                             }
                             if(possibleValues.isEmpty()) return Suggestions.empty();
@@ -48,14 +48,10 @@ public class Message {
 
                                     if (playerOptional.isPresent()) {
                                         Player receiver = playerOptional.get();
-                                        proxyServer.getEventManager().fire(new PrivateMessageEvent(context.getSource(), receiver, context.getArgument("message", String.class))).thenAccept((event) -> {
-                                            if(event.getResult() == ResultedEvent.GenericResult.allowed()) {
-                                                VelocityChat.getPlugin().getChatHandler().privateMessage(context.getSource(), receiver, context.getArgument("message", String.class));
-                                            }
-                                        });
+                                        VelocityChat.getPlugin().getChatHandler().privateMessage(context.getSource(), receiver, context.getArgument("message", String.class));
                                         return 1;
                                     } else {
-                                        // TODO NOBODY TO REPLY TO
+                                        // TODO wrong player message?
                                     }
                                     return 0;
                                 })
@@ -76,6 +72,6 @@ public class Message {
         CommandMeta meta = metaBuilder.build();
 
         proxyServer.getCommandManager().register(meta, brigadierCommand);
-    }
+    }*/
 
 }

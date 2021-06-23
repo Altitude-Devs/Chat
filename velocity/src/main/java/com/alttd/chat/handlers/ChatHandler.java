@@ -2,60 +2,48 @@ package com.alttd.chat.handlers;
 
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ChatHandler {
 
-    public void privateMessage(CommandSource commandSource, Player recipient, String message) {
-        // todo get the chatUserinstance of both players and or console - @teri should console be able to /msg?
-        String senderName;
-        String receiverName;
-        if (commandSource instanceof Player) {
-            Player sender = (Player) commandSource;
-            senderName = sender.getUsername();
-            //plugin.getChatHandler().getChatPlayer(sender.getUniqueId()).setReplyTarget(event.getRecipient().getUniqueId()); // TODO this needs to be cleaner
-        } else {
-            senderName = Config.CONSOLENAME;
-        }
-        receiverName = recipient.getUsername();
+    public void privateMessage(String sender, String target, String message) {
+        UUID uuid = UUID.fromString(sender);
+        ChatUser senderUser = ChatUserManager.getChatUser(uuid);
+        Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(uuid);
+        if(optionalPlayer.isEmpty()) return;
+        Player player = optionalPlayer.get();
+
+        Optional<Player> optionalPlayer2 = VelocityChat.getPlugin().getProxy().getPlayer(target);
+        if(optionalPlayer2.isEmpty()) return;
+        Player player2 = optionalPlayer2.get();
+        ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 
         MiniMessage miniMessage = MiniMessage.get();
 
-        message = Utility.parseColors(message);
-        if(!commandSource.hasPermission("chat.format")) // Todo PR fix for '<3' to minimessage
-            message = miniMessage.stripTokens(message);
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.of("sender", senderUser.getDisplayName()),
+                Template.of("receiver", targetUser.getDisplayName()),
+                Template.of("message", message),
+                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
 
-        message = RegexManager.replaceText(message); // this filters the message TODO should staff be able to bypass filters?
+        Component component = miniMessage.parse("<message>", templates);
 
-//        List<Template> templates = new ArrayList<>(List.of(
-//                Template.of("sender", user.getDisplayName()),
-//                Template.of("prefix", user.getPrefix()),
-//                Template.of("message", message),
-//                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")
-//                /*,Template.of("[i]" , itemComponent(sender.getInventory().getItemInMainHand()))*/ //Todo move this into ChatFilters
-//        ));
+        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, templates);
+        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, templates);
 
-        Map<String, String> map = new HashMap<>();
-
-        map.put("sender", senderName);
-        map.put("receiver", receiverName);
-        map.put("message", message);
-//        map.put("server", event.getRecipient().getCurrentServer().isPresent() ? event.getRecipient().getCurrentServer().get().getServerInfo().getName() : "Altitude");
-
-        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, map);
-        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, map);
-
-        commandSource.sendMessage(senderMessage);
-        recipient.sendMessage(receiverMessage);
+        player.sendMessage(senderMessage);
+        player2.sendMessage(receiverMessage);
     }
 
     public void globalAdminChat(String message) {

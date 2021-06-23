@@ -38,6 +38,9 @@ public class PluginMessageListener {
                     case "globaladminchat":
                         VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
                         break;
+                    case "privatemessage":
+                        VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
+                        break;
                     default:
                         VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
                         break;

@@ -14,6 +14,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +33,33 @@ public class ChatHandler {
         plugin = ChatPlugin.getInstance();
         miniMessage = MiniMessage.get();
         GCNOTENABLED = miniMessage.parse(Config.GCNOTENABLED);
+    }
+
+    public void privateMessage(Player player, String target, String message) {
+        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+
+        Component senderName = player.displayName();
+        String prefix = user.getPrefix();
+
+        message = RegexManager.replaceText(message); // todo a better way for this
+        if(message == null) return; // the message was blocked
+
+        if(!player.hasPermission("chat.format")) {
+            message = miniMessage.stripTokens(message);
+        } else {
+            message = Utility.parseColors(message);
+        }
+
+        if(message.contains("[i]"))
+            message = message.replace("[i]", "<[i]>");
+
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.of("message", message),
+                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand())))); // yes cross server [i];)
+
+        Component component = miniMessage.parse("<message>", templates);
+
+        sendPrivateMessage(player, target, "privatemessage", component);
     }
 
     public void globalChat(Player player, String message) {
@@ -77,7 +105,16 @@ public class ChatHandler {
     private void sendPluginMessage(Player player, String channel, Component component) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
-        out.writeUTF(GsonComponentSerializer.gson().serialize(component)); // todo use a better component serializer ~ look into kyori
+        out.writeUTF(GsonComponentSerializer.gson().serialize(component));
+        player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
+    }
+
+    private void sendPrivateMessage(Player player, String target, String channel, Component component) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(channel);
+        out.writeUTF(player.getUniqueId().toString());
+        out.writeUTF(target);
+        out.writeUTF(GsonComponentSerializer.gson().serialize(component));
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
 
