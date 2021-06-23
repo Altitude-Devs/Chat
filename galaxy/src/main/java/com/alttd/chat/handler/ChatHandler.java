@@ -37,10 +37,7 @@ public class ChatHandler {
 
     public void privateMessage(Player player, String target, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-
-        Component senderName = player.displayName();
-        String prefix = user.getPrefix();
-
+        user.setReplyTarget(target);
         message = RegexManager.replaceText(message); // todo a better way for this
         if(message == null) return; // the message was blocked
 

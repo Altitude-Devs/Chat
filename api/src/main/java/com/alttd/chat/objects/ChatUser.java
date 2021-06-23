@@ -15,7 +15,7 @@ public class ChatUser {
     private String staffPrefix; // doesn't need saving, we get this from luckperms
     private String prefixAll; // doesn't need saving, we get this from luckperms
     private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
-    private UUID replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
+    private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
 
     private LinkedList<Mail> mails; // mails aren't finalized yet, so for now a table sender, reciever, sendtime, readtime(if emtpy mail isn't read yet?, could also do a byte to control this), the actual message
@@ -102,11 +102,11 @@ public class ChatUser {
         return toggleGc;
     }
 
-    public UUID getReplyTarget() {
+    public String getReplyTarget() {
         return replyTarget;
     }
 
-    public void setReplyTarget(UUID replyTarget) {
+    public void setReplyTarget(String replyTarget) {
         this.replyTarget = replyTarget;
     }
 

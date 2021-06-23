@@ -9,3 +9,9 @@ commands:
     permission: command.globalchat
     permission-message: You do not have permission!
     aliases: gc
+  message:
+    permission: command.message
+    aliases: msg
+  reply:
+    permission: command.message
+    aliases: r
