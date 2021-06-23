@@ -202,6 +202,12 @@ public final class Config {
         GCCOOLDOWN = getInt("commands.globalchat.cooldown", GCCOOLDOWN);
     }
 
+    // TODO prefixes need hovers, this hasn't been setup yet!
+    public static String CHATFORMAT = "<white><light_purple><prefixall></light_purple> <gray><sender>: </gray><message>"; // @teri help with the default formatting?
+    private static void Chat() {
+        CHATFORMAT = getString("chat.format", CHATFORMAT);
+    }
+
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();
     public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team) <message>";
     private static void globalAdminChat() {
