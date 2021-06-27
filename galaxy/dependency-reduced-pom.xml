@@ -52,17 +52,11 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>Alttd-Nexus</id>
-      <url>http://leo:8081/snapshots/</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
-      <groupId>com.alttd.galaxy</groupId>
+      <groupId>com.alttd</groupId>
       <artifactId>galaxy-api</artifactId>
-      <version>1.16.5-R0.1-SNAPSHOT</version>
+      <version>1.17-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

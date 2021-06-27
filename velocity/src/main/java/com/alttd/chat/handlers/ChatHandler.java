@@ -87,16 +87,6 @@ public class ChatHandler {
         // todo construct the mail and notify the player if online?
     }
 
-    /**
-     * @param message the messaged to be parsed by the chatfilter
-     * @param player the player invoking the message
-     * @return the message altered by the filters
-     */
-    public String applyChatFilters(String message, Player player) {
-        return "";
-    }
-
-
     public void readMail(CommandSource commandSource, String targetPlayer, boolean unread) {
 
     }
@@ -104,6 +94,5 @@ public class ChatHandler {
     public void readMail(CommandSource commandSource, boolean unread) {
 
     }
-
 
 }

@@ -68,18 +68,10 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>Alttd-Nexus</id>
-            <url>http://leo:8081/snapshots/</url>
-        </repository>
+
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.alttd.galaxy</groupId>
-            <artifactId>galaxy-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>com.alttd.chat</groupId>
             <artifactId>chat-api</artifactId>
@@ -95,6 +87,11 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency><!-- Galaxy -->
+            <groupId>com.alttd</groupId>
+            <artifactId>galaxy-api</artifactId>
+            <version>1.17-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

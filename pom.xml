@@ -69,6 +69,15 @@
             <name>Sponge Maven Repository</name>
             <url>https://repo.spongepowered.org/maven</url>
         </repository>
+        <repository>
+            <id>Alttd-Nexus</id>
+            <url>http://leo:8081/snapshots/</url>
+        </repository>
+        <repository> <!-- can be removed when galaxy api is fixed, I fucked up when shading this in -->
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
     </repositories>
 
 </project>
