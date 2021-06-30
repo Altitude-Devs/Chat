@@ -2,6 +2,7 @@ package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalAdminChat;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handlers.ChatHandler;
 import com.alttd.chat.handlers.ServerHandler;
 import com.alttd.chat.listeners.ChatListener;
@@ -51,7 +52,9 @@ public class VelocityChat {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         ALogger.init(logger);
+
         chatAPI = new ChatImplementation();
+        DatabaseConnection.initialize();
 
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();

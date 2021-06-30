@@ -43,6 +43,7 @@ public class DatabaseConnection {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+
             connection = DriverManager.getConnection(
                     "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true&enabledTLSProtocols=TLSv1.1",
                     Config.USERNAME, Config.PASSWORD);
@@ -64,13 +65,13 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
 
-        return instance.connection;
+        return connection;
     }
 
     /**
      * Sets the connection for this instance
      */
-    public boolean initialize() {
+    public static boolean initialize() {
         instance = new DatabaseConnection();
         return connection != null;
     }

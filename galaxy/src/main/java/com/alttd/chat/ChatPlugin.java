@@ -4,6 +4,7 @@ import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.commands.Message;
 import com.alttd.chat.commands.Reply;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
@@ -28,6 +29,7 @@ public class ChatPlugin extends JavaPlugin {
         ALogger.init(getSLF4JLogger());
         chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
+        DatabaseConnection.initialize();
         registerListener(new PlayerListener(), new ChatListener());
         registerCommand("globalchat", new GlobalChat());
         registerCommand("message", new Message());
