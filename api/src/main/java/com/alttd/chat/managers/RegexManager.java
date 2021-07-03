@@ -18,7 +18,6 @@ public class RegexManager {
     }
 
     public static void addFilter(ChatFilter filter) {
-        ALogger.info("Adding " + filter.getName());
         chatFilters.add(filter);
     }
 

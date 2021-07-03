@@ -20,8 +20,8 @@ public class ChatImplementation implements ChatAPI{
         Config.init();
 
         luckPerms = getLuckPerms();
-        //databaseConnection = getDataBase(); // todo fix sql
-        //Queries.createTables(); // todo fix sql
+        databaseConnection = getDataBase(); // todo fix sql
+        Queries.createTables(); // todo fix sql
 
         ChatUserManager.initialize(); // loads all the users from the db and adds them.
         RegexManager.initialize(); // load the filters and regexes from config

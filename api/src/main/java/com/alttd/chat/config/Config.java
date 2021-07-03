@@ -236,14 +236,12 @@ public final class Config {
 
     }
 
-    public static String DRIVER = "mysql";
     public static String IP = "0.0.0.0";
     public static String PORT = "3306";
     public static String DATABASE = "database";
     public static String USERNAME = "root";
     public static String PASSWORD = "root";
     private static void database() {
-        DRIVER = getString("database.driver" , DRIVER);
         IP = getString("database.ip", IP);
         PORT = getString("database.port", PORT);
         DATABASE = getString("database.name", DATABASE);

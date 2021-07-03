@@ -2,6 +2,7 @@ package com.alttd.chat.database;
 
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.util.ALogger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,8 +45,11 @@ public class DatabaseConnection {
                 e.printStackTrace();
             }
 
+            ALogger.info("jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true"+
+                    "&useSSL=false");
             connection = DriverManager.getConnection(
-                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true&enabledTLSProtocols=TLSv1.1",
+                    "jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true"+
+                    "&useSSL=false",
                     Config.USERNAME, Config.PASSWORD);
         }
     }
