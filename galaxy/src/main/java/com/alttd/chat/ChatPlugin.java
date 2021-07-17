@@ -3,6 +3,7 @@ package com.alttd.chat;
 import com.alttd.chat.commands.GlobalChat;
 import com.alttd.chat.commands.Message;
 import com.alttd.chat.commands.Reply;
+import com.alttd.chat.commands.ToggleGlobalChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handler.ChatHandler;
@@ -32,6 +33,7 @@ public class ChatPlugin extends JavaPlugin {
         DatabaseConnection.initialize();
         registerListener(new PlayerListener(), new ChatListener());
         registerCommand("globalchat", new GlobalChat());
+        registerCommand("toggleglobalchat", new ToggleGlobalChat());
         registerCommand("message", new Message());
         registerCommand("reply", new Reply());
 
