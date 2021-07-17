@@ -46,7 +46,7 @@ public class ChatListener {
 
         map.put("sender", senderName);
         //map.put("message", event.getMessage());
-        map.put("message", Utility.parseColors(event.getMessage()));
+        map.put("message", event.getMessage());
         map.put("server", serverName);
 
         Component message = miniMessage.parse(Config.GACFORMAT, map);
@@ -55,11 +55,5 @@ public class ChatListener {
             target.sendMessage(message);
         });
     }
-
-    @Subscribe(order = PostOrder.FIRST)
-    public void onPlayerChat(PlayerChatEvent event) {
-        // do stuff
-    }
-
 
 }

@@ -20,7 +20,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency><!--TODO update to version 4.0.0-->
+        <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
             <version>3.7.1</version>

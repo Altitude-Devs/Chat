@@ -67,7 +67,10 @@
     </build>
 
     <repositories>
-
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -77,7 +80,7 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency><!--TODO update to version 4.0.0-->
+        <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
             <version>3.7.1</version>
@@ -86,6 +89,17 @@
             <groupId>com.alttd</groupId>
             <artifactId>galaxy-api</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.10.10</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

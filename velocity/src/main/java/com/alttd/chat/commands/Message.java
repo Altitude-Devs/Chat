@@ -24,7 +24,7 @@ public class Message {
     /*public Message(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("message")
-                .requires(ctx -> ctx.hasPermission("command.proxy.message"))// TODO permission system? load permissions from config?
+                .requires(ctx -> ctx.hasPermission("command.proxy.message"))
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("player", StringArgumentType.word())
                         .suggests((context, builder) -> {

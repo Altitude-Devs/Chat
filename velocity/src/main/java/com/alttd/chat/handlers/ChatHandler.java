@@ -53,26 +53,24 @@ public class ChatHandler {
     }
 
     public void globalAdminChat(CommandSource commandSource, String message) {
-        String senderName = Config.CONSOLENAME;
+        Component senderName = Component.text(Config.CONSOLENAME);
         String serverName = "Altitude";
         if (commandSource instanceof Player) {
             Player sender = (Player) commandSource;
-            senderName = sender.getUsername();
+            ChatUser user = ChatUserManager.getChatUser(sender.getUniqueId());
+            if(user == null) return;
+            senderName = user.getDisplayName();
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
         }
 
         MiniMessage miniMessage = MiniMessage.get();
 
-        message = Utility.parseColors(message);
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.of("message", message),
+                Template.of("sender", senderName),
+                Template.of("server", serverName)));
 
-        Map<String, String> map = new HashMap<>();
-
-        map.put("sender", senderName);
-        //map.put("message", event.getMessage());
-        map.put("message", Utility.parseColors(message));
-        map.put("server", serverName);
-
-        Component component = miniMessage.parse(Config.GACFORMAT, map);
+        Component component = miniMessage.parse(Config.GACFORMAT, templates);
 
         VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);

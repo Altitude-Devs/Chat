@@ -42,8 +42,6 @@ public class ChatHandler {
 
         if(!player.hasPermission("chat.format")) {
             message = miniMessage.stripTokens(message);
-        } else {
-            message = Utility.parseColors(message);
         }
 
         if(message.contains("[i]"))
@@ -71,16 +69,14 @@ public class ChatHandler {
             return;
         }
 
-        Component senderName = player.displayName();
-        String prefix = user.getPrefix();
+        Component senderName = user.getDisplayName();
+        Component prefix = user.getPrefix();
 
         message = RegexManager.replaceText(message); // todo a better way for this
         if(message == null) return; // the message was blocked
 
         if(!player.hasPermission("chat.format")) {
             message = miniMessage.stripTokens(message);
-        } else {
-            message = Utility.parseColors(message);
         }
 
         if(message.contains("[i]"))

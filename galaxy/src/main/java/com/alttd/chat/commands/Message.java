@@ -22,5 +22,4 @@ public class Message  implements CommandExecutor {
         return false;
     }
 
-    // Teri, is Tabcompleter needed here? we already have spigot setup to complete playernames on tab, doesn't work for crossserver stuff and offline players
 }

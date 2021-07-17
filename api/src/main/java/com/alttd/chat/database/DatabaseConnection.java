@@ -45,8 +45,6 @@ public class DatabaseConnection {
                 e.printStackTrace();
             }
 
-            ALogger.info("jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true"+
-                    "&useSSL=false");
             connection = DriverManager.getConnection(
                     "jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true"+
                     "&useSSL=false",

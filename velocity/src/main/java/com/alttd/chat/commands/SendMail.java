@@ -42,7 +42,7 @@ public class SendMail {
 
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("mail")
-                .requires(ctx -> ctx.hasPermission("command.proxy.mail"))// TODO permission
+                .requires(ctx -> ctx.hasPermission("command.proxy.mail"))
                 .then(LiteralArgumentBuilder.<CommandSource>literal("send")
                         .then(playerNode
                                 .then(RequiredArgumentBuilder

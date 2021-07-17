@@ -13,15 +13,15 @@ public class ChatImplementation implements ChatAPI{
     private static ChatAPI instance;
 
     private LuckPerms luckPerms;
-    private DatabaseConnection databaseConnection; // todo this isn't needed can be removed
+    private DatabaseConnection databaseConnection;
 
     public ChatImplementation() {
         instance = this;
         Config.init();
 
         luckPerms = getLuckPerms();
-        databaseConnection = getDataBase(); // todo fix sql
-        Queries.createTables(); // todo fix sql
+        databaseConnection = getDataBase();
+        Queries.createTables();
 
         ChatUserManager.initialize(); // loads all the users from the db and adds them.
         RegexManager.initialize(); // load the filters and regexes from config

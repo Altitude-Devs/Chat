@@ -2,6 +2,7 @@ package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.util.Utility;
+import net.kyori.adventure.text.Component;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -10,10 +11,11 @@ public class ChatUser {
     private final UUID uuid; // player uuid
     private final int partyId; // the party they are in
     private boolean toggledPartyChat; // should chat messages instantly go to party chat when added, idk if this should be saved
-    private String displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
-    private String prefix; // doesn't need saving, we get this from luckperms
-    private String staffPrefix; // doesn't need saving, we get this from luckperms
-    private String prefixAll; // doesn't need saving, we get this from luckperms
+    private String name; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
+    private Component displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
+    private Component prefix; // doesn't need saving, we get this from luckperms
+    private Component staffPrefix; // doesn't need saving, we get this from luckperms
+    private Component prefixAll; // doesn't need saving, we get this from luckperms
     private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
     private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
@@ -27,10 +29,11 @@ public class ChatUser {
         this.partyId = partyId;
         this.toggledPartyChat = toggledChat;
 
-        displayName = Queries.getNickname(uuid); // todo fix sql
-        if (displayName == null) {
-            displayName = Utility.getDisplayName(uuid);
+        name = Queries.getNickname(uuid);
+        if (name == null) {
+            name = Utility.getDisplayName(uuid);
         }
+        setDisplayName(name);
 
         prefix = Utility.getPrefix(uuid, true);
         staffPrefix = Utility.getStaffPrefix(uuid);
@@ -62,36 +65,24 @@ public class ChatUser {
         Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls - no CompleteableFuture<>!
     }
 
-    public String getDisplayName() {
+    public Component getDisplayName() {
         return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.displayName = Utility.applyColor(displayName);
     }
 
-    public String getPrefix() {
+    public Component getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getStaffPrefix() {
+    public Component getStaffPrefix() {
         return staffPrefix;
     }
 
-    public void setStaffPrefix(String staffPrefix) {
-        this.staffPrefix = staffPrefix;
-    }
-
-    public String getPrefixAll() {
+    public Component getPrefixAll() {
         return prefixAll;
-    }
-
-    public void setPrefixAll(String prefixAll) {
-        this.prefixAll = prefixAll;
     }
 
     public void toggleGc() {

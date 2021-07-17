@@ -16,7 +16,7 @@ public class GlobalAdminChat {
     public GlobalAdminChat(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("globaladminchat")
-                .requires(ctx -> ctx.hasPermission("command.proxy.globaladminchat"))// TODO permission system? load permissions from config?
+                .requires(ctx -> ctx.hasPermission("command.proxy.globaladminchat"))
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("message",  StringArgumentType.greedyString())
                         .executes(context -> {
