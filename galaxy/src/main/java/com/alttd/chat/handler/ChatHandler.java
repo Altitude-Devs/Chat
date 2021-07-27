@@ -65,7 +65,7 @@ public class ChatHandler {
             return;
         }
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
-        if(timeLeft <= Config.GCCOOLDOWN) { // player is on cooldown and should wait x seconds
+        if(timeLeft <= Config.GCCOOLDOWN || player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
             player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
             return;
         }
