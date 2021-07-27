@@ -32,7 +32,7 @@ public final class Config {
 
     public static File CONFIGPATH;
     public static void init() { // todo setup share for the config
-        CONFIGPATH = new File(System.getProperty("user.home")+File.separator+"ChatPlugin");
+        CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "ChatPlugin");
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");;
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
@@ -175,8 +175,8 @@ public final class Config {
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
     public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
-    public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receiver> ><light_purple>(Me -> <gray><receiver></gray>) <message>";
-    public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sender> ><light_purple>(<gray><sender></gray> on <server> -> Me) <message>";
+    public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receivername> ><light_purple>(Me -> <gray><receiver></gray>)</hover> <message>";
+    public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sendername> ><light_purple>(<gray><sender></gray> on <server> -> Me)</hover> <message>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
@@ -185,7 +185,7 @@ public final class Config {
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
     }
-///broadcast <white><light_purple><prefix></light_purple> <gray>Momlly</gray> <hover:show_text:on Atoll><yellow>to Global</yellow></hover><gray>: We Love <gold>Teri</gold> and <light_purple>Kappa</light_purple></gray></white>
+
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
     public static String GCPERMISSION = "proxy.globalchat";
     public static List<String> GCALIAS = new ArrayList<>();
@@ -193,7 +193,7 @@ public final class Config {
     public static String GCONCOOLDOWN = "You have to wait <cooldown> seconds before using this feature again."; // todo mini message formatting
     public static int GCCOOLDOWN = 30;
     private static void globalChat() {
-        MESSAGERECIEVER = getString("commands.globalchat.format", MESSAGERECIEVER);
+        GCFORMAT = getString("commands.globalchat.format", GCFORMAT);
         GCPERMISSION = getString("commands.globalchat.view-chat-permission", GCPERMISSION);
         GCALIAS.clear();
         GCALIAS = getList("commands.globalchat.alias", Lists.newArrayList("gc", "global"));
@@ -202,13 +202,13 @@ public final class Config {
     }
 
     // TODO prefixes need hovers, this hasn't been setup yet!
-    public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><sender>: <message>";
+    public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><sender>: <white><message>";
     private static void Chat() {
         CHATFORMAT = getString("chat.format", CHATFORMAT);
     }
 
     public static List<String> GACECOMMANDALIASES = new ArrayList<>();
-    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team) <message>";
+    public static String GACFORMAT = "<hover:show_text:Click to reply><click:suggest_command:/acg ><yellow>(<sender> on <server> -> Team)</hover> <message>";
     private static void globalAdminChat() {
         GACECOMMANDALIASES = getList("commands.globaladminchat.aliases", Lists.newArrayList("acg"));
         GACFORMAT = getString("commands.globaladminchat.format", GACFORMAT);

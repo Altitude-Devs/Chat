@@ -9,6 +9,7 @@ import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -49,7 +50,7 @@ public class ChatHandler {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("message", message),
-                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand())))); // yes cross server [i];)
+                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse("<message>", templates);
 
@@ -65,7 +66,7 @@ public class ChatHandler {
         }
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
         if(timeLeft <= Config.GCCOOLDOWN) { // player is on cooldown and should wait x seconds
-            player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", timeLeft+"")));
+            player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
             return;
         }
 
@@ -90,7 +91,7 @@ public class ChatHandler {
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse(Config.GCFORMAT, templates);
-
+        user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
 
@@ -112,15 +113,16 @@ public class ChatHandler {
 
     // Start - move these to util
     public static Component itemComponent(ItemStack item) {
-        Component component = Component.text("[i]");
-        if(item.getType().equals(Material.AIR)) // do we want to show the <players hand>?
-            return component;
+        Component component = Component.text("[i]", NamedTextColor.AQUA);
+        if(item.getType().equals(Material.AIR))
+            return component.color(NamedTextColor.WHITE);
         boolean dname = item.hasItemMeta() && item.getItemMeta().hasDisplayName();
         if(dname) {
             component = component.append(item.getItemMeta().displayName());
         } else {
-            component = Component.text(materialToName(item.getType()));
+            component = component.append(Component.text(materialToName(item.getType()), NamedTextColor.WHITE));
         }
+        component = component.append(Component.text(" x" + item.getAmount(), NamedTextColor.AQUA));
         component = component.hoverEvent(item.asHoverEvent());
         return component;
     }

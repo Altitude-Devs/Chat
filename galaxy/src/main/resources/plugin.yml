@@ -19,3 +19,7 @@ commands:
   reply:
     permission: command.message
     aliases: r
+  ignore:
+    permission: command.ignore
+  unignore:
+    permission: command.ignore

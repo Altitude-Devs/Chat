@@ -72,7 +72,7 @@ public class Utility {
             prefix.append(user.getCachedData().getMetaData().getPrefix());
         }
 
-        return LegacyComponentSerializer.builder().character('&').hexColors().build().deserialize(prefix.toString());
+        return applyColor(prefix.toString());
     }
 
     public static Component getStaffPrefix(UUID uuid) {
@@ -85,7 +85,7 @@ public class Utility {
             if(group != null)
                 prefix.append(group.getCachedData().getMetaData().getPrefix());
         }
-        return LegacyComponentSerializer.builder().character('&').hexColors().build().deserialize(prefix.toString());
+        return applyColor(prefix.toString());
     }
 
     public static String getDisplayName(UUID uuid) {

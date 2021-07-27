@@ -1,5 +1,6 @@
 package com.alttd.chat.managers;
 
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 
@@ -14,12 +15,14 @@ public final class ChatUserManager {
 
     public static void initialize() {
         chatUsers = new ArrayList<>();
-        //Queries.loadChatUsers(); // todo fix sql
     }
 
     public static void addUser(ChatUser user) {
-        if(getChatUser(user.getUuid()) == null)
-            chatUsers.add(user);
+        chatUsers.add(user);
+    }
+
+    public static void removeUser(ChatUser user) {
+        chatUsers.remove(user);
     }
 
     public static ChatUser getChatUser(UUID uuid) {
@@ -28,9 +31,11 @@ public final class ChatUserManager {
                 return user;
             }
         }
-        ChatUser user = new ChatUser(uuid, -1, false, false);
+        ChatUser user = Queries.loadChatUser(uuid);
+        if(user == null) user = new ChatUser(uuid, -1, false, false);
+        Queries.saveUser(user);
         chatUsers.add(user);
-        return user; // create a new user?
+        return user;
     }
 
     public List<Mail> getUnReadMail(ChatUser user) {

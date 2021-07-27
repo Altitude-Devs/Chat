@@ -2,6 +2,7 @@ package com.alttd.chat.database;
 
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
 
 import java.sql.Connection;
@@ -19,6 +20,7 @@ public class Queries {
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
         tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_chat` BIT(1) DEFAULT b'0', `toggled_gc` BIT(1) DEFAULT b'0', PRIMARY KEY (`uuid`))");
+        tables.add("CREATE TABLE IF NOT EXISTS mails (`id` INT NOT NULL AUTO_INCREMENT, `uuid` VARCHAR(36) NOT NULL, `from` VARCHAR(36) NOT NULL, `message` VARCHAR(256) NOT NULL, `sendtime` BIGINT default 0, `readtime` BIGINT default 0, PRIMARY KEY (`id`))");
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -295,13 +297,37 @@ public class Queries {
                 int partyId = resultSet.getInt("party_id");
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
                 boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
-                // could do a constructor for chatuser to accept the record?
-                //ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
+                ChatUserManager.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ChatUser loadChatUser(UUID uuid) { //TODO Get parties from cache somewhere
+        String query = "SELECT * FROM chat_users WHERE uuid = ?";
+        ChatUser user = null;
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, uuid.toString());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int partyId = resultSet.getInt("party_id");
+                boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
+                boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
+                user = new ChatUser(uuid, partyId, toggled_chat, toggle_Gc);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 
     public static void addUser(ChatUser user) {
@@ -324,6 +350,10 @@ public class Queries {
 
     public static void setPartyChatState(boolean toggledChat, UUID uuid) {
         setBitWhereId("UPDATE chat_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
+    }
+
+    public static void setGlobalChatState(boolean globalChat, UUID uuid) {
+        setBitWhereId("UPDATE chat_users set toggled_gc = ? WHERE uuid = ?", globalChat, uuid);
     }
 
     private static void setBitWhereId(String query, boolean bool, UUID uuid) {
@@ -356,4 +386,48 @@ public class Queries {
     }
 
     //-----------------------------------------
+
+    public static LinkedList<Mail> getMails(UUID uuid) {
+        LinkedList<Mail> mails = new LinkedList<>();
+        String query = "SELECT * FROM mails where uuid = ?";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, uuid.toString());
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                UUID fromUUID = UUID.fromString(resultSet.getString("from"));
+                String message = resultSet.getString("message");
+                long sendTime = resultSet.getLong("sendtime");
+                long readTime = resultSet.getLong("readtime");
+                mails.add(new Mail(uuid, fromUUID, sendTime, readTime, message));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return mails;
+    }
+
+    public static void saveUser(ChatUser user) {
+        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, toggled_gc) VALUES (?, ?, ?, ?)";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, user.getUuid().toString());
+            statement.setInt(2, user.getPartyId());
+            statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
+            statement.setInt(4, user.isGcOn() ? 1 : 0);
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

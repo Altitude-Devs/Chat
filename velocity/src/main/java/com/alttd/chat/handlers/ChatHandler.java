@@ -5,9 +5,14 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.Mail;
 import com.alttd.chat.util.Utility;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
@@ -33,15 +38,50 @@ public class ChatHandler {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderUser.getDisplayName()),
+                Template.of("sendername", player.getUsername()),
                 Template.of("receiver", targetUser.getDisplayName()),
-                Template.of("message", message),
+                Template.of("receivername", player2.getUsername()),
+                Template.of("message", GsonComponentSerializer.gson().deserialize(message)),
                 Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
 
-        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, templates);
-        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, templates);
+        ServerConnection serverConnection;
+        if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
+            // redirect to the sender
+            serverConnection = player.getCurrentServer().get();
+            Component component = miniMessage.parse(Config.MESSAGESENDER, templates);
+            ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+            buf.writeUTF("privatemessage");
+            buf.writeUTF(player.getUniqueId().toString());
+            buf.writeUTF(player2.getUsername());
+            buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
+            serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
 
-        player.sendMessage(senderMessage);
-        player2.sendMessage(receiverMessage);
+            //redirect to the receiver
+            serverConnection = player2.getCurrentServer().get();
+            component = miniMessage.parse(Config.MESSAGERECIEVER, templates);
+            buf = ByteStreams.newDataOutput();
+            buf.writeUTF("privatemessage");
+            buf.writeUTF(player2.getUniqueId().toString());
+            buf.writeUTF(player.getUsername());
+            buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
+            serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
+        }
+
+//        ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
+//
+//        MiniMessage miniMessage = MiniMessage.get();
+//
+//        List<Template> templates = new ArrayList<>(List.of(
+//                Template.of("sender", senderUser.getDisplayName()),
+//                Template.of("receiver", targetUser.getDisplayName()),
+//                Template.of("message", message),
+//                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
+//
+//        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, templates);
+//        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, templates);
+//
+//        player.sendMessage(senderMessage);
+//        player2.sendMessage(receiverMessage);
     }
 
     public void globalAdminChat(String message) {
@@ -82,6 +122,15 @@ public class ChatHandler {
      * / mail send playerA,playerB,playerC message
      */
     public void sendMail(CommandSource commandSource, String recipient, String message) {
+        UUID uuid;
+        if (commandSource instanceof Player) {
+            uuid = ((Player) commandSource).getUniqueId();
+        } else {
+            uuid = Config.CONSOLEUUID;
+        }
+        Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(recipient);
+
+        //Mail mail = new Mail()
         // todo construct the mail and notify the player if online?
     }
 

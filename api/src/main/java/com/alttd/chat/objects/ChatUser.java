@@ -13,9 +13,9 @@ public class ChatUser {
     private boolean toggledPartyChat; // should chat messages instantly go to party chat when added, idk if this should be saved
     private String name; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
     private Component displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
-    private Component prefix; // doesn't need saving, we get this from luckperms
-    private Component staffPrefix; // doesn't need saving, we get this from luckperms
-    private Component prefixAll; // doesn't need saving, we get this from luckperms
+//    private Component prefix; // doesn't need saving, we get this from luckperms
+//    private Component staffPrefix; // doesn't need saving, we get this from luckperms
+//    private Component prefixAll; // doesn't need saving, we get this from luckperms
     private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
     private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
@@ -35,15 +35,15 @@ public class ChatUser {
         }
         setDisplayName(name);
 
-        prefix = Utility.getPrefix(uuid, true);
-        staffPrefix = Utility.getStaffPrefix(uuid);
-
-        prefixAll = Utility.getPrefix(uuid, false);
+//        prefix = Utility.getPrefix(uuid, true); // TODO we need to update this, so cache and update when needed or always request it?
+//        staffPrefix = Utility.getStaffPrefix(uuid);
+//
+//        prefixAll = Utility.getPrefix(uuid, false);
 
         this.toggleGc = toggleGc;
         replyTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
-        mails = new LinkedList<>(); // todo load mails
+        mails = Queries.getMails(uuid);
         ignoredPlayers = Queries.getIgnoredUsers(uuid);
         ignoredBy = new LinkedList<>(); // todo load ignoredPlayers
     }
@@ -74,15 +74,18 @@ public class ChatUser {
     }
 
     public Component getPrefix() {
-        return prefix;
+        //return prefix;
+        return Utility.getPrefix(uuid, true); // No longer cache this data
     }
 
     public Component getStaffPrefix() {
-        return staffPrefix;
+        //return staffPrefix;
+        return Utility.getStaffPrefix(uuid);
     }
 
     public Component getPrefixAll() {
-        return prefixAll;
+        //return prefixAll;
+        return Utility.getPrefix(uuid, false);
     }
 
     public void toggleGc() {
@@ -115,6 +118,10 @@ public class ChatUser {
 
     public void addIgnoredPlayers(UUID uuid) {
         ignoredPlayers.add(uuid);
+    }
+
+    public void removeIgnoredPlayers(UUID uuid) {
+        ignoredPlayers.remove(uuid);
     }
 
     public LinkedList<UUID> getIgnoredBy() {

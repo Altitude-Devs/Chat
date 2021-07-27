@@ -96,7 +96,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.23</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>

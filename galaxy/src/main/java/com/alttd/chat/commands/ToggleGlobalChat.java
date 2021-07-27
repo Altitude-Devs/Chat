@@ -1,8 +1,10 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,9 +26,10 @@ public class ToggleGlobalChat implements CommandExecutor {
             public void run() {
                 ChatUser chatUser = ChatUserManager.getChatUser(((Player) sender).getUniqueId());
                 chatUser.toggleGc();
-                sender.sendMessage("You have turned globalchat " + (chatUser.isGcOn() ? "<green>on." : "<red>off.")); // TODO load from config and minimessage
+                Queries.setGlobalChatState(chatUser.isGcOn(), chatUser.getUuid());
+                sender.sendMessage(MiniMessage.get().parse("You have turned globalchat " + (chatUser.isGcOn() ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
             }
-        }.runTask(ChatPlugin.getInstance());
+        }.runTaskAsynchronously(ChatPlugin.getInstance());
         return false;
     }
 

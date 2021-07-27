@@ -96,4 +96,8 @@ public class VelocityChat {
     public ServerHandler getServerHandler() {
         return serverHandler;
     }
+
+    public ChannelIdentifier getChannelIdentifier() {
+        return channelIdentifier;
+    }
 }

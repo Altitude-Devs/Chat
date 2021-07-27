@@ -1,10 +1,18 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
+import java.util.UUID;
 
 public class PluginMessage implements PluginMessageListener {
 
@@ -16,6 +24,16 @@ public class PluginMessage implements PluginMessageListener {
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
         switch (subChannel) {
+            case "privatemessage":
+                UUID uuid = UUID.fromString(in.readUTF());
+                String target = in.readUTF();
+                Player p = Bukkit.getPlayer(uuid);
+                if(p != null) {
+                    ChatUser user = ChatUserManager.getChatUser(uuid);
+                    user.setReplyTarget(target);
+                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                }
+                break;
             case "globalchat":
                 break;
             default:

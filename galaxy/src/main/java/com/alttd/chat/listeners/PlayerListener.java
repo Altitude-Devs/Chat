@@ -1,5 +1,6 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,8 +25,15 @@ public class PlayerListener implements Listener {
 
         // todo actually load the users from db
         ChatUserManager.addUser(new ChatUser(uuid, -1, false, false));
-
     }
+
+    @EventHandler
+    private void onPlayerLogout(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        ChatUser user = ChatUserManager.getChatUser(uuid);
+        ChatUserManager.removeUser(user);
+    }
+
 
     @EventHandler(ignoreCancelled = true) // untested
     public void onSignChangeE(SignChangeEvent event) {
