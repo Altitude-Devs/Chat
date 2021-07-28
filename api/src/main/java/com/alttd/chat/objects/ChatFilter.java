@@ -17,7 +17,7 @@ public class ChatFilter {
         this.name = name;
         this.filterType = FilterType.getType(type);
         this.regex = regex;
-        this.pattern = Pattern.compile(getRegex());
+        this.pattern = Pattern.compile(getRegex(), Pattern.CASE_INSENSITIVE);
         this.replacement = replacement;
         this.exclusions = exclusions;
     }
