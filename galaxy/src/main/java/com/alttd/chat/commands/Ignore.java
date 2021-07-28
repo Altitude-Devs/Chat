@@ -39,9 +39,9 @@ public class Ignore implements CommandExecutor {
                 if(!chatUser.getIgnoredPlayers().contains(target)) {
                     chatUser.addIgnoredPlayers(target);
                     Queries.ignoreUser(((Player) sender).getUniqueId(), target);
-                    sender.sendMessage("You have turned ignored " + targetName + "."); // TODO load from config and minimessage
+                    sender.sendMessage("You have ignored " + targetName + "."); // TODO load from config and minimessage
                 } else {
-                    sender.sendMessage("You have already ignored " + targetName + "."); // TODO load from config and minimessage
+                    sender.sendMessage("You have ignored " + targetName + "."); // TODO load from config and minimessage
                 }
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());

@@ -33,7 +33,7 @@ public class Unignore implements CommandExecutor {
                 ChatUser chatUser = ChatUserManager.getChatUser(((Player) sender).getUniqueId());
                 if(chatUser.getIgnoredPlayers().contains(target)) {
                     chatUser.removeIgnoredPlayers(target);
-                    Queries.ignoreUser(((Player) sender).getUniqueId(), target);
+                    Queries.unIgnoreUser(((Player) sender).getUniqueId(), target);
                     sender.sendMessage("You no longer ignore " + targetName + "."); // TODO load from config and minimessage
                 } else {
                     sender.sendMessage("You don't have " + targetName + " ignored."); // TODO load from config and minimessage

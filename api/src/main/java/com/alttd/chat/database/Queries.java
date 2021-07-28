@@ -68,10 +68,10 @@ public class Queries {
      * returns the UUID of all players this player has ignored.
      *
      * @param uuid the player who ignored the other players
-     * @return LinkedList<UUID>
+     * @return List<UUID>
      */
-    public static LinkedList<UUID> getIgnoredUsers(UUID uuid) {
-        LinkedList<UUID> uuids = new LinkedList<>();
+    public static List<UUID> getIgnoredUsers(UUID uuid) {
+        List<UUID> uuids = new ArrayList<>();
         String query = "SELECT * FROM ignored_users WHERE uuid = ?";
 
         try {
@@ -387,8 +387,8 @@ public class Queries {
 
     //-----------------------------------------
 
-    public static LinkedList<Mail> getMails(UUID uuid) {
-        LinkedList<Mail> mails = new LinkedList<>();
+    public static List<Mail> getMails(UUID uuid) {
+        List<Mail> mails = new ArrayList<>();
         String query = "SELECT * FROM mails where uuid = ?";
 
         try {

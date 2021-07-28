@@ -177,6 +177,7 @@ public final class Config {
     public static List<String> REPLYCOMMANDALIASES = new ArrayList<>();
     public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receivername> ><light_purple>(Me -> <gray><receiver></gray>)</hover> <message>";
     public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sendername> ><light_purple>(<gray><sender></gray> on <server> -> Me)</hover> <message>";
+    public static String MESSAGESPY = "<gray>(<gray><sendername></gray> -> <receivername>) <message>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
@@ -184,6 +185,7 @@ public final class Config {
         REPLYCOMMANDALIASES = getList("commands.reply.aliases", Lists.newArrayList("r"));
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
+        MESSAGESPY = getString("commands.message.spy-message", MESSAGESPY);
     }
 
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";

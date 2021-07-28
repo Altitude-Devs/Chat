@@ -7,6 +7,7 @@ import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,11 +24,28 @@ public class PluginMessage implements PluginMessageListener {
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
+        UUID uuid;String target; Player p;
         switch (subChannel) {
-            case "privatemessage":
-                UUID uuid = UUID.fromString(in.readUTF());
-                String target = in.readUTF();
-                Player p = Bukkit.getPlayer(uuid);
+            case "privatemessagesend":
+                uuid = UUID.fromString(in.readUTF());
+                target = in.readUTF();
+                p = Bukkit.getPlayer(uuid);
+                if(p != null) {
+                    ChatUser user = ChatUserManager.getChatUser(uuid);
+                    user.setReplyTarget(target);
+                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                    Component spymessage = GsonComponentSerializer.gson().deserialize(in.readUTF());
+                    for(Player pl : Bukkit.getOnlinePlayers()) {
+                        if(pl.hasPermission("chat.social-spy")) { // todo add a toggle for social spy
+                            pl.sendMessage(spymessage);
+                        }
+                    }
+                }
+                break;
+            case "privatemessagesreceived":
+                uuid = UUID.fromString(in.readUTF());
+                target = in.readUTF();
+                p = Bukkit.getPlayer(uuid);
                 if(p != null) {
                     ChatUser user = ChatUserManager.getChatUser(uuid);
                     user.setReplyTarget(target);

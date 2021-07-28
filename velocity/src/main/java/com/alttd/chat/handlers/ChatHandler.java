@@ -47,23 +47,24 @@ public class ChatHandler {
         ServerConnection serverConnection;
         if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
             // redirect to the sender
+            String spyMessage = GsonComponentSerializer.gson().serialize(miniMessage.parse(Config.MESSAGESPY, templates));
             serverConnection = player.getCurrentServer().get();
             Component component = miniMessage.parse(Config.MESSAGESENDER, templates);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
-            buf.writeUTF("privatemessage");
+            buf.writeUTF("privatemessagesend");
             buf.writeUTF(player.getUniqueId().toString());
             buf.writeUTF(player2.getUsername());
             buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
+            buf.writeUTF(spyMessage);
             serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
 
             //redirect to the receiver
             serverConnection = player2.getCurrentServer().get();
             component = miniMessage.parse(Config.MESSAGERECIEVER, templates);
             buf = ByteStreams.newDataOutput();
-            buf.writeUTF("privatemessage");
+            buf.writeUTF("privatemessagesreceived");
             buf.writeUTF(player2.getUniqueId().toString());
             buf.writeUTF(player.getUsername());
-            buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
             serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
         }
 
