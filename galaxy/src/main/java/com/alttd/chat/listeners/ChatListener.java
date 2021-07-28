@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatListener implements Listener, ChatRenderer {
 
@@ -34,13 +36,25 @@ public class ChatListener implements Listener, ChatRenderer {
         Component input = event.message();
         String message = PlainComponentSerializer.plain().serialize(input);
 
+        MiniMessage miniMessage = MiniMessage.get();
+
         message = RegexManager.replaceText(message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
+            Bukkit.getOnlinePlayers().forEach(a ->{
+                Component blockedNotification = miniMessage.parse("<red>[Language] "
+                        + Objects.requireNonNull(player.getCustomName()) + " tried to say: "
+                        + PlainComponentSerializer.plain().serialize(input) + "</red>");
+                if (a.hasPermission("chat.alert-blocked")) {
+                    a.sendMessage(blockedNotification);//TODO make configurable
+                }
+            });
+            player.sendMessage(miniMessage.parse("<red>The language you used in your message is not allowed, " +
+                    "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
             return; // the message was blocked
         }
 
-        MiniMessage miniMessage = MiniMessage.get();
+
         if(!player.hasPermission("chat.format")) {
             message = miniMessage.stripTokens(message);
         }
