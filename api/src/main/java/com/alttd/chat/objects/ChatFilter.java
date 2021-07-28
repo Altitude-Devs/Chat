@@ -44,7 +44,7 @@ public class ChatFilter {
 
     public boolean matches(String input) {
         Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
+        return (matcher.find() || matcher.matches());
     }
 
     public String replaceText(String input) {
