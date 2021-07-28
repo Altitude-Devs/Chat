@@ -35,7 +35,10 @@ public class ChatListener implements Listener, ChatRenderer {
         String message = PlainComponentSerializer.plain().serialize(input);
 
         message = RegexManager.replaceText(message); // todo a better way for this
-        if(message == null)  return; // the message was blocked
+        if(message == null) {
+            event.setCancelled(true);
+            return; // the message was blocked
+        }
 
         MiniMessage miniMessage = MiniMessage.get();
         if(!player.hasPermission("chat.format")) {
