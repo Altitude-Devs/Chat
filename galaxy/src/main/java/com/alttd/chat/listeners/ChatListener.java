@@ -28,8 +28,8 @@ public class ChatListener implements Listener, ChatRenderer {
         Player player = event.getPlayer();
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
-        event.viewers().removeIf(audience -> audience instanceof Player
-                && user.getIgnoredPlayers().contains(((Player) audience).getUniqueId()));
+        event.viewers().removeIf(audience -> audience instanceof Player receiver
+                && ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()));
 
         Component input = event.message();
         String message = PlainComponentSerializer.plain().serialize(input);
