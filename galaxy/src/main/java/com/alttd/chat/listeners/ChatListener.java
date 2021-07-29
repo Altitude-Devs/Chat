@@ -5,15 +5,14 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ChatListener implements Listener, ChatRenderer {
 
@@ -41,16 +39,7 @@ public class ChatListener implements Listener, ChatRenderer {
         message = RegexManager.replaceText(message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
-            Bukkit.getOnlinePlayers().forEach(a ->{
-                Component blockedNotification = miniMessage.parse("<red>[Language] "
-                        + Objects.requireNonNull(player.getCustomName()) + " tried to say: "
-                        + PlainComponentSerializer.plain().serialize(input) + "</red>");
-                if (a.hasPermission("chat.alert-blocked")) {
-                    a.sendMessage(blockedNotification);//TODO make configurable
-                }
-            });
-            player.sendMessage(miniMessage.parse("<red>The language you used in your message is not allowed, " +
-                    "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
+            Utility.sendBlockedNotification("Language", player, input, "");
             return; // the message was blocked
         }
 

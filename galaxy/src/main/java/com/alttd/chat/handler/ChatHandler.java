@@ -38,18 +38,21 @@ public class ChatHandler {
     public void privateMessage(Player player, String target, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setReplyTarget(target);
-        message = RegexManager.replaceText(message); // todo a better way for this
-        if(message == null) return; // the message was blocked
-
-        if(!player.hasPermission("chat.format")) {
-            message = miniMessage.stripTokens(message);
+        String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
+        if(updatedMessage == null) {
+            Utility.sendBlockedNotification("DM Language", player, message, target);
+            return; // the message was blocked
         }
 
-        if(message.contains("[i]"))
-            message = message.replace("[i]", "<[i]>");
+        if(!player.hasPermission("chat.format")) {
+            updatedMessage = miniMessage.stripTokens(updatedMessage);
+        }
+
+        if(updatedMessage.contains("[i]"))
+            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("message", message),
+                Template.of("message", updatedMessage),
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse("<message>", templates);
@@ -73,20 +76,23 @@ public class ChatHandler {
         Component senderName = user.getDisplayName();
         Component prefix = user.getPrefix();
 
-        message = RegexManager.replaceText(message); // todo a better way for this
-        if(message == null) return; // the message was blocked
-
-        if(!player.hasPermission("chat.format")) {
-            message = miniMessage.stripTokens(message);
+        String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
+        if(updatedMessage == null) {
+            Utility.sendBlockedNotification("GC Language", player, message, "");
+            return; // the message was blocked
         }
 
-        if(message.contains("[i]"))
-            message = message.replace("[i]", "<[i]>"); // end of todo
+        if(!player.hasPermission("chat.format")) {
+            updatedMessage = miniMessage.stripTokens(updatedMessage);
+        }
+
+        if(updatedMessage.contains("[i]"))
+            updatedMessage = updatedMessage.replace("[i]", "<[i]>"); // end of todo
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),
                 Template.of("prefix", prefix),
-                Template.of("message", message),
+                Template.of("message", updatedMessage),
                 Template.of("server", Bukkit.getServerName()),
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
