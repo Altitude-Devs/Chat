@@ -414,7 +414,7 @@ public class Queries {
     }
 
     public static void saveUser(ChatUser user) {
-        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, toggled_gc) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, toggled_gc) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE party_id = ?, toggled_chat = ?, toggled_gc = ?";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -424,6 +424,9 @@ public class Queries {
             statement.setInt(2, user.getPartyId());
             statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
             statement.setInt(4, user.isGcOn() ? 1 : 0);
+            statement.setInt(5, user.getPartyId());
+            statement.setInt(6, user.toggledPartyChat() ? 1 : 0);
+            statement.setInt(7, user.isGcOn() ? 1 : 0);
 
             statement.execute();
         } catch (SQLException e) {
