@@ -2,7 +2,7 @@ package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Party {
@@ -11,27 +11,27 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private ArrayList<ChatUser> partyUsers; //TODO might need to be a map?
+    private HashMap<UUID, ChatUser> partyUsers; //TODO might need to be a map?
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
         this.ownerUuid = ownerUuid;
         this.partyName = partyName;
         this.partyPassword = partyPassword;
-        partyUsers = new ArrayList<>();
+        partyUsers = new HashMap<>();
     }
 
-    public void addUser(ArrayList<ChatUser> partyUsers) {
-        this.partyUsers.addAll(partyUsers);
+    public void addUser(HashMap<UUID, ChatUser> partyUsers) {
+        this.partyUsers.putAll(partyUsers);
     }
 
     public void addUser(ChatUser partyUser) {
-        this.partyUsers.add(partyUser);
+        this.partyUsers.put(partyUser.getUuid(), partyUser);
         Queries.addUser(partyUser);
     }
 
     public void removeUser(ChatUser partyUser) {
-        partyUsers.remove(partyUser);
+        partyUsers.remove(partyUser.getUuid());
         Queries.removeUser(partyUser.getUuid());
     }
 
@@ -70,11 +70,11 @@ public class Party {
         return !partyPassword.isEmpty();
     }
 
-    public ArrayList<ChatUser> getPartyUsers() {
+    public HashMap<UUID, ChatUser> getPartyUsers() {
         return partyUsers;
     }
 
-    public void setPartyUsers(ArrayList<ChatUser> partyUsers) {
+    public void setPartyUsers(HashMap<UUID, ChatUser> partyUsers) {
         this.partyUsers = partyUsers;
     }
 }
