@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
             if (component != null) {
                 String message = PlainComponentSerializer.plain().serialize(component);
 
-                message = RegexManager.replaceText(message); // todo a better way for this
+                message = RegexManager.replaceText(event.getPlayer(), message); // todo a better way for this
 
                 if (message == null) {
                     Utils.sendBlockedNotification("Sign Language" ,event.getPlayer(), PlainComponentSerializer.plain().serialize(component), "");
