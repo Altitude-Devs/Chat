@@ -11,6 +11,9 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.awt.*;
 import java.util.*;
@@ -84,6 +87,10 @@ public class Utility {
     }
 
     public static String getDisplayName(UUID uuid) {
+        OfflinePlayer player = Bukkit.getPlayer(uuid);
+        if (player != null && player.hasPlayedBefore()) {
+            return player.getName();
+        }
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
