@@ -3,6 +3,7 @@ package com.alttd.chat.managers;
 import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.objects.ChatFilter;
 import com.alttd.chat.util.ALogger;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class RegexManager {
         chatFilters.add(filter);
     }
 
-    public static String replaceText(String text) { // TODO loop all objects in the list and check if they violate based on the MATCHER
+    public static String replaceText(Player player, String text) { // TODO loop all objects in the list and check if they violate based on the MATCHER
         for(ChatFilter chatFilter : chatFilters) {
             switch (chatFilter.getType()) {
                 case CHAT:
@@ -33,7 +34,7 @@ public class RegexManager {
                     text = chatFilter.replaceText(text);
                     break;
                 case BLOCK:
-                    if(chatFilter.matches(text)) { // todo find a better way to do this?
+                    if(chatFilter.matches(text) && !player.hasPermission("chat.bypass-filter." + chatFilter.getName())) { // todo find a better way to do this?
                         return null;
                     }
                     break;
