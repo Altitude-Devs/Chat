@@ -41,6 +41,7 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("reply", new Reply());
         registerCommand("ignore", new Ignore());
         registerCommand("unignore", new Unignore());
+        registerCommand("muteserver", new MuteServer());
 
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
@@ -76,5 +77,13 @@ public class ChatPlugin extends JavaPlugin {
 
     public boolean serverGlobalChatEnabled() {
         return serverConfig.GLOBALCHAT;
+    }
+
+    public boolean serverMuted() {
+        return serverConfig.MUTED;
+    }
+
+    public void toggleServerMuted() {
+        serverConfig.MUTED = !serverConfig.MUTED;
     }
 }

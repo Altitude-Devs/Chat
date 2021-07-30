@@ -6,7 +6,6 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
-import com.alttd.chat.util.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import litebans.api.Database;
@@ -42,7 +41,7 @@ public class ChatHandler {
         user.setReplyTarget(target);
         String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
-            Utils.sendBlockedNotification("DM Language", player, message, target);
+            Utility.sendBlockedNotification("DM Language", player, message, target);
             return; // the message was blocked
         }
 
@@ -77,8 +76,8 @@ public class ChatHandler {
             return;
         }
 
-        if (Database.get().isPlayerMuted(player.getUniqueId(), null)) {
-            Utils.sendBlockedNotification("Muted" ,player, message, "");
+        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || ChatPlugin.getInstance().serverMuted()) {
+            Utility.sendMutedNotification("GC Muted", player, message);
             return;
         }
 
@@ -93,7 +92,7 @@ public class ChatHandler {
 
         String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
-            Utils.sendBlockedNotification("GC Language", player, message, "");
+            Utility.sendBlockedNotification("GC Language", player, message, "");
             return; // the message was blocked
         }
 
@@ -119,6 +118,7 @@ public class ChatHandler {
     private void sendPluginMessage(Player player, String channel, Component component) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
+        out.writeUTF(player.getUniqueId().toString());
         out.writeUTF(GsonComponentSerializer.gson().serialize(component));
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }

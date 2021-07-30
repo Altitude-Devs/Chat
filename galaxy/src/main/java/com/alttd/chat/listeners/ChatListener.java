@@ -6,7 +6,6 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
-import com.alttd.chat.util.Utils;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
@@ -40,7 +39,7 @@ public class ChatListener implements Listener, ChatRenderer {
         message = RegexManager.replaceText(event.getPlayer(), message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
-            Utils.sendBlockedNotification("Language", player, input, "");
+            Utility.sendBlockedNotification("Language", player, input, "");
             return; // the message was blocked
         }
 
