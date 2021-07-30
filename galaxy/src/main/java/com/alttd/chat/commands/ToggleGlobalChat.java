@@ -33,7 +33,7 @@ public class ToggleGlobalChat implements CommandExecutor {
                 //chatUser.toggleGc();
                 Utility.flipPermission(uuid, Config.GCPERMISSION);
                 //Queries.setGlobalChatState(chatUser.isGcOn(), chatUser.getUuid());
-                sender.sendMessage(MiniMessage.get().parse("You have turned globalchat " + (Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
+                sender.sendMessage(MiniMessage.get().parse("You have turned globalchat " + (!Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
         return false;
