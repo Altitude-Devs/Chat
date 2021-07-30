@@ -94,7 +94,7 @@ public class Utility {
         ChatAPI.get().getLuckPerms().getUserManager().modifyUser(uuid, user -> {
             // Add the permission
             user.data().add(Node.builder(permission)
-                    .value(user.getCachedData().getPermissionData().checkPermission(permission).asBoolean()).build());
+                    .value(!user.getCachedData().getPermissionData().checkPermission(permission).asBoolean()).build());
         });
     }
 
