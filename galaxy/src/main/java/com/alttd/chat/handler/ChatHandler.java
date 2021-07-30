@@ -9,6 +9,7 @@ import com.alttd.chat.util.Utility;
 import com.alttd.chat.util.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import litebans.api.Database;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -63,7 +64,7 @@ public class ChatHandler {
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = miniMessage.parse(Config.MESSAGESPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
-            if(pl.hasPermission("chat.social-spy")) { // todo add a toggle for social spy
+            if(pl.hasPermission("chat.social-spy") && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) { // todo add a toggle for social spy
                 pl.sendMessage(spymessage);
             }
         }
@@ -75,6 +76,12 @@ public class ChatHandler {
             player.sendMessage(GCNOTENABLED);// GC IS OFF INFORM THEM ABOUT THIS and cancel
             return;
         }
+
+        if (Database.get().isPlayerMuted(player.getUniqueId(), null)) {
+            Utils.sendBlockedNotification("Muted" ,player, message, "");
+            return;
+        }
+
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
         if(timeLeft <= Config.GCCOOLDOWN && !player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
             player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
