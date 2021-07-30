@@ -48,11 +48,11 @@ public class ProxyPlayerListener {
             // todo Code clean up @Destro
             ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERSWTICHMESSAGETO, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERSWTICHMESSAGETO, templates));
             }
             wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERSWTICHMESSAGEFROM, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERSWTICHMESSAGEFROM, templates));
             }
         } else {
             List<Template> templates = new ArrayList<>(List.of(
@@ -60,7 +60,7 @@ public class ProxyPlayerListener {
             ));
             ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERJOINMESSAGE, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERJOINMESSAGE, templates));
             }
         }
     }
@@ -78,7 +78,7 @@ public class ProxyPlayerListener {
 
             ServerWrapper wrapper = serverHandler.getWrapper(registeredServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(miniMessage.parse(Config.SERVERLEAVEMESSAGE, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERLEAVEMESSAGE, templates));
             }
         }
     }

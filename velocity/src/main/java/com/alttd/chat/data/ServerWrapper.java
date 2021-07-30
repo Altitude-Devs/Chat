@@ -1,8 +1,11 @@
 package com.alttd.chat.data;
 
 import com.alttd.chat.config.ServerConfig;
+import com.alttd.chat.managers.ChatUserManager;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
+
+import java.util.UUID;
 
 public class ServerWrapper {
 
@@ -37,8 +40,10 @@ public class ServerWrapper {
         return joinMessages;
     }
 
-    public void sendJoinLeaveMessage(Component component) {
+    public void sendJoinLeaveMessage(UUID uuid, Component component) {
         if(joinMessages())
-            getRegisteredServer().sendMessage(component);
+            getRegisteredServer().getPlayersConnected().stream()
+                    .filter(p -> ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                    .forEach(p -> p.sendMessage(component));
     }
 }
