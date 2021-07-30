@@ -70,8 +70,10 @@ public final class ServerConfig {
 
     public boolean GLOBALCHAT = true;
     public boolean JOINLEAVEMSSAGES = true;
+    public boolean MUTED = false;
     private void ServerSettings() {
         GLOBALCHAT = getBoolean("global-chat-enabled", GLOBALCHAT);
         JOINLEAVEMSSAGES = getBoolean("joinleave-messages-enabled", JOINLEAVEMSSAGES);
+        MUTED = getBoolean("server-muted", MUTED);
     }
 }

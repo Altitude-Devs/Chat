@@ -238,6 +238,12 @@ public final class Config {
 
     }
 
+    public static String SERVERMUTEPERMISSION = "chat.server-mute";
+
+    private static void permissions() {
+        SERVERMUTEPERMISSION = getString("permissions.server-mute", SERVERMUTEPERMISSION);
+    }
+
     public static String IP = "0.0.0.0";
     public static String PORT = "3306";
     public static String DATABASE = "database";
