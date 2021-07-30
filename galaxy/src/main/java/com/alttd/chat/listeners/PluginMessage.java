@@ -40,18 +40,18 @@ public class PluginMessage implements PluginMessageListener {
             case "globalchat": {
                 if (ChatPlugin.getInstance().serverGlobalChatEnabled()) {
                     String uuidString = in.readUTF();
-                    if (uuidString.matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")) {
-                        Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(in.readUTF()), Config.GCPERMISSION);
+                    if (!uuidString.matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")) {
+                        Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(uuidString), Config.GCPERMISSION);
                         break;
                     }
 
                     UUID uuid = UUID.fromString(uuidString);
                     String message = in.readUTF();
 
-                    Bukkit.getOnlinePlayers().forEach(a -> {
-                        ChatUser chatUser = ChatUserManager.getChatUser(a.getUniqueId());
-                        if (a.hasPermission(Config.GCPERMISSION) && chatUser.getIgnoredPlayers().contains(uuid)) {
-                            a.sendMessage(GsonComponentSerializer.gson().deserialize(message));
+                    Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(Config.GCPERMISSION)).forEach(p -> {
+                        ChatUser chatUser = ChatUserManager.getChatUser(p.getUniqueId());
+                        if (chatUser.getIgnoredPlayers().contains(uuid)) {
+                            p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
                         }
                     });
                 }
