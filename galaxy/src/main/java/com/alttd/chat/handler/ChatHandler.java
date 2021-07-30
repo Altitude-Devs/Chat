@@ -39,7 +39,7 @@ public class ChatHandler {
     public void privateMessage(Player player, String target, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setReplyTarget(target);
-        String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
+        String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
             Utils.sendBlockedNotification("DM Language", player, message, target);
             return; // the message was blocked
@@ -84,7 +84,7 @@ public class ChatHandler {
         Component senderName = user.getDisplayName();
         Component prefix = user.getPrefix();
 
-        String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
+        String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
             Utils.sendBlockedNotification("GC Language", player, message, "");
             return; // the message was blocked
