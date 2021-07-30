@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
+import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -25,20 +26,37 @@ public class PluginMessage implements PluginMessageListener {
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
         switch (subChannel) {
-            case "privatemessage":
+            case "privatemessage": {
                 UUID uuid = UUID.fromString(in.readUTF());
                 String target = in.readUTF();
                 Player p = Bukkit.getPlayer(uuid);
-                if(p != null) {
+                if (p != null) {
                     p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
                     ChatUser user = ChatUserManager.getChatUser(uuid);
                     user.setReplyTarget(target);
                 }
                 break;
-            case "globalchat":
-                if(ChatPlugin.getInstance().serverGlobalChatEnabled())
-                    Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(in.readUTF()), Config.GCPERMISSION);
+            }
+            case "globalchat": {
+                if (ChatPlugin.getInstance().serverGlobalChatEnabled()) {
+                    String uuidString = in.readUTF();
+                    if (uuidString.matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")) {
+                        Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(in.readUTF()), Config.GCPERMISSION);
+                        break;
+                    }
+
+                    UUID uuid = UUID.fromString(uuidString);
+                    String message = in.readUTF();
+
+                    Bukkit.getOnlinePlayers().forEach(a -> {
+                        ChatUser chatUser = ChatUserManager.getChatUser(a.getUniqueId());
+                        if (a.hasPermission(Config.GCPERMISSION) && chatUser.getIgnoredPlayers().contains(uuid)) {
+                            a.sendMessage(GsonComponentSerializer.gson().deserialize(message));
+                        }
+                    });
+                }
                 break;
+            }
             default:
                 break;
         }
