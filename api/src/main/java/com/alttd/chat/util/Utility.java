@@ -10,13 +10,10 @@ import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import net.luckperms.api.node.Node;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class Utility {
 
@@ -58,22 +55,17 @@ public class Utility {
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return Component.empty();
-        if(single) {
-            Group group = luckPerms.getGroupManager().getGroup(user.getPrimaryGroup());
-            if(group != null)
-                prefix.append(group.getCachedData().getMetaData().getPrefix());
-//            Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
-//            inheritedGroups.stream()
-//                    .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
-//                    .distinct()
-//                    .forEach(group -> {
-//                        if (Config.PREFIXGROUPS.contains(group.getName())) {
-//                            prefix.append("[").append(group.getCachedData().getMetaData().getPrefix()).append("]");
-//                        }
-//                    });
-        } else {
-            prefix.append(user.getCachedData().getMetaData().getPrefix());
+        if(!single) {
+            Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
+            inheritedGroups.stream()
+                    .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
+                    .forEach(group -> {
+                        if (Config.PREFIXGROUPS.contains(group.getName())) {
+                            prefix.append(group.getCachedData().getMetaData().getPrefix());
+                        }
+                    });
         }
+        prefix.append(user.getCachedData().getMetaData().getPrefix());
 
         return applyColor(prefix.toString());
     }
@@ -96,6 +88,21 @@ public class Utility {
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
         return user.getUsername();
+    }
+
+    public static void flipPermission(UUID uuid, String permission) {
+        ChatAPI.get().getLuckPerms().getUserManager().modifyUser(uuid, user -> {
+            // Add the permission
+            user.data().add(Node.builder(permission)
+                    .value(user.getCachedData().getPermissionData().checkPermission(permission).asBoolean()).build());
+        });
+    }
+
+    public static boolean hasPermission(UUID uuid, String permission) {
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        User user = luckPerms.getUserManager().getUser(uuid);
+        if(user == null) return false;
+        return user.getCachedData().getPermissionData().checkPermission(permission).asBoolean();
     }
 
     public static Component applyColor(String message) {
@@ -172,23 +179,4 @@ public class Utility {
                 : miniMessage.parse(stringBuilder.toString());
     }
 
-
-    public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
-        MiniMessage miniMessage = MiniMessage.get();
-        Bukkit.getOnlinePlayers().forEach(a ->{
-            Component blockedNotification = miniMessage.parse("<red>[" + prefix + "] "
-                    + getDisplayName(player.getUniqueId())
-                    + (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")
-                    + input + "</red>");
-            if (a.hasPermission("chat.alert-blocked")) {
-                a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-            }
-        });
-        player.sendMessage(miniMessage.parse("<red>The language you used in your message is not allowed, " +
-                "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
-    }
-
-    public static void sendBlockedNotification(String prefix, Player player, Component input, String target) {
-        sendBlockedNotification(prefix, player, PlainComponentSerializer.plain().serialize(input), target);
-    }
 }

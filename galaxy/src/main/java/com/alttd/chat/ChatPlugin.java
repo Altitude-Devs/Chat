@@ -2,12 +2,14 @@ package com.alttd.chat;
 
 import com.alttd.chat.commands.*;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
 import com.alttd.chat.util.ALogger;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +22,7 @@ public class ChatPlugin extends JavaPlugin {
     private ChatHandler chatHandler;
 
     private String messageChannel;
+    private ServerConfig serverConfig;
 
     @Override
     public void onEnable() {
@@ -28,9 +31,12 @@ public class ChatPlugin extends JavaPlugin {
         chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
         DatabaseConnection.initialize();
+        serverConfig = new ServerConfig(Bukkit.getServerName());
         registerListener(new PlayerListener(), new ChatListener());
-        registerCommand("globalchat", new GlobalChat());
-        registerCommand("toggleglobalchat", new ToggleGlobalChat());
+        if(serverConfig.GLOBALCHAT) {
+            registerCommand("globalchat", new GlobalChat());
+            registerCommand("toggleglobalchat", new ToggleGlobalChat());
+        }
         registerCommand("message", new Message());
         registerCommand("reply", new Reply());
         registerCommand("ignore", new Ignore());
@@ -66,5 +72,9 @@ public class ChatPlugin extends JavaPlugin {
 
     public ChatHandler getChatHandler() {
         return chatHandler;
+    }
+
+    public boolean serverGlobalChatEnabled() {
+        return serverConfig.GLOBALCHAT;
     }
 }

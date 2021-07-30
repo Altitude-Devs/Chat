@@ -24,35 +24,20 @@ public class PluginMessage implements PluginMessageListener {
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
-        UUID uuid;String target; Player p;
         switch (subChannel) {
-            case "privatemessagesend":
-                uuid = UUID.fromString(in.readUTF());
-                target = in.readUTF();
-                p = Bukkit.getPlayer(uuid);
+            case "privatemessage":
+                UUID uuid = UUID.fromString(in.readUTF());
+                String target = in.readUTF();
+                Player p = Bukkit.getPlayer(uuid);
                 if(p != null) {
+                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
                     ChatUser user = ChatUserManager.getChatUser(uuid);
                     user.setReplyTarget(target);
-                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
-                    Component spymessage = GsonComponentSerializer.gson().deserialize(in.readUTF());
-                    for(Player pl : Bukkit.getOnlinePlayers()) {
-                        if(pl.hasPermission("chat.social-spy")) { // todo add a toggle for social spy
-                            pl.sendMessage(spymessage);
-                        }
-                    }
-                }
-                break;
-            case "privatemessagesreceived":
-                uuid = UUID.fromString(in.readUTF());
-                target = in.readUTF();
-                p = Bukkit.getPlayer(uuid);
-                if(p != null) {
-                    ChatUser user = ChatUserManager.getChatUser(uuid);
-                    user.setReplyTarget(target);
-                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
                 }
                 break;
             case "globalchat":
+                if(ChatPlugin.getInstance().serverGlobalChatEnabled())
+                    Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(in.readUTF()), Config.GCPERMISSION);
                 break;
             default:
                 break;

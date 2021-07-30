@@ -5,6 +5,7 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
+import com.alttd.chat.util.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.event.EventHandler;
@@ -46,7 +47,7 @@ public class PlayerListener implements Listener {
                 message = RegexManager.replaceText(message); // todo a better way for this
 
                 if (message == null) {
-                    Utility.sendBlockedNotification("Sign Language" ,event.getPlayer(), PlainComponentSerializer.plain().serialize(component), "");
+                    Utils.sendBlockedNotification("Sign Language" ,event.getPlayer(), PlainComponentSerializer.plain().serialize(component), "");
                 }
 
                 component = message == null ? Component.empty() : Component.text(message);

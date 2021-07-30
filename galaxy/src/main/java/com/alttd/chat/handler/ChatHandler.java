@@ -6,6 +6,7 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
+import com.alttd.chat.util.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -40,7 +41,7 @@ public class ChatHandler {
         user.setReplyTarget(target);
         String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
         if(updatedMessage == null) {
-            Utility.sendBlockedNotification("DM Language", player, message, target);
+            Utils.sendBlockedNotification("DM Language", player, message, target);
             return; // the message was blocked
         }
 
@@ -53,22 +54,29 @@ public class ChatHandler {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("message", updatedMessage),
+                Template.of("sendername", player.getName()),
+                Template.of("receivername", target),
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse("<message>", templates);
 
         sendPrivateMessage(player, target, "privatemessage", component);
+        Component spymessage = miniMessage.parse(Config.MESSAGESPY, templates);
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if(pl.hasPermission("chat.social-spy")) { // todo add a toggle for social spy
+                pl.sendMessage(spymessage);
+            }
+        }
     }
 
     public void globalChat(Player player, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-        if(user == null) return;
-        if(!user.isGcOn()) {
+        if(!Utility.hasPermission(player.getUniqueId(), Config.GCPERMISSION)) {
             player.sendMessage(GCNOTENABLED);// GC IS OFF INFORM THEM ABOUT THIS and cancel
             return;
         }
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
-        if(timeLeft <= Config.GCCOOLDOWN || player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
+        if(timeLeft <= Config.GCCOOLDOWN && !player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
             player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
             return;
         }
@@ -78,7 +86,7 @@ public class ChatHandler {
 
         String updatedMessage = RegexManager.replaceText(message); // todo a better way for this
         if(updatedMessage == null) {
-            Utility.sendBlockedNotification("GC Language", player, message, "");
+            Utils.sendBlockedNotification("GC Language", player, message, "");
             return; // the message was blocked
         }
 

@@ -1,9 +1,12 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.Utility;
+import jdk.jshell.execution.Util;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
@@ -13,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class ToggleGlobalChat implements CommandExecutor {
 
@@ -24,10 +28,12 @@ public class ToggleGlobalChat implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChatUser chatUser = ChatUserManager.getChatUser(((Player) sender).getUniqueId());
-                chatUser.toggleGc();
-                Queries.setGlobalChatState(chatUser.isGcOn(), chatUser.getUuid());
-                sender.sendMessage(MiniMessage.get().parse("You have turned globalchat " + (chatUser.isGcOn() ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
+                UUID uuid = ((Player) sender).getUniqueId();
+                ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                //chatUser.toggleGc();
+                Utility.flipPermission(uuid, Config.GCPERMISSION);
+                //Queries.setGlobalChatState(chatUser.isGcOn(), chatUser.getUuid());
+                sender.sendMessage(MiniMessage.get().parse("You have turned globalchat " + (Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
         return false;

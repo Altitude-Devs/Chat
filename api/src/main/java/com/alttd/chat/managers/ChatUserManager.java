@@ -27,7 +27,7 @@ public final class ChatUserManager {
 
     public static ChatUser getChatUser(UUID uuid) {
         for(ChatUser user : chatUsers) {
-            if(uuid.compareTo(user.getUuid()) == 0) {
+            if(uuid.equals(user.getUuid())) {
                 return user;
             }
         }

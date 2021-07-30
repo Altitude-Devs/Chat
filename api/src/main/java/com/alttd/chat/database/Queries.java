@@ -340,7 +340,8 @@ public class Queries {
             statement.setString(1, user.getUuid().toString());
             statement.setInt(2, user.getPartyId());
             statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
-            statement.setInt(5, user.isGcOn() ? 1 : 0);
+            statement.setInt(4, 0);
+//            statement.setInt(5, user.isGcOn() ? 1 : 0);
 
             statement.execute();
         } catch (SQLException e) {
@@ -423,10 +424,10 @@ public class Queries {
             statement.setString(1, user.getUuid().toString());
             statement.setInt(2, user.getPartyId());
             statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
-            statement.setInt(4, user.isGcOn() ? 1 : 0);
+            statement.setInt(4, 0);
             statement.setInt(5, user.getPartyId());
             statement.setInt(6, user.toggledPartyChat() ? 1 : 0);
-            statement.setInt(7, user.isGcOn() ? 1 : 0);
+            statement.setInt(7, 0);
 
             statement.execute();
         } catch (SQLException e) {

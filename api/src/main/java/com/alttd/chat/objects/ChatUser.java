@@ -17,7 +17,7 @@ public class ChatUser {
 //    private Component prefix; // doesn't need saving, we get this from luckperms
 //    private Component staffPrefix; // doesn't need saving, we get this from luckperms
 //    private Component prefixAll; // doesn't need saving, we get this from luckperms
-    private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
+    //private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
     private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
 
@@ -41,7 +41,7 @@ public class ChatUser {
 //
 //        prefixAll = Utility.getPrefix(uuid, false);
 
-        this.toggleGc = toggleGc;
+        //this.toggleGc = toggleGc;
         replyTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = Queries.getMails(uuid);
@@ -87,14 +87,6 @@ public class ChatUser {
     public Component getPrefixAll() {
         //return prefixAll;
         return Utility.getPrefix(uuid, false);
-    }
-
-    public void toggleGc() {
-        toggleGc = !toggleGc;
-    }
-
-    public boolean isGcOn() {
-        return toggleGc;
     }
 
     public String getReplyTarget() {

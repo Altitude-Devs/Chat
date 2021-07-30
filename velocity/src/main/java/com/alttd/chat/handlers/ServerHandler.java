@@ -3,6 +3,8 @@ package com.alttd.chat.handlers;
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.data.ServerWrapper;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
@@ -38,11 +40,18 @@ public class ServerHandler {
     }
 
     public void sendGlobalChat(String message) {
-        Component component = GsonComponentSerializer.gson().deserialize(message);
+//        Component component = GsonComponentSerializer.gson().deserialize(message);
 
         servers.stream()
-                .filter(serverWrapper -> serverWrapper.globalChat())
-                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(component));
+                .map(ServerWrapper::getRegisteredServer)
+                .forEach(registeredServer -> {
+                    ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+                    buf.writeUTF("globalchat");
+                    buf.writeUTF(message);
+                    registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
+                });
+//                .filter(serverWrapper -> serverWrapper.globalChat())
+//                .forEach(serverWrapper -> serverWrapper.getRegisteredServer().sendMessage(component));
     }
 
     public List<ServerWrapper> getServers()
