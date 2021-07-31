@@ -28,7 +28,7 @@ public class MuteServer implements CommandExecutor {
                     return;
                 }
                 ChatPlugin.getInstance().toggleServerMuted();
-                sender.sendMessage(MiniMessage.get().parse("You have " + (!Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>muted</green>" : "<red>unmuted</red>")) + " chat for this server."); // TODO load from config and minimessage
+                sender.sendMessage(MiniMessage.get().parse("You have " + (!Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>muted</green>" : "<red>unmuted</red>") + " chat for this server.")); // TODO load from config and minimessage
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
         return false;

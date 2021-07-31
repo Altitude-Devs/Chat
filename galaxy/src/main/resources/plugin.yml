@@ -23,3 +23,5 @@ commands:
     permission: command.ignore
   unignore:
     permission: command.ignore
+  muteserver:
+    permission: command.mute-server

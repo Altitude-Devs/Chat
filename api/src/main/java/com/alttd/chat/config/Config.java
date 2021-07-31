@@ -238,7 +238,7 @@ public final class Config {
 
     }
 
-    public static String SERVERMUTEPERMISSION = "chat.server-mute";
+    public static String SERVERMUTEPERMISSION = "command.mute-server";
 
     private static void permissions() {
         SERVERMUTEPERMISSION = getString("permissions.server-mute", SERVERMUTEPERMISSION);
