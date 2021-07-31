@@ -39,7 +39,7 @@ public class ServerHandler {
         }
     }
 
-    public void sendGlobalChat(String message) {
+    public void sendGlobalChat(String uuid, String message) {
 //        Component component = GsonComponentSerializer.gson().deserialize(message);
 
         servers.stream()
@@ -47,6 +47,7 @@ public class ServerHandler {
                 .forEach(registeredServer -> {
                     ByteArrayDataOutput buf = ByteStreams.newDataOutput();
                     buf.writeUTF("globalchat");
+                    buf.writeUTF(uuid);
                     buf.writeUTF(message);
                     registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
                 });

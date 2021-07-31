@@ -38,7 +38,7 @@ public class PluginMessage implements PluginMessageListener {
                 break;
             }
             case "globalchat": {
-                if (ChatPlugin.getInstance().serverGlobalChatEnabled()) {
+                if (ChatPlugin.getInstance().serverGlobalChatEnabled() && !ChatPlugin.getInstance().serverMuted()) {
                     String uuidString = in.readUTF();
                     if (!uuidString.matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")) {
                         Bukkit.broadcast(GsonComponentSerializer.gson().deserialize(uuidString), Config.GCPERMISSION);
