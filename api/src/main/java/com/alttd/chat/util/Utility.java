@@ -9,9 +9,6 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -178,41 +175,5 @@ public class Utility {
         MiniMessage miniMessage = MiniMessage.get();
         return stringBuilder.length()==0 ? miniMessage.parse(message)
                 : miniMessage.parse(stringBuilder.toString());
-    }
-
-    public static void noPermission(CommandSender sender) {
-        sender.sendMessage(MiniMessage.get().parse("<red>You don't have permission to use this command.</red>")); //TODO config?
-    }
-
-    public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
-        MiniMessage miniMessage = MiniMessage.get();
-        Bukkit.getOnlinePlayers().forEach(a ->{
-            Component blockedNotification = miniMessage.parse("<red>[" + prefix + "] "
-                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                    + (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")
-                    + input + "</red>");
-            if (a.hasPermission("chat.alert-blocked")) {
-                a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-            }
-        });
-        player.sendMessage(miniMessage.parse("<red>The language you used in your message is not allowed, " +
-                "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
-    }
-
-    public static void sendMutedNotification(String prefix, Player player, String input) {
-        MiniMessage miniMessage = MiniMessage.get();
-        Bukkit.getOnlinePlayers().forEach(a ->{
-            Component blockedNotification = miniMessage.parse("<red>[" + prefix + "] "
-                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                    + " tried to say: "
-                    + input + "</red>");
-            if (a.hasPermission("chat.alert-blocked")) {
-                a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-            }
-        });
-    }
-
-    public static void sendBlockedNotification(String prefix, Player player, Component input, String target) {
-        sendBlockedNotification(prefix, player, PlainComponentSerializer.plain().serialize(input), target);
     }
 }

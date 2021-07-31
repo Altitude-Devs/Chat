@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -41,7 +42,7 @@ public class ChatHandler {
         user.setReplyTarget(target);
         String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
-            Utility.sendBlockedNotification("DM Language", player, message, target);
+            GalaxyUtility.sendBlockedNotification("DM Language", player, message, target);
             return; // the message was blocked
         }
 
@@ -77,7 +78,16 @@ public class ChatHandler {
         }
 
         if (Database.get().isPlayerMuted(player.getUniqueId(), null) || ChatPlugin.getInstance().serverMuted()) {
-            Utility.sendMutedNotification("GC Muted", player, message);
+            MiniMessage miniMessage = MiniMessage.get();
+            Bukkit.getOnlinePlayers().forEach(a ->{
+                Component blockedNotification = miniMessage.parse("<red>[GC Muted] "
+                        + Utility.getDisplayName(player.getUniqueId(), player.getName())
+                        + " tried to say: "
+                        + message + "</red>");
+                if (a.hasPermission("chat.alert-blocked")) {
+                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
+                }
+            });
             return;
         }
 
@@ -92,7 +102,7 @@ public class ChatHandler {
 
         String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
         if(updatedMessage == null) {
-            Utility.sendBlockedNotification("GC Language", player, message, "");
+            GalaxyUtility.sendBlockedNotification("GC Language", player, message, "");
             return; // the message was blocked
         }
 

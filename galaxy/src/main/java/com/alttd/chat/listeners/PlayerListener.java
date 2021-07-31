@@ -3,6 +3,7 @@ package com.alttd.chat.listeners;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
@@ -44,7 +45,7 @@ public class PlayerListener implements Listener {
                 message = RegexManager.replaceText(event.getPlayer(), message); // todo a better way for this
 
                 if (message == null) {
-                    Utility.sendBlockedNotification("Sign Language" ,event.getPlayer(), PlainComponentSerializer.plain().serialize(component), "");
+                    GalaxyUtility.sendBlockedNotification("Sign Language" ,event.getPlayer(), PlainComponentSerializer.plain().serialize(component), "");
                 }
 
                 component = message == null ? Component.empty() : Component.text(message);

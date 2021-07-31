@@ -24,7 +24,7 @@ public class MuteServer implements CommandExecutor {
             public void run() {
                 UUID uuid = ((Player) sender).getUniqueId();
                 if (!Utility.hasPermission(uuid, Config.SERVERMUTEPERMISSION)) {
-                    Utility.noPermission(sender);
+                    sender.sendMessage(MiniMessage.get().parse("<red>You don't have permission to use this command.</red>"));
                     return;
                 }
                 ChatPlugin.getInstance().toggleServerMuted();

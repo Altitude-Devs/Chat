@@ -5,6 +5,7 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -39,7 +40,7 @@ public class ChatListener implements Listener, ChatRenderer {
         message = RegexManager.replaceText(event.getPlayer(), message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
-            Utility.sendBlockedNotification("Language", player, input, "");
+            GalaxyUtility.sendBlockedNotification("Language", player, input, "");
             return; // the message was blocked
         }
 
