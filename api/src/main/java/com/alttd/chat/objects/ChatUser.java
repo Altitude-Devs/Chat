@@ -3,6 +3,8 @@ package com.alttd.chat.objects;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,12 @@ public class ChatUser {
 
         name = Queries.getNickname(uuid);
         if (name == null) {
-            name = Utility.getDisplayName(uuid);
+            OfflinePlayer player = Bukkit.getPlayer(uuid);
+            String playerName = "";
+            if (player != null && player.hasPlayedBefore()) {
+                playerName = player.getName();
+            }
+            name = Utility.getDisplayName(uuid, playerName);
         }
         setDisplayName(name);
 

@@ -3,20 +3,16 @@ package com.alttd.chat.util;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.util.*;
 
 public class Utility {
@@ -87,11 +83,8 @@ public class Utility {
         return applyColor(prefix.toString());
     }
 
-    public static String getDisplayName(UUID uuid) {
-        OfflinePlayer player = Bukkit.getPlayer(uuid);
-        if (player != null && player.hasPlayedBefore()) {
-            return player.getName();
-        }
+    public static String getDisplayName(UUID uuid, String playerName) {
+        if (!playerName.isBlank()) return playerName;
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         if(user == null) return "";
@@ -195,7 +188,7 @@ public class Utility {
         MiniMessage miniMessage = MiniMessage.get();
         Bukkit.getOnlinePlayers().forEach(a ->{
             Component blockedNotification = miniMessage.parse("<red>[" + prefix + "] "
-                    + Utility.getDisplayName(player.getUniqueId())
+                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
                     + (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")
                     + input + "</red>");
             if (a.hasPermission("chat.alert-blocked")) {
@@ -210,7 +203,7 @@ public class Utility {
         MiniMessage miniMessage = MiniMessage.get();
         Bukkit.getOnlinePlayers().forEach(a ->{
             Component blockedNotification = miniMessage.parse("<red>[" + prefix + "] "
-                    + Utility.getDisplayName(player.getUniqueId())
+                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
                     + " tried to say: "
                     + input + "</red>");
             if (a.hasPermission("chat.alert-blocked")) {
