@@ -9,6 +9,8 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 
+import java.util.UUID;
+
 public class PluginMessageListener {
 
     //todo add an extra listener for nicknames?
