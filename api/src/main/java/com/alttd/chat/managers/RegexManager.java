@@ -3,6 +3,7 @@ package com.alttd.chat.managers;
 import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.objects.ChatFilter;
 import com.alttd.chat.util.ALogger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class RegexManager {
                     break;
                 case BLOCK:
                     if(chatFilter.matches(text) && !player.hasPermission("chat.bypass-filter." + chatFilter.getName())) { // todo find a better way to do this?
+                        ALogger.info(player.getName() + " triggered the chat filter for " + chatFilter.getName() + ".");
                         return null;
                     }
                     break;
