@@ -434,4 +434,30 @@ public class Queries {
             e.printStackTrace();
         }
     }
+
+    public static String getDisplayName(UUID uuid) {
+        String nickname = getNickname(uuid);
+        if (nickname != null) return nickname;
+
+        // View has been created.
+        String query = "SELECT Username FROM utility_users WHERE uuid = ?";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, uuid.toString());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("Username");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -40,7 +40,7 @@ public class ChatHandler {
     public void privateMessage(Player player, String target, String message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setReplyTarget(target);
-        String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
+        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(updatedMessage == null) {
             GalaxyUtility.sendBlockedNotification("DM Language", player, message, target);
             return; // the message was blocked
@@ -100,7 +100,7 @@ public class ChatHandler {
         Component senderName = user.getDisplayName();
         Component prefix = user.getPrefix();
 
-        String updatedMessage = RegexManager.replaceText(player, message); // todo a better way for this
+        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(updatedMessage == null) {
             GalaxyUtility.sendBlockedNotification("GC Language", player, message, "");
             return; // the message was blocked

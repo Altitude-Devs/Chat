@@ -37,7 +37,7 @@ public class ChatListener implements Listener, ChatRenderer {
 
         MiniMessage miniMessage = MiniMessage.get();
 
-        message = RegexManager.replaceText(event.getPlayer(), message); // todo a better way for this
+        message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
             GalaxyUtility.sendBlockedNotification("Language", player, input, "");
