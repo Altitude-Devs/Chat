@@ -438,26 +438,39 @@ public class Queries {
     public static String getDisplayName(UUID uuid) {
         String nickname = getNickname(uuid);
         if (nickname != null) return nickname;
+        HashSet<String> userNames = getUserNames(List.of(uuid));
+        return userNames.isEmpty() ? null : userNames.iterator().next();
+    }
 
-        // View has been created.
-        String query = "SELECT Username FROM utility_users WHERE uuid = ?";
+    public static HashSet<String> getUserNames(List<UUID> uuid) {
+        StringBuilder query = new StringBuilder("SELECT Username FROM utility_users WHERE uuid IN (");
+        if (uuid.isEmpty()) return new HashSet<>();
+
+        query.append("?, ".repeat(uuid.size()));
+        query.delete(query.length() - 2, query.length());
+        query.append(")");
+
+        HashSet<String> userNames = new HashSet<>();
 
         try {
             Connection connection = DatabaseConnection.getConnection();
 
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query.toString());
 
-            statement.setString(1, uuid.toString());
+            for (int i = 0; i < uuid.size(); i++) {
+                statement.setString(i + 1, uuid.get(i).toString());
+            }
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                return resultSet.getString("Username");
+            while (resultSet.next()) {
+                userNames.add(resultSet.getString("Username"));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return userNames;
     }
 }
