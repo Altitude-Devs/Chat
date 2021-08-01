@@ -25,3 +25,5 @@ commands:
     permission: command.ignore
   muteserver:
     permission: command.mute-server
+  spy:
+    permission: command.togglespy
