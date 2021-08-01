@@ -32,18 +32,11 @@ public final class ChatUserManager {
                 return user;
             }
         }
-        // todo move the CompletableFuture to Queries
-        return CompletableFuture.supplyAsync(() -> {
-            ChatUser loadChatUser = Queries.loadChatUser(uuid);
-            if (loadChatUser != null) {
-                ChatUserManager.addUser(loadChatUser);
-            }
-            return loadChatUser;
-        }).join();
-//        if(user == null) user = new ChatUser(uuid, -1, false, false);
-//        Queries.saveUser(user);
-//        chatUsers.add(user);
-//        return user;
+        ChatUser user = Queries.loadChatUser(uuid);
+        if(user == null) user = new ChatUser(uuid, -1, false, false);
+        Queries.saveUser(user);
+        chatUsers.add(user);
+        return user;
     }
 
     public List<Mail> getUnReadMail(ChatUser user) {

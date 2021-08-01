@@ -42,6 +42,7 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("ignore", new Ignore());
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
+        registerCommand("spy", new Spy());
 
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
