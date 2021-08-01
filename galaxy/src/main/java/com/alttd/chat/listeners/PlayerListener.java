@@ -1,5 +1,6 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
@@ -25,7 +26,9 @@ public class PlayerListener implements Listener {
         if(user != null) return;
 
         // todo actually load the users from db
-        ChatUserManager.addUser(new ChatUser(uuid, -1, false, false));
+        ChatUser chatUser = new ChatUser(uuid, -1, false, false);
+        ChatUserManager.addUser(chatUser);
+        Queries.saveUser(chatUser);
     }
 
     @EventHandler

@@ -2,6 +2,7 @@ package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
@@ -50,6 +51,18 @@ public class PluginMessage implements PluginMessageListener {
                     });
                 }
                 break;
+            }
+            case "ignore": {
+                ChatUser chatUser = ChatUserManager.getChatUser(UUID.fromString(in.readUTF()));
+                UUID targetUUID = UUID.fromString(in.readUTF());
+
+                if(!chatUser.getIgnoredPlayers().contains(targetUUID)) {
+                    chatUser.addIgnoredPlayers(targetUUID);
+                }
+            }
+            case "unignore": {
+                ChatUser chatUser = ChatUserManager.getChatUser(UUID.fromString(in.readUTF()));
+                chatUser.removeIgnoredPlayers(UUID.fromString(in.readUTF()));
             }
             default:
                 break;
