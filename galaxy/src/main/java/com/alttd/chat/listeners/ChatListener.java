@@ -1,5 +1,6 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
@@ -9,11 +10,13 @@ import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import litebans.api.Database;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +29,25 @@ public class ChatListener implements Listener, ChatRenderer {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
+
+        if (ChatPlugin.getInstance().serverMuted() && !event.getPlayer().hasPermission("chat.bypass-server-muted")) {
+            event.setCancelled(true);
+
+            Player player = event.getPlayer();
+            MiniMessage miniMessage = MiniMessage.get();
+            Component blockedNotification = miniMessage.parse("<red>[Chat Muted] "
+                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
+                    + " tried to say: "
+                    + PlainComponentSerializer.plain().serialize(event.message()) + "</red>");
+
+            Bukkit.getOnlinePlayers().forEach(a ->{
+                if (a.hasPermission("chat.alert-blocked")) {
+                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
+                }
+            });
+            return;
+        }
+
         Player player = event.getPlayer();
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 

@@ -77,13 +77,14 @@ public class ChatHandler {
             return;
         }
 
-        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || ChatPlugin.getInstance().serverMuted()) {
+        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
             MiniMessage miniMessage = MiniMessage.get();
+            Component blockedNotification = miniMessage.parse("<red>[GC Muted] "
+                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
+                    + " tried to say: "
+                    + message + "</red>");
+
             Bukkit.getOnlinePlayers().forEach(a ->{
-                Component blockedNotification = miniMessage.parse("<red>[GC Muted] "
-                        + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                        + " tried to say: "
-                        + message + "</red>");
                 if (a.hasPermission("chat.alert-blocked")) {
                     a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
                 }
