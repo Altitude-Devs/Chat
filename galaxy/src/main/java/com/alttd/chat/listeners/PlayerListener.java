@@ -25,7 +25,7 @@ public class PlayerListener implements Listener {
         ChatUser user = ChatUserManager.getChatUser(uuid);
         if(user != null) return;
 
-        // todo actually load the users from db
+        // user failed to load - create a new one
         ChatUser chatUser = new ChatUser(uuid, -1, false, false);
         ChatUserManager.addUser(chatUser);
         Queries.saveUser(chatUser);
