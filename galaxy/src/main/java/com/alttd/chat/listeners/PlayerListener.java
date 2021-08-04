@@ -29,6 +29,8 @@ public class PlayerListener implements Listener {
         ChatUser chatUser = new ChatUser(uuid, -1, false, false);
         ChatUserManager.addUser(chatUser);
         Queries.saveUser(chatUser);
+
+        //TODO load player on other servers with plugin message?
     }
 
     @EventHandler

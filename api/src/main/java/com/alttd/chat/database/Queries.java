@@ -1,6 +1,7 @@
 package com.alttd.chat.database;
 
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
@@ -133,8 +134,7 @@ public class Queries {
 
     //Party
 
-    public static void getParties() {
-        HashMap<Integer, Party> parties = new HashMap<>(); //TODO Replace with a proper way/location to store this in
+    public static void loadParties() {
         String query = "SELECT * FROM parties";
 
         try {
@@ -149,14 +149,12 @@ public class Queries {
                 String partyName = resultSet.getString("party_name");
                 String password = resultSet.getString("password");
 
-                parties.put(id, new Party(id, ownerUuid, partyName, password));
+                PartyManager.addParty(new Party(id, ownerUuid, partyName, password));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        getChatUsers(parties); //TODO This parameter should be temporary, it should access the actual list of parties normally
     }
 
     public static Party addParty(UUID partyOwner, String partyName, String password) {
@@ -292,7 +290,6 @@ public class Queries {
             ResultSet resultSet = connection.prepareStatement(query).executeQuery();
 
             while (resultSet.next()) {
-
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 int partyId = resultSet.getInt("party_id");
                 boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;

@@ -5,6 +5,7 @@ import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +17,7 @@ public final class ChatUserManager {
 
     public static void initialize() {
         chatUsers = new ArrayList<>();
+        loadUsers();
     }
 
     public static void addUser(ChatUser user) {
@@ -32,16 +34,20 @@ public final class ChatUserManager {
                 return user;
             }
         }
-        ChatUser user = Queries.loadChatUser(uuid);
-        if(user == null) user = new ChatUser(uuid, -1, false, false);
-        Queries.saveUser(user);
-        chatUsers.add(user);
-        return user;
+        return Queries.loadChatUser(uuid);
     }
 
     public List<Mail> getUnReadMail(ChatUser user) {
         return user.getMails().stream()
                 .filter(Mail::isUnRead)
                 .collect(Collectors.toList());
+    }
+
+    public static void loadUsers() {
+        Queries.loadChatUsers();
+    }
+
+    protected static List<ChatUser> getChatUsers() {
+        return Collections.unmodifiableList(chatUsers);
     }
 }
