@@ -14,6 +14,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -39,17 +40,17 @@ public class PluginMessage implements PluginMessageListener {
                 break;
             }
             case "globalchat": {
-                if (ChatPlugin.getInstance().serverGlobalChatEnabled() && !ChatPlugin.getInstance().serverMuted()) {
-                    UUID uuid = UUID.fromString(in.readUTF());
-                    String message = in.readUTF();
+                if (!ChatPlugin.getInstance().serverGlobalChatEnabled() || ChatPlugin.getInstance().serverMuted()) break;
 
-                    Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(Config.GCPERMISSION)).forEach(p -> {
-                        ChatUser chatUser = ChatUserManager.getChatUser(p.getUniqueId());
-                        if (!chatUser.getIgnoredPlayers().contains(uuid)) {
-                            p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
-                        }
-                    });
-                }
+                UUID uuid = UUID.fromString(in.readUTF());
+                String message = in.readUTF();
+
+                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(Config.GCPERMISSION)).forEach(p -> {
+                    ChatUser chatUser = ChatUserManager.getChatUser(p.getUniqueId());
+                    if (!chatUser.getIgnoredPlayers().contains(uuid)) {
+                        p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
+                    }
+                });
                 break;
             }
             case "ignore": {
@@ -63,6 +64,21 @@ public class PluginMessage implements PluginMessageListener {
             case "unignore": {
                 ChatUser chatUser = ChatUserManager.getChatUser(UUID.fromString(in.readUTF()));
                 chatUser.removeIgnoredPlayers(UUID.fromString(in.readUTF()));
+            }
+            case "chatchannel": {
+                if (ChatPlugin.getInstance().serverMuted()) break;
+
+                String chatChannel = in.readUTF();
+                Component component = GsonComponentSerializer.gson().deserialize(in.readUTF());
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> p.hasPermission("chat.channel." + chatChannel))
+                                .forEach(p -> p.sendMessage(component));
+                    }
+                }.runTaskAsynchronously(ChatPlugin.getInstance());
             }
             default:
                 break;

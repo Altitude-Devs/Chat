@@ -238,6 +238,11 @@ public final class Config {
 
     }
 
+    public static List<String> CHATCHANNEL_CHANNELS = List.of("ac");
+    private static void chatChannels() {
+        CHATCHANNEL_CHANNELS = getList("chat-channels", CHATCHANNEL_CHANNELS);
+    }
+
     public static String SERVERMUTEPERMISSION = "command.mute-server";
     public static String SPYPERMISSION = "chat.socialspy";
     private static void permissions() {
