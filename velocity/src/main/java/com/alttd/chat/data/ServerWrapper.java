@@ -43,7 +43,7 @@ public class ServerWrapper {
     public void sendJoinLeaveMessage(UUID uuid, Component component) {
         if(joinMessages())
             getRegisteredServer().getPlayersConnected().stream()
-                    .filter(p -> ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                    .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
                     .forEach(p -> p.sendMessage(component));
     }
 }
