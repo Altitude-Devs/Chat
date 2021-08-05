@@ -69,6 +69,8 @@ public class ChatListener implements Listener, ChatRenderer {
 
         if(!player.hasPermission("chat.format")) {
             message = miniMessage.stripTokens(message);
+        } else {
+            message = Utility.parseColors(message);
         }
 
         if(message.contains("[i]"))

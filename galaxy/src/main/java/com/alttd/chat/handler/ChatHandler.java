@@ -48,6 +48,8 @@ public class ChatHandler {
 
         if(!player.hasPermission("chat.format")) {
             updatedMessage = miniMessage.stripTokens(updatedMessage);
+        } else {
+            updatedMessage = Utility.parseColors(updatedMessage);
         }
 
         if(updatedMessage.contains("[i]"))
@@ -109,6 +111,8 @@ public class ChatHandler {
 
         if(!player.hasPermission("chat.format")) {
             updatedMessage = miniMessage.stripTokens(updatedMessage);
+        } else {
+            updatedMessage = Utility.parseColors(updatedMessage);
         }
 
         if(updatedMessage.contains("[i]"))
