@@ -43,6 +43,7 @@ public class ServerHandler {
 //        Component component = GsonComponentSerializer.gson().deserialize(message);
 
         servers.stream()
+                .filter(ServerWrapper::globalChat)
                 .map(ServerWrapper::getRegisteredServer)
                 .forEach(registeredServer -> {
                     ByteArrayDataOutput buf = ByteStreams.newDataOutput();
