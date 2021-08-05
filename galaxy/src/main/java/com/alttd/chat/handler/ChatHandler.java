@@ -1,9 +1,11 @@
 package com.alttd.chat.handler;
 
 import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.commands.ChatChannel;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.objects.Channel;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
@@ -117,13 +119,13 @@ public class ChatHandler {
         sendPluginMessage(player, "globalchat", component);
     }
 
-    public void chatChannel(Player player, String label, String message) {
-        if (!player.hasPermission("chat.channel." + label)) {
+    public void chatChannel(Player player, Channel channel, String message) {
+        if (!player.hasPermission(channel.getPermission())) {
             player.sendMessage(MiniMessage.get().parse("<red>You don't have permission to use this channel.</red>"));
             return;
         }
 
-        if (isMuted(player, message, "[" + StringUtils.capitalize(label) + " Muted] ")) return;
+        if (isMuted(player, message, "[" + channel.getChannelName() + " Muted] ")) return;
 
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         Component senderName = user.getDisplayName();
@@ -144,28 +146,24 @@ public class ChatHandler {
                 Template.of("sender", senderName),
                 Template.of("message", updatedMessage),
                 Template.of("server", Bukkit.getServerName()),
+                Template.of("channel", channel.getChannelName()),
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
-        Component component = miniMessage.parse(Config.GCFORMAT, templates);
-        sendChatChannelMessage(player, label, "chatchannel", component);
+        Component component = miniMessage.parse(channel.getFormat(), templates);
+
+        if (channel.isProxy()) {
+            sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
+        } else {
+            sendChatChannelMessage(channel, component);
+        }
     }
 
-    private boolean isMuted(Player player, String message, String prefix) {
-        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
-            MiniMessage miniMessage = MiniMessage.get();
-            Component blockedNotification = miniMessage.parse("<red>" + prefix
-                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                    + " tried to say: "
-                    + message + "</red>");
+    private void sendChatChannelMessage(Channel chatChannel, Component component) {
+        if (!chatChannel.getServers().contains(Bukkit.getServerName())) return;
 
-            Bukkit.getOnlinePlayers().forEach(a ->{
-                if (a.hasPermission("chat.alert-blocked")) {
-                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-                }
-            });
-            return true;
-        }
-        return false;
+        Bukkit.getServer().getOnlinePlayers().stream()
+                .filter(p -> p.hasPermission(chatChannel.getPermission()))
+                .forEach(p -> p.sendMessage(component));
     }
 
     private void sendPluginMessage(Player player, String channel, Component component) {
@@ -185,14 +183,32 @@ public class ChatHandler {
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
 
-    public void sendChatChannelMessage(Player player, String label, String channel, Component component) {
+    public void sendChatChannelMessage(Player player, String chatChannelName, String channel, Component component) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
-        out.writeUTF(label);
+        out.writeUTF(chatChannelName);
         out.writeUTF(GsonComponentSerializer.gson().serialize(component));
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
     // Start - move these to util
+
+    private boolean isMuted(Player player, String message, String prefix) {
+        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
+            MiniMessage miniMessage = MiniMessage.get();
+            Component blockedNotification = miniMessage.parse("<red>" + prefix
+                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
+                    + " tried to say: "
+                    + message + "</red>");
+
+            Bukkit.getOnlinePlayers().forEach(a ->{
+                if (a.hasPermission("chat.alert-blocked")) {
+                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
+                }
+            });
+            return true;
+        }
+        return false;
+    }
 
     public static Component itemComponent(ItemStack item) {
         Component component = Component.text("[i]", NamedTextColor.AQUA);

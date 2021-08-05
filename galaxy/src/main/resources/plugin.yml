@@ -27,5 +27,3 @@ commands:
     permission: command.mute-server
   spy:
     permission: command.togglespy
-  chatchannel:
-    permission: chat.channel.chatchannel

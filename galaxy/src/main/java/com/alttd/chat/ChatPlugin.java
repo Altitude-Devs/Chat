@@ -8,6 +8,7 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
+import com.alttd.chat.objects.Channel;
 import com.alttd.chat.util.ALogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +16,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ChatPlugin extends JavaPlugin {
@@ -47,7 +47,9 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
         registerCommand("spy", new Spy());
-        registerCommand("chatchannel", new ChatChannel(), Config.CHATCHANNEL_CHANNELS);
+        for (Channel channel : Channel.getChannels()) {
+           this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(channel));
+        }
 
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);

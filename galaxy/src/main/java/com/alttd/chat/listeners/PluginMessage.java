@@ -4,6 +4,7 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.Channel;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
@@ -60,29 +61,56 @@ public class PluginMessage implements PluginMessageListener {
                 if(!chatUser.getIgnoredPlayers().contains(targetUUID)) {
                     chatUser.addIgnoredPlayers(targetUUID);
                 }
+                break;
             }
             case "unignore": {
                 ChatUser chatUser = ChatUserManager.getChatUser(UUID.fromString(in.readUTF()));
                 chatUser.removeIgnoredPlayers(UUID.fromString(in.readUTF()));
+                break;
             }
             case "chatchannel": {
                 if (ChatPlugin.getInstance().serverMuted()) break;
 
-                String chatChannel = in.readUTF();
-                Component component = GsonComponentSerializer.gson().deserialize(in.readUTF());
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> p.hasPermission("chat.channel." + chatChannel))
-                                .forEach(p -> p.sendMessage(component));
-                    }
-                }.runTaskAsynchronously(ChatPlugin.getInstance());
+                chatChannel(in);
             }
             default:
                 break;
         }
+    }
+
+    private void chatChannel(ByteArrayDataInput in) {
+        Channel chatChannel = null;
+        Component component = null;
+        try {
+            chatChannel = Channel.getChatChannel(in.readUTF());
+            component = GsonComponentSerializer.gson().deserialize(in.readUTF());
+        } catch (Exception e) { //Idk the exception for reading too far into in.readUTF()
+            e.printStackTrace();
+        }
+
+        if (chatChannel == null) {
+            ALogger.warn("Received ChatChannel message for non existent channel.");
+            return;
+        }
+        if (!chatChannel.getServers().contains(Bukkit.getServerName())) {
+            ALogger.warn("Received ChatChannel message for the wrong server.");
+            return;
+        }
+        if (component == null) {
+            ALogger.warn("Didn't receive a valid message for ChatChannel " + chatChannel.getChannelName() + ".");
+        }
+
+        final Channel finalChatChannel = chatChannel;
+        final Component finalComponent = component;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(p -> p.hasPermission(finalChatChannel.getPermission()))
+                        .forEach(p -> p.sendMessage(finalComponent));
+            }
+        }.runTaskAsynchronously(ChatPlugin.getInstance());
     }
 
 }
