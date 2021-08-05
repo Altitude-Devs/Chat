@@ -173,8 +173,15 @@ public final class RegexConfig {
                 String regex = entry.getValue().getNode("regex").getString();
                 String replacement = entry.getValue().getNode("replacement").getString();
                 List<String> exclusions = entry.getValue().getNode("exclusions").getList(TypeToken.of(String.class), new ArrayList<>());
-                ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions);
-                RegexManager.addFilter(chatFilter);
+                if (type == null || type.isEmpty() || regex == null || regex.isEmpty()) {
+                    ALogger.warn("Filter: " + name + " was set up incorrectly");
+                } else {
+                    if (replacement == null || replacement.isEmpty()) {
+                        replacement = name;
+                    }
+                    ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions);
+                    RegexManager.addFilter(chatFilter);
+                }
             } catch(ObjectMappingException ex) {
             }
         });

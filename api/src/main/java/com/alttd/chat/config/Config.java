@@ -1,5 +1,6 @@
 package com.alttd.chat.config;
 
+import com.alttd.chat.objects.Channel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
@@ -14,9 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public final class Config {
@@ -236,6 +235,25 @@ public final class Config {
         SERVERJOINMESSAGE = getString("messages.join-server", SERVERJOINMESSAGE);
         SERVERLEAVEMESSAGE = getString("messages.leave-server", SERVERLEAVEMESSAGE);
 
+    }
+
+    private static void chatChannels() {
+        ConfigurationNode node = getNode("chat-channels");
+        if (node.isEmpty()) {
+            getString("chat-channels.ac.format", "<white><gray><sender></gray> <hover:show_text:on <server>><yellow>to <channel></yellow></hover><gray>: <message>");
+            getList("chat-channels.ac.servers", List.of("lobby"));
+            getBoolean("chat-channels.ac.proxy", false);
+            node = getNode("chat-channels");
+        }
+
+        for (ConfigurationNode configurationNode : node.getChildrenMap().values()) {
+            String channelName = Objects.requireNonNull(configurationNode.getKey()).toString();
+            String key = "chat-channels." + channelName + ".";
+            new Channel(channelName,
+                    getString(key + "format", ""),
+                    getList(key + "servers", Collections.EMPTY_LIST),
+                    getBoolean(key + "proxy", false));
+        }
     }
 
     public static String SERVERMUTEPERMISSION = "command.mute-server";
