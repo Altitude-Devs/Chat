@@ -8,11 +8,15 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
+import com.alttd.chat.objects.Channel;
 import com.alttd.chat.util.ALogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class ChatPlugin extends JavaPlugin {
 
@@ -43,6 +47,9 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
         registerCommand("spy", new Spy());
+        for (Channel channel : Channel.getChannels()) {
+           this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(channel));
+        }
 
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
@@ -60,8 +67,14 @@ public class ChatPlugin extends JavaPlugin {
         }
     }
 
-    public void registerCommand(String commandName, CommandExecutor CommandExecutor) {
-        getCommand(commandName).setExecutor(CommandExecutor);
+    public void registerCommand(String commandName, CommandExecutor commandExecutor) {
+        getCommand(commandName).setExecutor(commandExecutor);
+    }
+
+    public void registerCommand(String commandName, CommandExecutor commandExecutor, List<String> aliases) {
+        PluginCommand command = getCommand(commandName);
+        command.setAliases(aliases);
+        command.setExecutor(commandExecutor);
     }
 
     public static ChatPlugin getInstance() {
