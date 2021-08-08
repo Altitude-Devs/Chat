@@ -8,7 +8,8 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
-import com.alttd.chat.objects.Channel;
+import com.alttd.chat.objects.channels.Channel;
+import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -47,8 +48,11 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
         registerCommand("spy", new Spy());
+        registerCommand("party", new PartyCommand());
+        registerCommand("pc", new PartyChatCommand());
         for (Channel channel : Channel.getChannels()) {
-           this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(channel));
+            if (!(channel instanceof CustomChannel customChannel)) continue;
+           this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(customChannel));
         }
 
         messageChannel = Config.MESSAGECHANNEL;

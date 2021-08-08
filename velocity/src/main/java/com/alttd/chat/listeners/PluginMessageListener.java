@@ -1,10 +1,9 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.VelocityChat;
-import com.alttd.chat.objects.Channel;
+import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -15,7 +14,6 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class PluginMessageListener {
@@ -52,7 +50,7 @@ public class PluginMessageListener {
                         break;
                     case "chatchannel": {
                         String channelName = in.readUTF();
-                        Channel chatChannel = Channel.getChatChannel(channelName);
+                        CustomChannel chatChannel = (CustomChannel) CustomChannel.getChatChannel(channelName);
 
                         if (chatChannel == null) {
                             ALogger.warn("Received non existent channel" + channelName +".");
@@ -62,6 +60,10 @@ public class PluginMessageListener {
                         ProxyServer proxy = VelocityChat.getPlugin().getProxy();
                         chatChannel.getServers().forEach(server -> proxy.getServer(server).ifPresent(registeredServer ->
                                 registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData())));
+                        break;
+                    }
+                    case "party": {
+                        VelocityChat.getPlugin().getChatHandler().partyChat(in.readUTF(), UUID.fromString(in.readUTF()), GsonComponentSerializer.gson().deserialize(in.readUTF()));
                         break;
                     }
                     default:

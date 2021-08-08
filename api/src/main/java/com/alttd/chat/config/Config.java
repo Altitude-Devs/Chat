@@ -1,6 +1,6 @@
 package com.alttd.chat.config;
 
-import com.alttd.chat.objects.Channel;
+import com.alttd.chat.objects.channels.CustomChannel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
@@ -68,7 +68,6 @@ public final class Config {
             e.printStackTrace();
         }
     }
-
     public static void readConfig(Class<?> clazz, Object instance) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (Modifier.isPrivate(method.getModifiers())) {
@@ -156,6 +155,7 @@ public final class Config {
         return config.getNode(splitPath(path));
     }
 
+
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
     public static List<String> STAFFGROUPS = new ArrayList<>();
@@ -200,6 +200,11 @@ public final class Config {
         GCALIAS = getList("commands.globalchat.alias", Lists.newArrayList("gc", "global"));
         GCNOTENABLED = getString("commands.globalchat.not-enabled", GCNOTENABLED);
         GCCOOLDOWN = getInt("commands.globalchat.cooldown", GCCOOLDOWN);
+    }
+
+    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
+    private static void party() {
+        PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
     }
 
     // TODO prefixes need hovers, this hasn't been setup yet!
@@ -249,7 +254,7 @@ public final class Config {
         for (ConfigurationNode configurationNode : node.getChildrenMap().values()) {
             String channelName = Objects.requireNonNull(configurationNode.getKey()).toString();
             String key = "chat-channels." + channelName + ".";
-            new Channel(channelName,
+            new CustomChannel(channelName,
                     getString(key + "format", ""),
                     getList(key + "servers", Collections.EMPTY_LIST),
                     getBoolean(key + "proxy", false));

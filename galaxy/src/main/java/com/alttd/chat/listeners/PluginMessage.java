@@ -2,12 +2,11 @@ package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
-import com.alttd.chat.objects.Channel;
+import com.alttd.chat.objects.channels.Channel;
+import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
-import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -79,11 +78,11 @@ public class PluginMessage implements PluginMessageListener {
     }
 
     private void chatChannel(ByteArrayDataInput in) {
-        Channel chatChannel = null;
+        CustomChannel chatChannel = null;
         UUID uuid = null;
         Component component = null;
         try {
-            chatChannel = Channel.getChatChannel(in.readUTF());
+            chatChannel = (CustomChannel) Channel.getChatChannel(in.readUTF());
             uuid = UUID.fromString(in.readUTF());
             component = GsonComponentSerializer.gson().deserialize(in.readUTF());
         } catch (Exception e) { //Idk the exception for reading too far into in.readUTF()
@@ -102,7 +101,7 @@ public class PluginMessage implements PluginMessageListener {
             ALogger.warn("Didn't receive a valid message for ChatChannel " + chatChannel.getChannelName() + ".");
         }
 
-        final Channel finalChatChannel = chatChannel;
+        final CustomChannel finalChatChannel = chatChannel;
         final Component finalComponent = component;
         final UUID finalUuid = uuid;
 

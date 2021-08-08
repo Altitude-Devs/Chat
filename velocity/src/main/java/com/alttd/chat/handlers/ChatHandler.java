@@ -3,9 +3,12 @@ package com.alttd.chat.handlers;
 import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
+import com.alttd.chat.objects.Party;
+import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -142,4 +145,17 @@ public class ChatHandler {
 
     }
 
+    public void partyChat(String partyId, UUID uuid, Component message) {
+        Party party = PartyManager.getParty(Integer.parseInt(partyId));
+        if (party == null) {
+            ALogger.warn("Received a non existent party");
+            return;
+        }
+        List<UUID> ignoredPlayers = ChatUserManager.getChatUser(uuid).getIgnoredPlayers();
+        List<UUID> partyUsersUuid = party.getPartyUsersUuid();
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
+                .filter(p -> partyUsersUuid.contains(p.getUniqueId()))
+                .filter(p -> !ignoredPlayers.contains(p.getUniqueId()))
+                .forEach(p -> p.sendMessage(message));
+    }
 }

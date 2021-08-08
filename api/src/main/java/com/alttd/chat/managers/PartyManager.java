@@ -3,6 +3,7 @@ package com.alttd.chat.managers;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -25,8 +26,18 @@ public class PartyManager {
     }
 
     public static Party getParty(int id) {
+        if (id < 0) return null;
         for(Party party : parties) {
             if(id == party.getPartyId()) {
+                return party;
+            }
+        }
+        return null;
+    }
+
+    public static Party getParty(String partyName) {
+        for(Party party : parties) {
+            if(party.getPartyName().equalsIgnoreCase(partyName)) {
                 return party;
             }
         }

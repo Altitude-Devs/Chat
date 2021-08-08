@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public final class ChatUserManager {
@@ -17,7 +16,6 @@ public final class ChatUserManager {
 
     public static void initialize() {
         chatUsers = new ArrayList<>();
-        loadUsers();
     }
 
     public static void addUser(ChatUser user) {
@@ -41,10 +39,6 @@ public final class ChatUserManager {
         return user.getMails().stream()
                 .filter(Mail::isUnRead)
                 .collect(Collectors.toList());
-    }
-
-    public static void loadUsers() {
-        Queries.loadChatUsers();
     }
 
     protected static List<ChatUser> getChatUsers() {

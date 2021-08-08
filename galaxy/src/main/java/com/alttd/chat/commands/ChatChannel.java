@@ -1,7 +1,7 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.objects.Channel;
+import com.alttd.chat.objects.channels.CustomChannel;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -13,10 +13,10 @@ import java.util.Collections;
 
 public class ChatChannel extends BukkitCommand {
 
-    Channel channel;
+    CustomChannel channel;
     String command;
 
-    public ChatChannel(Channel channel) {
+    public ChatChannel(CustomChannel channel) {
         super(channel.getChannelName().toLowerCase());
         this.channel = channel;
         this.command = channel.getChannelName().toLowerCase();

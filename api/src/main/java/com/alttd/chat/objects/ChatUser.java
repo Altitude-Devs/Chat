@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class ChatUser {
     private final UUID uuid; // player uuid
-    private final int partyId; // the party they are in
+    private int partyId; // the party they are in
     private boolean toggledPartyChat; // should chat messages instantly go to party chat when added, idk if this should be saved
     private String name; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
     private Component displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
@@ -55,6 +55,10 @@ public class ChatUser {
 
     public int getPartyId() {
         return partyId;
+    }
+
+    public void setPartyId(int partyId) {
+        this.partyId = partyId;
     }
 
     public boolean toggledPartyChat() {

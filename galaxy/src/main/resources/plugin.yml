@@ -27,3 +27,7 @@ commands:
     permission: command.mute-server
   spy:
     permission: command.togglespy
+  party:
+    permission: command.party
+  pc:
+    permission: command.pc

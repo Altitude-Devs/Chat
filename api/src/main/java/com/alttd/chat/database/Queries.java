@@ -5,12 +5,16 @@ import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.util.ALogger;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 
 public class Queries {
 
@@ -155,6 +159,41 @@ public class Queries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        loadPartyUsers();
+    }
+
+    private static void loadPartyUsers() {
+        String query = "SELECT chat_users.party_id, chat_users.uuid, nicknames.nickname, utility_users.Username " +
+                "FROM chat_users " +
+                    "LEFT OUTER JOIN nicknames ON chat_users.UUID = nicknames.uuid " +
+                    "LEFT OUTER JOIN utility_users ON chat_users.uuid = utility_users.UUID " +
+                "WHERE party_id != -1";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("party_id");
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                String displayName = resultSet.getString("nickname");
+                if (displayName == null || displayName.isEmpty()) {
+                    displayName = resultSet.getString("Username");
+                }
+
+                Party party = PartyManager.getParty(id);
+                if (party == null) {
+                    ALogger.warn("Unable to retrieve party: " + id);
+                    continue;
+                }
+
+                party.putUser(uuid, displayName);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Party addParty(UUID partyOwner, String partyName, String password) {
@@ -228,15 +267,51 @@ public class Queries {
         }
     }
 
-    public static void removeParty(int id) {
-        String query = "DELETE FROM parties WHERE id = ?";
+    public static void addPartyUser(ChatUser user) {
+        String query = "UPDATE chat_users SET party_id = ? WHERE uuid = ?";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
 
-            statement.setInt(1, id);
+            statement.setInt(1, user.getPartyId());
+            statement.setString(2, user.getUuid().toString());
 
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removePartyUser(UUID uuid) {
+        String query = "UPDATE chat_users SET party_id = -1 WHERE uuid = ?";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, uuid.toString());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeParty(int id) {
+        String deleteParty = "DELETE FROM parties WHERE id = ?";
+        String updateUsers = "UPDATE chat_users SET party_id = -1 WHERE party_id = ?";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(deleteParty);
+
+            statement.setInt(1, id);
+            statement.execute();
+
+            statement = connection.prepareStatement(updateUsers);
+
+            statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -245,44 +320,8 @@ public class Queries {
 
     //-----------------------------------------
 
-    private static void getChatUsers(HashMap<Integer, Party> parties) { //TODO Get parties from cache somewhere
-        String query = "SELECT * FROM chat_users WHERE party_id != -1";
-
-        try {
-            Connection connection = DatabaseConnection.getConnection();
-
-            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
-
-            while (resultSet.next()) {
-
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                int partyId = resultSet.getInt("party_id");
-                boolean toggled_chat = resultSet.getInt("toggled_chat") == 1;
-                boolean toggle_Gc = resultSet.getInt("toggled_gc") == 1;
-
-                if (partyId == 0) {
-                    continue;
-                }
-
-                Party party = parties.get(partyId);
-
-                if (party == null) {
-                    //TODO log this properly
-                    System.out.println("INCORRECT LOGGING: party was empty, the party id stored in the database with user " + uuid + " was invalid.");
-                    continue;
-                }
-
-                party.addUser(new ChatUser(uuid, partyId, toggled_chat, toggle_Gc));
-                //TODO maybe add to the cache as well?
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void loadChatUsers() { //TODO Get parties from cache somewhere
-        String query = "SELECT * FROM chat_users";
+        String query = "SELECT * FROM chat_users WHERE party_id > -1";
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -327,25 +366,6 @@ public class Queries {
         return user;
     }
 
-    public static void addUser(ChatUser user) {
-        String query = "INSERT INTO chat_users (uuid, party_id, toggled_chat, toggled_gc) VALUES (?, ?, ?, ?)";
-
-        try {
-            Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            statement.setString(1, user.getUuid().toString());
-            statement.setInt(2, user.getPartyId());
-            statement.setInt(3, user.toggledPartyChat() ? 1 : 0);
-            statement.setInt(4, 0);
-//            statement.setInt(5, user.isGcOn() ? 1 : 0);
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setPartyChatState(boolean toggledChat, UUID uuid) {
         setBitWhereId("UPDATE chat_users set toggled_chat = ? WHERE uuid = ?", toggledChat, uuid);
     }
@@ -361,21 +381,6 @@ public class Queries {
 
             statement.setInt(1, bool ? 1 : 0);
             statement.setString(2, uuid.toString());
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void removeUser(UUID uuid) {
-        String query = "DELETE FROM chat_users WHERE uuid = ?";
-
-        try {
-            Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            statement.setString(1, uuid.toString());
 
             statement.execute();
         } catch (SQLException e) {

@@ -1,9 +1,12 @@
 package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.PartyManager;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 
 public class Party {
 
@@ -11,7 +14,7 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private HashMap<UUID, ChatUser> partyUsers; //TODO might need to be a map?
+    private final HashMap<UUID, String> partyUsers; //TODO might need to be a map?
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
@@ -21,18 +24,23 @@ public class Party {
         partyUsers = new HashMap<>();
     }
 
-    public void addUser(HashMap<UUID, ChatUser> partyUsers) {
-        this.partyUsers.putAll(partyUsers);
+    public void putUser(UUID uuid, String displayName) {
+        this.partyUsers.put(uuid, displayName);
     }
 
     public void addUser(ChatUser partyUser) {
-        this.partyUsers.put(partyUser.getUuid(), partyUser);
-        Queries.addUser(partyUser);
+        this.partyUsers.put(partyUser.getUuid(), PlainComponentSerializer.plain().serialize(partyUser.getDisplayName()));
+        partyUser.setPartyId(getPartyId());
+        Queries.addPartyUser(partyUser);
+    }
+
+    public void removeUser(UUID uuid) {
+        removeUser(ChatUserManager.getChatUser(uuid));
     }
 
     public void removeUser(ChatUser partyUser) {
         partyUsers.remove(partyUser.getUuid());
-        Queries.removeUser(partyUser.getUuid());
+        Queries.removePartyUser(partyUser.getUuid());
     }
 
     public int getPartyId() {
@@ -41,6 +49,12 @@ public class Party {
 
     public UUID getOwnerUuid() {
         return ownerUuid;
+    }
+
+    public UUID newOwner() {
+        UUID uuid = partyUsers.keySet().iterator().next();
+        setOwnerUuid(uuid);
+        return uuid;
     }
 
     public void setOwnerUuid(UUID ownerUuid) {
@@ -70,11 +84,20 @@ public class Party {
         return !partyPassword.isEmpty();
     }
 
-    public HashMap<UUID, ChatUser> getPartyUsers() {
+    public HashMap<UUID, String> getPartyUsers() {
         return partyUsers;
     }
 
-    public void setPartyUsers(HashMap<UUID, ChatUser> partyUsers) {
-        this.partyUsers = partyUsers;
+    public void delete() {
+        Queries.removeParty(partyId);
+        PartyManager.removeParty(this);
+    }
+
+    public List<UUID> getPartyUsersUuid() {
+        return new ArrayList<>(partyUsers.keySet());
+    }
+
+    public String getUserDisplayName(UUID uuid) {
+        return partyUsers.get(uuid);
     }
 }
