@@ -98,7 +98,7 @@ public class PluginMessage implements PluginMessageListener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged onto the proxy.");
+                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged in to Altitude.");
 
                         Bukkit.getOnlinePlayers().stream()
                                 .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
@@ -119,7 +119,7 @@ public class PluginMessage implements PluginMessageListener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged out.");
+                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged out of Altitude.");
 
                         Bukkit.getOnlinePlayers().stream()
                                 .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
