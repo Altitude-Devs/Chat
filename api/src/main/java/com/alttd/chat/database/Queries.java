@@ -1,5 +1,6 @@
 package com.alttd.chat.database;
 
+import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
@@ -372,6 +373,7 @@ public class Queries {
                 String toggledChannel = resultSet.getString("toggled_channel");
                 Channel channel = toggledChannel == null ? null : Channel.getChatChannel(toggledChannel);
                 user = new ChatUser(uuid, partyId, channel);
+                ChatUserManager.addUser(user);
             }
 
         } catch (SQLException e) {
