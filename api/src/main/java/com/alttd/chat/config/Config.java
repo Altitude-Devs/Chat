@@ -203,8 +203,10 @@ public final class Config {
     }
 
     public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
+    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
     private static void party() {
         PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
+        PARTY_SPY = getString("party.spy", PARTY_SPY);
     }
 
     // TODO prefixes need hovers, this hasn't been setup yet!

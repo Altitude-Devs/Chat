@@ -181,12 +181,21 @@ public class ChatHandler {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),
+                Template.of("sendername", senderName),
+                Template.of("partyname", party.getPartyName()),
                 Template.of("message", updatedMessage),
                 Template.of("server", Bukkit.getServerName()),
                 Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = miniMessage.parse(Config.PARTY_FORMAT, templates);
         sendPartyMessage(player, party.getPartyId(), component);
+
+        Component spyMessage = miniMessage.parse(Config.PARTY_SPY, templates);
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsers().containsKey(pl.getUniqueId())) { // todo add a toggle for social spy
+                pl.sendMessage(spyMessage);
+            }
+        }
     }
 
     private void sendChatChannelMessage(CustomChannel chatChannel, UUID uuid, Component component) {

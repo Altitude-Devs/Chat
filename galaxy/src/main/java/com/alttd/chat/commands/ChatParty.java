@@ -24,10 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ChatParty implements CommandExecutor, TabCompleter {
@@ -151,6 +148,11 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                             return;
                         }
                         party.removeUser(ChatUserManager.getChatUser(offlinePlayerIfCached.getUniqueId()));
+
+                        if (offlinePlayerIfCached.getUniqueId().equals(party.getOwnerUuid())) {
+                            sender.sendMessage(MiniMessage.get().parse("<red>You can't remove yourself, please leave instead.</red>"));
+                            return;
+                        }
 
                         if (offlinePlayerIfCached.isOnline()) {
                             Objects.requireNonNull(offlinePlayerIfCached.getPlayer())
