@@ -80,9 +80,11 @@ public class PluginMessage implements PluginMessageListener {
 
     private void chatChannel(ByteArrayDataInput in) {
         Channel chatChannel = null;
+        UUID uuid = null;
         Component component = null;
         try {
             chatChannel = Channel.getChatChannel(in.readUTF());
+            uuid = UUID.fromString(in.readUTF());
             component = GsonComponentSerializer.gson().deserialize(in.readUTF());
         } catch (Exception e) { //Idk the exception for reading too far into in.readUTF()
             e.printStackTrace();
@@ -102,12 +104,14 @@ public class PluginMessage implements PluginMessageListener {
 
         final Channel finalChatChannel = chatChannel;
         final Component finalComponent = component;
+        final UUID finalUuid = uuid;
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 Bukkit.getOnlinePlayers().stream()
                         .filter(p -> p.hasPermission(finalChatChannel.getPermission()))
+                        .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(finalUuid))
                         .forEach(p -> p.sendMessage(finalComponent));
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
