@@ -2,6 +2,7 @@ package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
@@ -71,6 +72,17 @@ public class PluginMessage implements PluginMessageListener {
                 if (ChatPlugin.getInstance().serverMuted()) break;
 
                 chatChannel(in);
+                break;
+            }
+            case "tmppartyupdate" : {
+                int id = Integer.parseInt(in.readUTF());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Queries.loadPartyUsers(id);
+                    }
+                }.runTaskAsynchronously(ChatPlugin.getInstance());
+                break;
             }
             default:
                 break;

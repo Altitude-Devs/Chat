@@ -3,7 +3,6 @@ package com.alttd.chat.objects;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 
 import java.util.*;
 import java.util.List;
@@ -102,5 +101,9 @@ public class Party {
 
     public String getUserDisplayName(UUID uuid) {
         return partyUsers.get(uuid);
+    }
+
+    public void resetPartyUsers() { // FIXME: 08/08/2021 This is a temp solution until bungee messages take over updating parties
+        partyUsers.clear();
     }
 }

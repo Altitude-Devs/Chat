@@ -1,8 +1,10 @@
 package com.alttd.chat.objects;
 
 import com.alttd.chat.database.Queries;
+import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.UUID;
 public class ChatUser {
     private final UUID uuid; // player uuid
     private int partyId; // the party they are in
-    private boolean toggledPartyChat; // should chat messages instantly go to party chat when added, idk if this should be saved
+    private Channel toggledChannel;
     private String name; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
     private Component displayName; // the nickname, doesn't need to be saved with the chatuser object, could be saved but we can get it from the nicknamesview
 //    private Component prefix; // doesn't need saving, we get this from luckperms
@@ -25,10 +27,10 @@ public class ChatUser {
     private List<UUID> ignoredPlayers; // a list of UUID, a new table non unique, where one is is the player select * from ignores where ignoredby = thisplayer? where the result is the uuid of the player ignored by this player?
     private List<UUID> ignoredBy; // a list of UUID, same table as above but select * from ignores where ignored = thisplayer? result should be the other user that ignored this player?
 
-    public ChatUser(UUID uuid, int partyId, boolean toggledChat, boolean toggleGc) {
+    public ChatUser(UUID uuid, int partyId, Channel toggledChannel) {
         this.uuid = uuid;
         this.partyId = partyId;
-        this.toggledPartyChat = toggledChat;
+        this.toggledChannel = toggledChannel;
 
         name = Queries.getDisplayName(uuid);
         if (name == null) {
@@ -41,7 +43,6 @@ public class ChatUser {
 //
 //        prefixAll = Utility.getPrefix(uuid, false);
 
-        //this.toggleGc = toggleGc;
         replyTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = Queries.getMails(uuid);
@@ -61,13 +62,13 @@ public class ChatUser {
         this.partyId = partyId;
     }
 
-    public boolean toggledPartyChat() {
-        return toggledPartyChat;
+    public Channel getToggledChannel() {
+        return toggledChannel;
     }
 
-    public void togglePartyChat() {
-        toggledPartyChat = !toggledPartyChat;
-        Queries.setPartyChatState(toggledPartyChat, uuid); //TODO: Async pls - no CompleteableFuture<>!
+    public void setToggledChannel(Channel channel) {
+        toggledChannel = channel;
+        Queries.setToggledChannel(toggledChannel, uuid); //TODO: Async pls - no CompleteableFuture<>!
     }
 
     public Component getDisplayName() {

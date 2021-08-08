@@ -1,6 +1,8 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.VelocityChat;
+import com.alttd.chat.database.Queries;
+import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
@@ -14,6 +16,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class PluginMessageListener {
@@ -64,6 +67,12 @@ public class PluginMessageListener {
                     }
                     case "party": {
                         VelocityChat.getPlugin().getChatHandler().partyChat(in.readUTF(), UUID.fromString(in.readUTF()), GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                        break;
+                    }
+                    case "tmppartyupdate": {
+                        int id = Integer.parseInt(in.readUTF());
+                        Queries.loadPartyUsers(id);
+                        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
                         break;
                     }
                     default:

@@ -26,7 +26,7 @@ public class PlayerListener implements Listener {
         if(user != null) return;
 
         // user failed to load - create a new one
-        ChatUser chatUser = new ChatUser(uuid, -1, false, false);
+        ChatUser chatUser = new ChatUser(uuid, -1, null);
         ChatUserManager.addUser(chatUser);
         Queries.saveUser(chatUser);
 
