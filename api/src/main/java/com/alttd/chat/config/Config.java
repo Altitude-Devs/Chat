@@ -203,7 +203,7 @@ public final class Config {
     }
 
     // TODO prefixes need hovers, this hasn't been setup yet!
-    public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><sender>: <white><message>";
+    public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><hover:show_text:Click to message <sendername>><click:suggest_command:/msg <sendername> ><sender></hover>: <white><message>";
     private static void Chat() {
         CHATFORMAT = getString("chat.format", CHATFORMAT);
     }

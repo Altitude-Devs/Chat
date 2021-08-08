@@ -93,6 +93,7 @@ public class ChatListener implements Listener, ChatRenderer {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", user.getDisplayName()),
+                Template.of("sendername", player.getName()),
                 Template.of("prefix", user.getPrefix()),
                 Template.of("prefixall", user.getPrefixAll()),
                 Template.of("staffprefix", user.getStaffPrefix()),

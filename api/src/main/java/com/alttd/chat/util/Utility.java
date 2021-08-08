@@ -18,8 +18,8 @@ public class Utility {
     public static HashMap<String, String> colors;
     static { // this might be in minimessage already?
         colors = new HashMap<>();
-        colors.put("&0", "<black>"); // and confirm these are correct
-        colors.put("&1", "<dark_blue>"); // could also add some default hex colors here?
+        colors.put("&0", "<black>");
+        colors.put("&1", "<dark_blue>");
         colors.put("&2", "<dark_green>");
         colors.put("&3", "<dark_aqua>");
         colors.put("&4", "<dark_red>");

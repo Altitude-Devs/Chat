@@ -26,6 +26,7 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class ChatHandler {
@@ -158,15 +159,16 @@ public class ChatHandler {
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
         } else {
-            sendChatChannelMessage(channel, component);
+            sendChatChannelMessage(channel, player.getUniqueId(), component);
         }
     }
 
-    private void sendChatChannelMessage(Channel chatChannel, Component component) {
+    private void sendChatChannelMessage(Channel chatChannel, UUID uuid, Component component) {
         if (!chatChannel.getServers().contains(Bukkit.getServerName())) return;
 
         Bukkit.getServer().getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission(chatChannel.getPermission()))
+                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
                 .forEach(p -> p.sendMessage(component));
     }
 
@@ -191,6 +193,7 @@ public class ChatHandler {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
         out.writeUTF(chatChannelName);
+        out.writeUTF(player.getUniqueId().toString());
         out.writeUTF(GsonComponentSerializer.gson().serialize(component));
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
     }
