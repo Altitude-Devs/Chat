@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class PartyCommand implements CommandExecutor, TabCompleter {
+public class ChatParty implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -159,7 +159,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                         }
 
                         StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("<gold><bold>Party info</bold>:</gold>")
+                        stringBuilder.append("<gold><bold>Party info</bold>:\n</gold>")
                                 .append("<green>Party name: <dark_aqua>").append(party.getPartyName()).append("</dark_aqua>\n")
                                 .append(party.getOwnerUuid().equals(player.getUniqueId()) ? "Party password: <dark_aqua>" + party.getPartyPassword() + "</dark_aqua>\n" : "")
                                 .append("Party owner: ").append(party.getUserDisplayName(party.getOwnerUuid())).append("\n")
