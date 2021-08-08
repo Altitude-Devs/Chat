@@ -14,12 +14,19 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class PartyCommand implements CommandExecutor {
+public class PartyCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -187,6 +194,42 @@ public class PartyCommand implements CommandExecutor {
         }
         stringBuilder.append("</green>");
         sender.sendMessage(MiniMessage.get().parse(stringBuilder.toString()));
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        List<String> possibleValues = new ArrayList<>();
+        String current = args.length > 0 ? args[args.length - 1].toLowerCase() : "";
+
+        if (args.length <= 1) {
+            possibleValues.add("create");
+            possibleValues.add("invite");
+            possibleValues.add("join");
+            possibleValues.add("leave");
+            possibleValues.add("remove");
+            possibleValues.add("info");
+            return finalizeSuggest(possibleValues, current);
+        }
+
+        switch (args[0].toLowerCase()) {
+            case "invite","remove" -> {
+                Bukkit.getOnlinePlayers().stream().filter(p -> !p.getName().equals(sender.getName())).forEach(p -> possibleValues.add(p.getName()));
+            }
+        }
+
+        return finalizeSuggest(possibleValues, current.toLowerCase());
+    }
+
+    public List<String> finalizeSuggest(List<String> possibleValues, String remaining) {
+        List<String> finalValues = new ArrayList<>();
+
+        for (String str : possibleValues) {
+            if (str.toLowerCase().startsWith(remaining)) {
+                finalValues.add(str);
+            }
+        }
+
+        return finalValues;
     }
 
     private enum CommandUsage {
