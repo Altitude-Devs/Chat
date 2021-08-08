@@ -44,7 +44,8 @@ public class PartyCommand implements CommandExecutor {
                             break;
                         }
                         Party party = Queries.addParty(player.getUniqueId(), args[1], args[2]);
-                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()));
+//                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
+                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getName());
                         PartyManager.addParty(party);
                         sender.sendMessage(MiniMessage.get().parse("<green>You created a party called: '<gold>" +
                                 party.getPartyName() + "</gold>' with the password: '<gold>" +
@@ -90,7 +91,8 @@ public class PartyCommand implements CommandExecutor {
                             break;
                         }
 
-                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()));
+//                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
+                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getName());
                         sender.sendMessage(MiniMessage.get().parse("<green>You joined " + party.getPartyName() + "!</green>"));
                     }
                     case "leave" -> {
@@ -194,7 +196,8 @@ public class PartyCommand implements CommandExecutor {
         INVITE("<gold>/party invite <username></gold>"),
         JOIN("<gold>/party join <party name> <password></gold>"),
         LEAVE("<gold><hover:show_text:'<red>If the party owner leaves the server will choose a new party owner</red>'>/party leave</hover></gold>"),
-        REMOVE("<gold>/party remove <username></gold>");
+        REMOVE("<gold>/party remove <username></gold>"),
+        INFO("<gold>/party info</gold>");
 
         private final String message;
 

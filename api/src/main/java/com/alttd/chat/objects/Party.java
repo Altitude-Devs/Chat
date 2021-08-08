@@ -28,8 +28,11 @@ public class Party {
         this.partyUsers.put(uuid, displayName);
     }
 
-    public void addUser(ChatUser partyUser) {
-        this.partyUsers.put(partyUser.getUuid(), PlainComponentSerializer.plain().serialize(partyUser.getDisplayName()));
+    public void addUser(ChatUser partyUser, String displayName) {
+//        this.partyUsers.put(partyUser.getUuid(), PlainComponentSerializer.plain().serialize(partyUser.getDisplayName()));
+//        partyUser.setPartyId(getPartyId());
+//        Queries.addPartyUser(partyUser);
+        this.partyUsers.put(partyUser.getUuid(), displayName);
         partyUser.setPartyId(getPartyId());
         Queries.addPartyUser(partyUser);
     }

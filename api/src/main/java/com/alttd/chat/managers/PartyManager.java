@@ -50,9 +50,5 @@ public class PartyManager {
 
     public static void loadParties() {
         Queries.loadParties();
-        for (ChatUser chatUser : ChatUserManager.getChatUsers()) {
-            Party party = getParty(chatUser.getPartyId());
-            if (party != null) party.addUser(chatUser);
-        }
     }
 }

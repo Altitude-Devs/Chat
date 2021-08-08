@@ -177,10 +177,11 @@ public class Queries {
             while (resultSet.next()) {
                 int id = resultSet.getInt("party_id");
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                String displayName = resultSet.getString("nickname");
-                if (displayName == null || displayName.isEmpty()) {
-                    displayName = resultSet.getString("Username");
-                }
+//                String displayName = resultSet.getString("nickname");
+//                if (displayName == null || displayName.isEmpty()) {
+//                    displayName = resultSet.getString("Username");
+//                }
+                String displayName = resultSet.getString("Username"); // FIXME: 08/08/2021 only using display name till we can fix nickname colors
 
                 Party party = PartyManager.getParty(id);
                 if (party == null) {
