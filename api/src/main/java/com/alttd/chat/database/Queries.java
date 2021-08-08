@@ -5,6 +5,7 @@ import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.ALogger;
 
@@ -176,19 +177,18 @@ public class Queries {
             while (resultSet.next()) {
                 int id = resultSet.getInt("party_id");
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-//                String displayName = resultSet.getString("nickname");
-//                if (displayName == null || displayName.isEmpty()) {
-//                    displayName = resultSet.getString("Username");
-//                }
-                String displayName = resultSet.getString("Username"); // FIXME: 08/08/2021 only using display name till we can fix nickname colors
+                String displayName = resultSet.getString("nickname");
+                if (displayName == null || displayName.isEmpty()) {
+                    displayName = resultSet.getString("Username");
+                }
+                String playerName = resultSet.getString("Username");
 
                 Party party = PartyManager.getParty(id);
                 if (party == null) {
                     ALogger.warn("Unable to retrieve party: " + id);
                     continue;
                 }
-
-                party.putUser(uuid, displayName);
+                party.putPartyUser(new PartyUser(uuid, displayName, playerName));
             }
 
         } catch (SQLException e) {
@@ -218,13 +218,13 @@ public class Queries {
             party.resetPartyUsers();
             while (resultSet.next()) {
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-//                String displayName = resultSet.getString("nickname");
-//                if (displayName == null || displayName.isEmpty()) {
-//                    displayName = resultSet.getString("Username");
-//                }
-                String displayName = resultSet.getString("Username"); // FIXME: 08/08/2021 only using display name till we can fix nickname colors
+                String displayName = resultSet.getString("nickname");
+                if (displayName == null || displayName.isEmpty()) {
+                    displayName = resultSet.getString("Username");
+                }
+                String playerName = resultSet.getString("Username");
 
-                party.putUser(uuid, displayName);
+                party.putPartyUser(new PartyUser(uuid, displayName, playerName));
             }
 
         } catch (SQLException e) {

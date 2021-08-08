@@ -6,6 +6,7 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.objects.ChatUser;
@@ -98,12 +99,15 @@ public class PluginMessage implements PluginMessageListener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged in to Altitude.");
+                        PartyUser user = party.getPartyUser(uuid);
+                        if(user != null) {
+                            Component component = MiniMessage.get().parse("<dark_aqua>* " + user.getPlayerName() + " logged in to Altitude.");
 
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
-                                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
-                                .forEach(p -> p.sendMessage(component));
+                            Bukkit.getOnlinePlayers().stream()
+                                    .filter(p -> party.getPartyUsersUuid().contains(p.getUniqueId()))
+                                    .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                                    .forEach(p -> p.sendMessage(component));
+                        }
                     }
                 }.runTaskAsynchronously(ChatPlugin.getInstance());
                 break;
@@ -119,12 +123,15 @@ public class PluginMessage implements PluginMessageListener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged out of Altitude.");
+                        PartyUser user = party.getPartyUser(uuid);
+                        if(user != null) {
+                            Component component = MiniMessage.get().parse("<dark_aqua>* " + user.getPlayerName() + " logged out of Altitude.");
 
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
-                                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
-                                .forEach(p -> p.sendMessage(component));
+                            Bukkit.getOnlinePlayers().stream()
+                                    .filter(p -> party.getPartyUsersUuid().contains(p.getUniqueId()))
+                                    .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                                    .forEach(p -> p.sendMessage(component));
+                        }
                     }
                 }.runTaskAsynchronously(ChatPlugin.getInstance());
                 break;

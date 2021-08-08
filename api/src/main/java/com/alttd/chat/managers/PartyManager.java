@@ -46,7 +46,7 @@ public class PartyManager {
 
     public static Party getParty(UUID uuid) {
         for(Party party : parties) {
-            if(party.getPartyUsers().containsKey(uuid)) {
+            if(party.getPartyUsersUuid().contains(uuid)) {
                 return party;
             }
         }

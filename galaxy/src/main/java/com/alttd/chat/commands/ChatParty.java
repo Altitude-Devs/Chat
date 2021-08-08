@@ -7,11 +7,13 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -41,6 +43,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
         new BukkitRunnable() {
             @Override
             public void run() {
+                MiniMessage miniMessage = MiniMessage.get();
                 switch (args[0].toLowerCase()) {
                     case "create" -> {
                         if (args.length < 3 || !args[1].matches("[\\w]{3,16}") || !args[2].matches("[\\w]{3,16}")) {
@@ -119,7 +122,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                                 sender.sendMessage(MiniMessage.get().parse("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
                                 ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
                                         player.getName() +
-                                        " left the chat party, the new party owner is " + party.getUserDisplayName(uuid));
+                                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
                             } else {
                                 party.delete();
                             }
@@ -169,19 +172,24 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                             break;
                         }
 
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("<gold><bold>Chat party info</bold>:\n</gold>")
-                                .append("<green>Name: <dark_aqua>").append(party.getPartyName()).append("</dark_aqua>\n")
-                                .append(party.getOwnerUuid().equals(player.getUniqueId()) ? "Password: <dark_aqua>" + party.getPartyPassword() + "</dark_aqua>\n" : "")
-                                .append("Owner: ").append(party.getUserDisplayName(party.getOwnerUuid())).append("\n")
-                                .append("Members: ");
-                        for (String displayName : party.getPartyUsers().values()) {
-                            stringBuilder.append(displayName).append(", ");
+                        String message = "<gold><bold>Chat party info</bold>:\n</gold>"
+                                + "<green>Name: <dark_aqua><partyname></dark_aqua>\n"
+                                + (party.getOwnerUuid().equals(player.getUniqueId()) ? "Password: <dark_aqua><password></dark_aqua>\n" : "")
+                                + "Owner: <ownername>\n"
+                                + "Members: <members>";
+                        List<Component> displayNames = new ArrayList<>();
+                        for (PartyUser partyUser : party.getPartyUsers()) {
+                            displayNames.add(partyUser.getDisplayName());
                         }
 
-                        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+                        List<Template> templates = new ArrayList<>(List.of(
+                                Template.of("partyname", party.getPartyName()),
+                                Template.of("password", party.getPartyPassword()),
+                                Template.of("ownername", party.getPartyUser(party.getOwnerUuid()).getDisplayName()),
+                                Template.of("members", Component.join(Component.text(", "), displayNames)),
+                                Template.of("message", message)));
 
-                        sender.sendMessage(Utility.applyColor(stringBuilder.toString()));
+                        sender.sendMessage(miniMessage.parse("<message>", templates));
                     }
                     // TODO: 08/08/2021 add a way to change the password and owner (and name?)
                     default -> {

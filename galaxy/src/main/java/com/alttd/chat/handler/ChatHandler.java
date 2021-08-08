@@ -192,7 +192,7 @@ public class ChatHandler {
 
         Component spyMessage = miniMessage.parse(Config.PARTY_SPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
-            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsers().containsKey(pl.getUniqueId())) { // todo add a toggle for social spy
+            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) { // todo add a toggle for social spy
                 pl.sendMessage(spyMessage);
             }
         }

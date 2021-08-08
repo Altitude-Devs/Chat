@@ -6,6 +6,7 @@ import com.alttd.chat.managers.PartyManager;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Party {
 
@@ -13,27 +14,27 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private final HashMap<UUID, String> partyUsers; //TODO might need to be a map?
+    private static ArrayList<PartyUser> partyUsers; //TODO might need to be a map?
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
         this.ownerUuid = ownerUuid;
         this.partyName = partyName;
         this.partyPassword = partyPassword;
-        partyUsers = new HashMap<>();
+        partyUsers = new ArrayList<>();
     }
 
-    public void putUser(UUID uuid, String displayName) {
-        this.partyUsers.put(uuid, displayName);
+    public void putPartyUser(PartyUser partyUser) {
+        partyUsers.add(partyUser);
     }
 
-    public void addUser(ChatUser partyUser, String displayName) {
+    public void addUser(ChatUser chatUser, String playerName) {
 //        this.partyUsers.put(partyUser.getUuid(), PlainComponentSerializer.plain().serialize(partyUser.getDisplayName()));
 //        partyUser.setPartyId(getPartyId());
 //        Queries.addPartyUser(partyUser);
-        this.partyUsers.put(partyUser.getUuid(), displayName);
-        partyUser.setPartyId(getPartyId());
-        Queries.addPartyUser(partyUser);
+        partyUsers.add(new PartyUser(chatUser.getUuid(), chatUser.getDisplayName(), playerName));
+        chatUser.setPartyId(getPartyId());
+        Queries.addPartyUser(chatUser);
     }
 
     public void removeUser(UUID uuid) {
@@ -54,7 +55,7 @@ public class Party {
     }
 
     public UUID newOwner() {
-        UUID uuid = partyUsers.keySet().iterator().next();
+        UUID uuid = partyUsers.iterator().next().getUuid();
         setOwnerUuid(uuid);
         return uuid;
     }
@@ -86,7 +87,7 @@ public class Party {
         return !partyPassword.isEmpty();
     }
 
-    public HashMap<UUID, String> getPartyUsers() {
+    public List<PartyUser> getPartyUsers() {
         return partyUsers;
     }
 
@@ -96,14 +97,19 @@ public class Party {
     }
 
     public List<UUID> getPartyUsersUuid() {
-        return new ArrayList<>(partyUsers.keySet());
-    }
-
-    public String getUserDisplayName(UUID uuid) {
-        return partyUsers.get(uuid);
+        return partyUsers.stream().map(PartyUser::getUuid).collect(Collectors.toList());
     }
 
     public void resetPartyUsers() { // FIXME: 08/08/2021 This is a temp solution until bungee messages take over updating parties
         partyUsers.clear();
+    }
+
+    public PartyUser getPartyUser(UUID uuid) {
+        for(PartyUser user : partyUsers) {
+            if(uuid.equals(user.getUuid())) {
+                return user;
+            }
+        }
+        return null;
     }
 }
