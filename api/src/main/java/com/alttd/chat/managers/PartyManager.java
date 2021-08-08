@@ -45,7 +45,12 @@ public class PartyManager {
     }
 
     public static Party getParty(UUID uuid) {
-        return getParty(ChatUserManager.getChatUser(uuid).getPartyId());
+        for(Party party : parties) {
+            if(party.getPartyUsers().containsKey(uuid)) {
+                return party;
+            }
+        }
+        return null;
     }
 
     public static void loadParties() {
