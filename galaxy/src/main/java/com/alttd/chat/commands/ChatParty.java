@@ -71,7 +71,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                             break;
                         }
                         if (!party.getOwnerUuid().equals(player.getUniqueId())) {
-                            sender.sendMessage("<red>You don't own this chat party.</red>");
+                            sender.sendMessage(MiniMessage.get().parse("<red>You don't own this chat party.</red>"));
                             break;
                         }
                         Player target = Bukkit.getPlayer(args[1]);
@@ -115,11 +115,11 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         party.removeUser(player.getUniqueId());
                         if (party.getOwnerUuid().equals(player.getUniqueId())) {
                             if (party.getPartyUsers().size() > 0) {
-                                ChatUser chatUser = ChatUserManager.getChatUser(party.newOwner());
+                                UUID uuid = party.newOwner();
                                 sender.sendMessage(MiniMessage.get().parse("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
                                 ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
                                         player.getName() +
-                                        " left the chat party, the new party owner is " + chatUser.getDisplayName());
+                                        " left the chat party, the new party owner is " + party.getUserDisplayName(uuid));
                             } else {
                                 party.delete();
                             }
