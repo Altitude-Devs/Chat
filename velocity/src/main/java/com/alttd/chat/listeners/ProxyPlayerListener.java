@@ -4,6 +4,10 @@ import com.alttd.chat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.data.ServerWrapper;
 import com.alttd.chat.handlers.ServerHandler;
+import com.alttd.chat.managers.PartyManager;
+import com.alttd.chat.objects.Party;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -16,17 +20,34 @@ import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProxyPlayerListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerLogin(LoginEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
+        if (party == null) return;
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("partylogin");
+        out.writeUTF(String.valueOf(party.getPartyId()));
+        out.writeUTF(uuid.toString());
+        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), out.toByteArray()));
         // TODO setup ChatUser on Proxy
         //VelocityChat.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
     }
 
     @Subscribe
     public void quitEvent(DisconnectEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
+        if (party == null) return;
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("partylogout");
+        out.writeUTF(String.valueOf(party.getPartyId()));
+        out.writeUTF(uuid.toString());
+        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), out.toByteArray()));
         // TODO setup ChatUser on Proxy
         //VelocityChat.getPlugin().getChatHandler().removePlayer(event.getPlayer().getUniqueId());
     }

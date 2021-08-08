@@ -4,6 +4,8 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.PartyManager;
+import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.objects.ChatUser;
@@ -11,6 +13,7 @@ import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -80,6 +83,48 @@ public class PluginMessage implements PluginMessageListener {
                     @Override
                     public void run() {
                         Queries.loadPartyUsers(id);
+                    }
+                }.runTaskAsynchronously(ChatPlugin.getInstance());
+                break;
+            }
+            case "partylogin": {
+                int id = Integer.parseInt(in.readUTF());
+                Party party = PartyManager.getParty(id);
+                if (party == null) {
+                    ALogger.warn("Received invalid party id.");
+                    return;
+                }
+                UUID uuid = UUID.fromString(in.readUTF());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged onto the proxy.");
+
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
+                                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                                .forEach(p -> p.sendMessage(component));
+                    }
+                }.runTaskAsynchronously(ChatPlugin.getInstance());
+                break;
+            }
+            case "partylogout": {
+                int id = Integer.parseInt(in.readUTF());
+                Party party = PartyManager.getParty(id);
+                if (party == null) {
+                    ALogger.warn("Received invalid party id.");
+                    return;
+                }
+                UUID uuid = UUID.fromString(in.readUTF());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Component component = MiniMessage.get().parse("<dark_aqua>* " + party.getPartyUsers().get(uuid) + " logged out.");
+
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(p -> party.getPartyUsers().containsKey(p.getUniqueId()))
+                                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
+                                .forEach(p -> p.sendMessage(component));
                     }
                 }.runTaskAsynchronously(ChatPlugin.getInstance());
                 break;

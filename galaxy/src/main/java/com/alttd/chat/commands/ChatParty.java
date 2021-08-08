@@ -181,6 +181,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
 
                         sender.sendMessage(Utility.applyColor(stringBuilder.toString()));
                     }
+                    // TODO: 08/08/2021 add a way to change the password and owner (and name?)
                     default -> {
                         helpMessage(sender);
                     }
