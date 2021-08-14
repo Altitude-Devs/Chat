@@ -68,7 +68,7 @@ public final class ServerConfig {
 
     /** DO NOT EDIT ANYTHING ABOVE **/
 
-    public boolean GLOBALCHAT = true;
+    public boolean GLOBALCHAT = false;
     public boolean JOINLEAVEMSSAGES = true;
     public boolean MUTED = false;
     private void ServerSettings() {

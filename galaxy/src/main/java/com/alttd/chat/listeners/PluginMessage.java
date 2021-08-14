@@ -136,6 +136,9 @@ public class PluginMessage implements PluginMessageListener {
                 }.runTaskAsynchronously(ChatPlugin.getInstance());
                 break;
             }
+            case "reloadconfig":
+                ChatPlugin.getInstance().ReloadConfig();
+                break;
             default:
                 break;
         }

@@ -9,7 +9,10 @@ import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.ProxyPlayerListener;
 import com.alttd.chat.listeners.PluginMessageListener;
 import com.alttd.chat.util.ALogger;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
@@ -18,6 +21,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -66,6 +70,16 @@ public class VelocityChat {
         server.getEventManager().register(this, new PluginMessageListener(channelIdentifier));
 
         loadCommands();
+    }
+
+    public void ReloadConfig() {
+        chatAPI.ReloadConfig();
+        chatAPI.ReloadChatFilters();
+        serverHandler.cleanup();
+        ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+        buf.writeUTF("reloadconfig");
+        ALogger.info("Reloaded ChatPlugin proxy config.");
+        getProxy().getAllServers().stream().forEach(registeredServer -> registeredServer.sendPluginMessage(getChannelIdentifier(), buf.toByteArray()));
     }
 
     public File getDataDirectory() {

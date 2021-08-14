@@ -18,7 +18,7 @@ public class ChatImplementation implements ChatAPI{
 
     public ChatImplementation() {
         instance = this;
-        Config.init();
+        ReloadConfig();
 
         luckPerms = getLuckPerms();
         databaseConnection = getDataBase();
@@ -47,6 +47,16 @@ public class ChatImplementation implements ChatAPI{
         if(databaseConnection == null)
             databaseConnection = new DatabaseConnection();
         return databaseConnection;
+    }
+
+    @Override
+    public void ReloadConfig() {
+        Config.init();
+    }
+
+    @Override
+    public void ReloadChatFilters() {
+        RegexManager.initialize();
     }
 
 }

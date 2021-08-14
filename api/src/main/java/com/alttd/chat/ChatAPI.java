@@ -13,4 +13,8 @@ public interface ChatAPI {
 
     DatabaseConnection getDataBase();
 
+    void ReloadConfig();
+
+    void ReloadChatFilters();
+
 }
