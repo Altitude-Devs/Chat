@@ -62,13 +62,16 @@ public class Utility {
         StringBuilder prefix = new StringBuilder();
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
+        List<String> prefixGroups = Config.PREFIXGROUPS;
+        if(prefixGroups.containsAll(Config.CONFLICTINGPREFIXGROUPS))
+            prefixGroups.remove("eventteam"); // hardcoded for now, new prefix system would load this from config
         if(user == null) return Component.empty();
         if(!single) {
             Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
             inheritedGroups.stream()
                     .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
                     .forEach(group -> {
-                        if (Config.PREFIXGROUPS.contains(group.getName())) {
+                        if (prefixGroups.contains(group.getName())) {
                             prefix.append(getGroupPrefix(group));
                         }
                     });
@@ -92,8 +95,22 @@ public class Utility {
     }
 
     public static String getGroupPrefix(Group group) {
-
-        return group.getCachedData().getMetaData().getPrefix();
+        switch (group.getName()) { // hardcoded for now, new prefix system would load this from config
+            case "discord":
+                return "<hover:show_text:'&dNitro Booster in our discord'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            case "socialmedia":
+                return "<hover:show_text:'&6Social Media, this person manages our Socials'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            case "eventteam":
+                return "<hover:show_text:'&6Event Team, this person is part of the event team'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            case "eventleader":
+                return "<hover:show_text:'&6Event Leader, this person is an event leader'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            case "youtube":
+                return "<hover:show_text:'&6This person creates Altitude content on YouTube'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            case "twitch":
+                return "<hover:show_text:'&6This person creates Altitude content on Twitch'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+            default:
+                return group.getCachedData().getMetaData().getPrefix();
+        }
     }
 
     public static String getDisplayName(UUID uuid, String playerName) {

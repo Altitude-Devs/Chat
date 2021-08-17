@@ -158,6 +158,7 @@ public final class Config {
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
+    public static List<String> CONFLICTINGPREFIXGROUPS = new ArrayList<>();
     public static List<String> STAFFGROUPS = new ArrayList<>();
     public static String MINIMIUMSTAFFRANK = "trainee";
     public static String CONSOLENAME = "Console";
@@ -165,6 +166,9 @@ public final class Config {
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
+        CONFLICTINGPREFIXGROUPS = getList("settings.prefix-conflicts-groups",
+                Lists.newArrayList("eventteam", "eventleader"));
+
         STAFFGROUPS = getList("settings.staff-groups",
                 Lists.newArrayList("trainee", "moderator", "headmod", "admin", "manager", "owner"));
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);
