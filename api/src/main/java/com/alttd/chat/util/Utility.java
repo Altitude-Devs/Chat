@@ -3,19 +3,30 @@ package com.alttd.chat.util;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
+import net.md_5.bungee.api.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utility {
 
+    static final Pattern DEFAULT_URL_PATTERN = Pattern.compile("(?:(https?)://)?([-\\w_.]+\\.\\w{2,})(/\\S*)?");
+    static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^[a-z][a-z0-9+\\-.]*:");
+
     public static String stringRegen = "\\{#[A-Fa-f0-9]{6}(<)?(>)?}";
     public static HashMap<String, String> colors;
+    private static LegacyComponentSerializer legacySerializer;
     static { // this might be in minimessage already?
         colors = new HashMap<>();
         colors.put("&0", "<black>");
@@ -58,7 +69,7 @@ public class Utility {
                     .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
                     .forEach(group -> {
                         if (Config.PREFIXGROUPS.contains(group.getName())) {
-                            prefix.append(group.getCachedData().getMetaData().getPrefix());
+                            prefix.append(getGroupPrefix(group));
                         }
                     });
         }
@@ -78,6 +89,11 @@ public class Utility {
                 prefix.append(group.getCachedData().getMetaData().getPrefix());
         }
         return applyColor(prefix.toString());
+    }
+
+    public static String getGroupPrefix(Group group) {
+
+        return group.getCachedData().getMetaData().getPrefix();
     }
 
     public static String getDisplayName(UUID uuid, String playerName) {
@@ -176,4 +192,30 @@ public class Utility {
         return stringBuilder.length()==0 ? miniMessage.parse(message)
                 : miniMessage.parse(stringBuilder.toString());
     }
+
+    public static String formatText(String message) {
+            /*
+                .match(pattern)
+                .replacement(url -> {
+                  String clickUrl = url.content();
+                  if (!URL_SCHEME_PATTERN.matcher(clickUrl).find()) {
+                    clickUrl = "http://" + clickUrl;
+                  }
+                  return (style == null ? url : url.style(style)).clickEvent(ClickEvent.openUrl(clickUrl));
+                })
+                .build();
+              */
+        Matcher matcher = DEFAULT_URL_PATTERN.matcher(message);
+        while (matcher.find()) {
+            String url = matcher.group();
+            String clickUrl = url;
+            String urlFormat = Config.URLFORMAT;
+            if (!URL_SCHEME_PATTERN.matcher(clickUrl).find()) {
+                clickUrl = "http://" + clickUrl;
+            }
+            message = message.replace(url, urlFormat.replaceAll("<url>", url).replaceAll("<clickurl>", clickUrl));
+        }
+        return message;
+    }
+
 }

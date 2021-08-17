@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -57,6 +58,8 @@ public class ChatHandler {
 
         if(updatedMessage.contains("[i]"))
             updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+
+        updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("message", updatedMessage),
@@ -110,6 +113,8 @@ public class ChatHandler {
         if(updatedMessage.contains("[i]"))
             updatedMessage = updatedMessage.replace("[i]", "<[i]>"); // end of todo
 
+        updatedMessage = Utility.formatText(updatedMessage);
+
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),
                 Template.of("prefix", prefix),
@@ -145,6 +150,8 @@ public class ChatHandler {
 
         if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
 
+        updatedMessage = Utility.formatText(updatedMessage);
+
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),
                 Template.of("message", updatedMessage),
@@ -178,6 +185,8 @@ public class ChatHandler {
         }
 
         if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+
+        updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("sender", senderName),

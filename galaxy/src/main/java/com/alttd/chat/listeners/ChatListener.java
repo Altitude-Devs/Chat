@@ -76,6 +76,8 @@ public class ChatListener implements Listener, ChatRenderer {
         if(message.contains("[i]"))
             message = message.replace("[i]", "<[i]>"); // end of todo
 
+        message = Utility.formatText(message);
+
         List<Template> templates = new ArrayList<>(List.of(
                 Template.of("message", message),
                 Template.of("[i]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
