@@ -1,13 +1,19 @@
 package com.alttd.chat;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.config.PrefixConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.util.ALogger;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatImplementation implements ChatAPI{
 
@@ -15,6 +21,8 @@ public class ChatImplementation implements ChatAPI{
 
     private LuckPerms luckPerms;
     private DatabaseConnection databaseConnection;
+
+    private HashMap<String, String> prefixes;
 
     public ChatImplementation() {
         instance = this;
@@ -52,11 +60,26 @@ public class ChatImplementation implements ChatAPI{
     @Override
     public void ReloadConfig() {
         Config.init();
+        loadPrefixes();
     }
 
     @Override
     public void ReloadChatFilters() {
         RegexManager.initialize();
+    }
+
+    @Override
+    public HashMap<String, String> getPrefixes() {
+        return prefixes;
+    }
+
+    private void loadPrefixes() {
+        prefixes = new HashMap<>();
+        getLuckPerms().getGroupManager().getLoadedGroups().stream()
+                .map(Group::getName).forEach(groupName -> prefixes.put(groupName, new PrefixConfig(groupName).PREFIXFORMAT));
+        for (Map.Entry<String, String> entry : prefixes.entrySet()) {
+            ALogger.info("prefix: " + entry.getKey() + " format: " + entry.getValue());
+        }
     }
 
 }

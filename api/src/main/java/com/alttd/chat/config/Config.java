@@ -32,7 +32,7 @@ public final class Config {
     public static File CONFIGPATH;
     public static void init() { // todo setup share for the config
         CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "ChatPlugin");
-        CONFIG_FILE = new File(CONFIGPATH, "config.yml");;
+        CONFIG_FILE = new File(CONFIGPATH, "config.yml");
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -68,6 +68,7 @@ public final class Config {
             e.printStackTrace();
         }
     }
+
     public static void readConfig(Class<?> clazz, Object instance) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (Modifier.isPrivate(method.getModifiers())) {
@@ -155,7 +156,6 @@ public final class Config {
         return config.getNode(splitPath(path));
     }
 
-
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
     public static List<String> PREFIXGROUPS = new ArrayList<>();
     public static List<String> CONFLICTINGPREFIXGROUPS = new ArrayList<>();
@@ -168,7 +168,6 @@ public final class Config {
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
         CONFLICTINGPREFIXGROUPS = getList("settings.prefix-conflicts-groups",
                 Lists.newArrayList("eventteam", "eventleader"));
-
         STAFFGROUPS = getList("settings.staff-groups",
                 Lists.newArrayList("trainee", "moderator", "headmod", "admin", "manager", "owner"));
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);

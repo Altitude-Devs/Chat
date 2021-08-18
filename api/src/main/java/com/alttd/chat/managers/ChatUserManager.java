@@ -4,10 +4,7 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class ChatUserManager {

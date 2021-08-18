@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Utility {
 
@@ -63,11 +64,12 @@ public class Utility {
         LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
         User user = luckPerms.getUserManager().getUser(uuid);
         List<String> prefixGroups = Config.PREFIXGROUPS;
-        if(prefixGroups.containsAll(Config.CONFLICTINGPREFIXGROUPS))
-            prefixGroups.remove("eventteam"); // hardcoded for now, new prefix system would load this from config
         if(user == null) return Component.empty();
         if(!single) {
             Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
+            if(inheritedGroups.stream().map(Group::getName).collect(Collectors.toList()).contains("eventleader")) {
+                prefixGroups.remove("eventteam"); // hardcoded for now, new prefix system would load this from config
+            }
             inheritedGroups.stream()
                     .sorted(Comparator.comparingInt(o -> o.getWeight().orElse(0)))
                     .forEach(group -> {
@@ -95,22 +97,23 @@ public class Utility {
     }
 
     public static String getGroupPrefix(Group group) {
-        switch (group.getName()) { // hardcoded for now, new prefix system would load this from config
-            case "discord":
-                return "<hover:show_text:'&dNitro Booster in our discord'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            case "socialmedia":
-                return "<hover:show_text:'&6Social Media, this person manages our Socials'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            case "eventteam":
-                return "<hover:show_text:'&6Event Team, this person is part of the event team'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            case "eventleader":
-                return "<hover:show_text:'&6Event Leader, this person is an event leader'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            case "youtube":
-                return "<hover:show_text:'&6This person creates Altitude content on YouTube'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            case "twitch":
-                return "<hover:show_text:'&6This person creates Altitude content on Twitch'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
-            default:
-                return group.getCachedData().getMetaData().getPrefix();
-        }
+        return ChatAPI.get().getPrefixes().get(group.getName()).replace("<prefix>", group.getCachedData().getMetaData().getPrefix());
+//        switch (group.getName()) { // hardcoded for now, new prefix system would load this from config
+//            case "discord":
+//                return "<hover:show_text:'&dNitro Booster in our discord'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            case "socialmedia":
+//                return "<hover:show_text:'&6Social Media, this person manages our Socials'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            case "eventteam":
+//                return "<hover:show_text:'&6Event Team, this person is part of the event team'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            case "eventleader":
+//                return "<hover:show_text:'&6Event Leader, this person is an event leader'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            case "youtube":
+//                return "<hover:show_text:'&6This person creates Altitude content on YouTube'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            case "twitch":
+//                return "<hover:show_text:'&6This person creates Altitude content on Twitch'>" + group.getCachedData().getMetaData().getPrefix() + "</hover>";
+//            default:
+//                return group.getCachedData().getMetaData().getPrefix();
+//        }
     }
 
     public static String getDisplayName(UUID uuid, String playerName) {
