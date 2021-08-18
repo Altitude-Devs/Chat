@@ -54,6 +54,6 @@ public class PartyManager {
     }
 
     public static void loadParties() {
-        Queries.loadParties();
+        //Queries.loadParties();
     }
 }

@@ -1,6 +1,7 @@
 package com.alttd.chat;
 
 import com.alttd.chat.commands.GlobalAdminChat;
+import com.alttd.chat.commands.Reload;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handlers.ChatHandler;
@@ -100,6 +101,7 @@ public class VelocityChat {
 
     public void loadCommands() {
         new GlobalAdminChat(server);
+        new Reload(server);
         // all (proxy)commands go here
     }
 
