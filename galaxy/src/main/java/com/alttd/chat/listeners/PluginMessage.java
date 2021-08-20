@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,7 +34,19 @@ public class PluginMessage implements PluginMessageListener {
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
         switch (subChannel) {
-            case "privatemessage": {
+            case "privatemessagein": {
+                UUID uuid = UUID.fromString(in.readUTF());
+                String target = in.readUTF();
+                Player p = Bukkit.getPlayer(uuid);
+                if (p != null) {
+                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
+                    ChatUser user = ChatUserManager.getChatUser(uuid);
+                    user.setReplyTarget(target);
+                }
+                break;
+            }
+            case "privatemessageout": {
                 UUID uuid = UUID.fromString(in.readUTF());
                 String target = in.readUTF();
                 Player p = Bukkit.getPlayer(uuid);

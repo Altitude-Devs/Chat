@@ -31,7 +31,7 @@ public final class Config {
 
     public static File CONFIGPATH;
     public static void init() { // todo setup share for the config
-        CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "ChatPlugin");
+        CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "ChatPlugin");
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)

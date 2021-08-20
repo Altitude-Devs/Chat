@@ -48,7 +48,7 @@ public class PlayerListener implements Listener {
             if (component != null) {
                 String message = PlainComponentSerializer.plain().serialize(component);
                 Player player = event.getPlayer();
-                message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
+                message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message, false); // todo a better way for this
 
                 if (message == null) {
                     GalaxyUtility.sendBlockedNotification("Sign Language" , player, PlainComponentSerializer.plain().serialize(component), "");

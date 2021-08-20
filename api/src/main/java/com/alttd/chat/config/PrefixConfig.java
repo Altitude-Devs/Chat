@@ -36,10 +36,8 @@ public final class PrefixConfig {
         init();
     }
 
-    public static File CONFIGPATH;
     public void init() {
-        CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "ChatPlugin");
-        CONFIG_FILE = new File(CONFIGPATH, "prefix.yml");
+        CONFIG_FILE = new File(Config.CONFIGPATH, "prefix.yml");
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)

@@ -57,4 +57,19 @@ public class ChatFilter {
         }
         return input;
     }
+
+    public String replaceMatcher(String input) {
+        int lenght;
+        try {
+            lenght = Integer.parseInt(replacement);
+        } catch (NumberFormatException e) {
+            lenght = 3; // could load this from config and make it cleaner
+        }
+        Matcher matcher = pattern.matcher(input);
+        while (matcher.find()) {
+            String group = matcher.group();
+            input = input.replace(group, group.substring(0, lenght));
+        }
+        return input;
+    }
 }

@@ -53,7 +53,7 @@ public class ChatHandler {
             serverConnection = player.getCurrentServer().get();
             Component component = miniMessage.parse(Config.MESSAGESENDER, templates);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
-            buf.writeUTF("privatemessage");
+            buf.writeUTF("privatemessageout");
             buf.writeUTF(player.getUniqueId().toString());
             buf.writeUTF(player2.getUsername());
             buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
@@ -63,7 +63,7 @@ public class ChatHandler {
             serverConnection = player2.getCurrentServer().get();
             component = miniMessage.parse(Config.MESSAGERECIEVER, templates);
             buf = ByteStreams.newDataOutput();
-            buf.writeUTF("privatemessage");
+            buf.writeUTF("privatemessagein");
             buf.writeUTF(player2.getUniqueId().toString());
             buf.writeUTF(player.getUsername());
             buf.writeUTF(GsonComponentSerializer.gson().serialize(component));

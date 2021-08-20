@@ -30,6 +30,10 @@ public class RegexManager {
     }
 
     public static String replaceText(String playerName, UUID uuid, String text) { // TODO loop all objects in the list and check if they violate based on the MATCHER
+        return replaceText(playerName, uuid, text, true);
+    }
+
+    public static String replaceText(String playerName, UUID uuid, String text, boolean matcher) {
         User user = ChatAPI.get().getLuckPerms().getUserManager().getUser(uuid);
         if (user == null) {
             ALogger.warn("Tried to check chat filters for a user who doesn't exist in LuckPerms");
@@ -49,14 +53,12 @@ public class RegexManager {
                         return null;
                     }
                     break;
+                case REPLACEMATCHER:
+                    if(matcher) {
+                        text = chatFilter.replaceMatcher(text);
+                    }
+                    break;
             }
-        }
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String group = matcher.group();
-            System.out.println(group);
-            text = text.replace(group, group.substring(0, 3)); //TODO HARD CODED PLS PUT IN CONFIG
-            System.out.println(text);
         }
         return text;
     }

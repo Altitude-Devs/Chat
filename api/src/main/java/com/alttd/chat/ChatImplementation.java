@@ -77,9 +77,6 @@ public class ChatImplementation implements ChatAPI{
         prefixes = new HashMap<>();
         getLuckPerms().getGroupManager().getLoadedGroups().stream()
                 .map(Group::getName).forEach(groupName -> prefixes.put(groupName, new PrefixConfig(groupName).PREFIXFORMAT));
-        for (Map.Entry<String, String> entry : prefixes.entrySet()) {
-            ALogger.info("prefix: " + entry.getKey() + " format: " + entry.getValue());
-        }
     }
 
 }
