@@ -22,7 +22,7 @@ public class ChatUser {
     //private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
     private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
-
+    private boolean spy;
     private List<Mail> mails; // mails aren't finalized yet, so for now a table sender, reciever, sendtime, readtime(if emtpy mail isn't read yet?, could also do a byte to control this), the actual message
     private List<UUID> ignoredPlayers; // a list of UUID, a new table non unique, where one is is the player select * from ignores where ignoredby = thisplayer? where the result is the uuid of the player ignored by this player?
     private List<UUID> ignoredBy; // a list of UUID, same table as above but select * from ignores where ignored = thisplayer? result should be the other user that ignored this player?
@@ -48,6 +48,7 @@ public class ChatUser {
         mails = Queries.getMails(uuid);
         ignoredPlayers = Queries.getIgnoredUsers(uuid);
         ignoredBy = new ArrayList<>(); // todo load ignoredPlayers
+        spy = true;
     }
 
     public UUID getUuid() {
@@ -136,5 +137,13 @@ public class ChatUser {
 
     public void setGcCooldown(long time) {
         this.gcCooldown = time;
+    }
+
+    public boolean isSpy() {
+        return spy;
+    }
+
+    public void toggleSpy() {
+        this.spy = !spy;
     }
 }

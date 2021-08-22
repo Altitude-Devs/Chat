@@ -15,7 +15,7 @@ commands:
     aliases: togglegc
   message:
     permission: command.message
-    aliases: msg
+    aliases: [msg, tell]
   reply:
     permission: command.message
     aliases: r

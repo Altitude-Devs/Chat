@@ -39,10 +39,13 @@ public class PluginMessage implements PluginMessageListener {
                 String target = in.readUTF();
                 Player p = Bukkit.getPlayer(uuid);
                 if (p != null) {
-                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
-                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
-                    ChatUser user = ChatUserManager.getChatUser(uuid);
-                    user.setReplyTarget(target);
+                    ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                    if (!chatUser.getIgnoredPlayers().contains(uuid)) {
+                        p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
+                        ChatUser user = ChatUserManager.getChatUser(uuid);
+                        user.setReplyTarget(target);
+                    }
                 }
                 break;
             }
@@ -51,9 +54,12 @@ public class PluginMessage implements PluginMessageListener {
                 String target = in.readUTF();
                 Player p = Bukkit.getPlayer(uuid);
                 if (p != null) {
-                    p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
-                    ChatUser user = ChatUserManager.getChatUser(uuid);
-                    user.setReplyTarget(target);
+                    ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                    if (!chatUser.getIgnoredPlayers().contains(uuid)) {
+                        p.sendMessage(GsonComponentSerializer.gson().deserialize(in.readUTF()));
+                        ChatUser user = ChatUserManager.getChatUser(uuid);
+                        user.setReplyTarget(target);
+                    }
                 }
                 break;
             }

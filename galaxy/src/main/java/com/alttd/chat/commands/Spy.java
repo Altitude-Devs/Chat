@@ -25,9 +25,9 @@ public class Spy implements CommandExecutor {
             @Override
             public void run() {
                 UUID uuid = ((Player) sender).getUniqueId();
-                Utility.flipPermission(uuid, Config.SPYPERMISSION);
-                //Queries.setGlobalChatState(chatUser.isGcOn(), chatUser.getUuid());
-                sender.sendMessage(MiniMessage.get().parse("You have turned spy " + (!Utility.hasPermission(uuid, Config.GCPERMISSION) ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
+                ChatUser user = ChatUserManager.getChatUser(uuid);
+                user.toggleSpy();
+                sender.sendMessage(MiniMessage.get().parse("You have turned spy " + (user.isSpy() ? "<green>on." : "<red>off."))); // TODO load from config and minimessage
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
         return false;
