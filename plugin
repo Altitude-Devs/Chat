@@ -14,16 +14,21 @@ case "$1" in
     "d" | "deploy") # deploy api to repo
       ;;
     "b" | "build")
+        (
+            cd "$basedir"
             mvn package
+        )
         ;;
     "upload")
         (
+        cd "$basedir"
         scp ./galaxy/target/galaxy-chat.jar sid@leo:/home/sid/servers/meadowTest/plugins/galaxy-chat.jar
         scp ./velocity/target/velocity-chat.jar sid@leo:/home/sid/servers/velocity/plugins/velocity-chat.jar
         )
         ;;
     "queue")
         (
+        cd "$basedir"
         scp ./galaxy/target/galaxy-chat.jar sid@lyra:/home/sid/share/updates/all/plugins/galaxy-chat.jar
         scp ./velocity/target/velocity-chat.jar sid@lyra:/home/sid/share/updates/plugins/proxy/velocity-chat.jar
         )
