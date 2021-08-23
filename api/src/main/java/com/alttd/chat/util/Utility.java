@@ -78,7 +78,8 @@ public class Utility {
                         }
                     });
         }
-        prefix.append(user.getCachedData().getMetaData().getPrefix());
+        prefix.append(getUserPrefix(user));
+//        prefix.append(user.getCachedData().getMetaData().getPrefix());
 
         return applyColor(prefix.toString());
     }
@@ -91,9 +92,27 @@ public class Utility {
         if(user.getCachedData().getPermissionData().checkPermission("group." + Config.MINIMIUMSTAFFRANK).asBoolean()) {
             Group group = luckPerms.getGroupManager().getGroup(user.getPrimaryGroup());
             if(group != null)
-                prefix.append(group.getCachedData().getMetaData().getPrefix());
+                prefix.append(getGroupPrefix(group));
+//                prefix.append(group.getCachedData().getMetaData().getPrefix());
         }
         return applyColor(prefix.toString());
+    }
+
+    public static String getUserPrefix(User user) {
+        LuckPerms luckPerms = ChatAPI.get().getLuckPerms();
+        Group group = luckPerms.getGroupManager().getGroup(user.getPrimaryGroup());
+        if (group == null) {
+            return "";
+        }
+        return ChatAPI.get().getPrefixes().get(group.getName()).replace("<prefix>", user.getCachedData().getMetaData().getPrefix());
+    }
+
+    public static String getGroupPrefix(String groupName) {
+        Group group = ChatAPI.get().getLuckPerms().getGroupManager().getGroup(groupName);
+        if (group == null) {
+            return "";
+        }
+        return getGroupPrefix(group);
     }
 
     public static String getGroupPrefix(Group group) {
