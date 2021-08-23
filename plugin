@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# get base dir regardless of execution location
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
+basedir=$(dirname "$SOURCE")
+. "$basedir"/scripts/init.sh
+
+case "$1" in
+    "d" | "deploy") # deploy api to repo
+      ;;
+    "b" | "build")
+            mvn package
+        ;;
+    "upload")
+        (
+        scp ./galaxy/target/galaxy-chat.jar sid@leo:/home/sid/servers/meadowTest/plugins/galaxy-chat.jar
+        scp ./velocity/target/velocity-chat.jar sid@leo:/home/sid/servers/velocity/plugins/velocity-chat.jar
+        )
+        ;;
+    "queue")
+        (
+        scp ./galaxy/target/galaxy-chat.jar sid@lyra:/home/sid/share/updates/all/plugins/galaxy-chat.jar
+        scp ./velocity/target/velocity-chat.jar sid@lyra:/home/sid/share/updates/plugins/proxy/velocity-chat.jar
+        )
+        ;;
+      "setup")
+        if [[ -f ~/.bashrc ]] ; then
+            NAME="${PLUGIN_NAME}"
+            if [[ ! -z "${2+x}" ]] ; then
+                NAME="$2"
+            fi
+            (grep "alias $NAME=" ~/.bashrc > /dev/null) && (sed -i "s|alias $NAME=.*|alias $NAME='. $SOURCE'|g" ~/.bashrc) || (echo "alias $NAME='. $SOURCE'" >> ~/.bashrc)
+            alias "$NAME=. $SOURCE"
+            echo "You can now just type '$NAME' at any time to access the build tool."
+        fi
+    ;;
+    *)
+    echo "${PLUGIN_NAME} build tool. This provides a variety of commands to control the build."
+    echo "View below for details of the available commands."
+    echo ""
+    echo "Commands:"
+    echo "  * b, build          | Builds the project"
+    echo "  * upload            | uploads the lastest build to a testserver"
+    echo "  * queue             | queue the lastest build to Alttiude"
+    echo "  * setup             | Add an alias to .bashrc to allow full functionality of this script. Run as:"
+    echo "                      |     . ./plugin setup"
+    ;;
+esac
