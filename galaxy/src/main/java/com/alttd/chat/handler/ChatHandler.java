@@ -42,8 +42,8 @@ public class ChatHandler {
     }
 
     public void privateMessage(Player player, String target, String message) {
-        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-        user.setReplyTarget(target);
+//        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+//        user.setReplyTarget(target);
         String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(updatedMessage == null) {
             GalaxyUtility.sendBlockedNotification("DM Language", player, message, target);

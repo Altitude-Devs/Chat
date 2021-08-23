@@ -40,16 +40,17 @@ public class ChatListener implements Listener, ChatRenderer {
                     + " tried to say: "
                     + PlainComponentSerializer.plain().serialize(event.message()) + "</red>");
 
-            Bukkit.getOnlinePlayers().forEach(a ->{
-                if (a.hasPermission("chat.alert-blocked")) {
-                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-                }
-            });
+            Bukkit.broadcast(blockedNotification, "chat.alert-blocked");
+//            Bukkit.getOnlinePlayers().forEach(a ->{
+//                if (a.hasPermission("chat.alert-blocked")) {
+//                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
+//                }
+//            });
             return;
         }
 
         Player player = event.getPlayer();
-        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+//        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
         event.viewers().removeIf(audience -> audience instanceof Player receiver
                 && ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()));

@@ -57,6 +57,7 @@ public class ChatHandler {
             buf.writeUTF(player.getUniqueId().toString());
             buf.writeUTF(player2.getUsername());
             buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
+            buf.writeUTF(player2.getUniqueId().toString());
             serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
 
             //redirect to the receiver
@@ -67,6 +68,7 @@ public class ChatHandler {
             buf.writeUTF(player2.getUniqueId().toString());
             buf.writeUTF(player.getUsername());
             buf.writeUTF(GsonComponentSerializer.gson().serialize(component));
+            buf.writeUTF(player.getUniqueId().toString());
             serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
         }
 
