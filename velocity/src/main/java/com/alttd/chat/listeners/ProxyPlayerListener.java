@@ -66,7 +66,6 @@ public class ProxyPlayerListener {
                     Template.of("player", player.getUsername()),
                     Template.of("from_server", previousServer.getServerInfo().getName()),
                     Template.of("to_server", event.getServer().getServerInfo().getName())));
-            // todo Code clean up @Destro
             ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
                 wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERSWTICHMESSAGETO, templates));

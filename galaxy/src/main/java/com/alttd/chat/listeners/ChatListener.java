@@ -41,11 +41,6 @@ public class ChatListener implements Listener, ChatRenderer {
                     + PlainComponentSerializer.plain().serialize(event.message()) + "</red>");
 
             Bukkit.broadcast(blockedNotification, "chat.alert-blocked");
-//            Bukkit.getOnlinePlayers().forEach(a ->{
-//                if (a.hasPermission("chat.alert-blocked")) {
-//                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-//                }
-//            });
             return;
         }
 

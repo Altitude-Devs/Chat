@@ -31,7 +31,7 @@ public final class Config {
     static boolean verbose;
 
     public static File CONFIGPATH;
-    public static void init() { // todo setup share for the config
+    public static void init() {
         CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "ChatPlugin");
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");
         configLoader = YAMLConfigurationLoader.builder()
@@ -196,8 +196,8 @@ public final class Config {
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
     public static String GCPERMISSION = "proxy.globalchat";
     public static List<String> GCALIAS = new ArrayList<>();
-    public static String GCNOTENABLED = "You don't have global chat enabled."; // todo mini message formatting
-    public static String GCONCOOLDOWN = "You have to wait <cooldown> seconds before using this feature again."; // todo mini message formatting
+    public static String GCNOTENABLED = "You don't have global chat enabled.";
+    public static String GCONCOOLDOWN = "You have to wait <cooldown> seconds before using this feature again.";
     public static int GCCOOLDOWN = 30;
     private static void globalChat() {
         GCFORMAT = getString("commands.globalchat.format", GCFORMAT);
@@ -215,7 +215,6 @@ public final class Config {
         PARTY_SPY = getString("party.spy", PARTY_SPY);
     }
 
-    // TODO prefixes need hovers, this hasn't been setup yet!
     public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><hover:show_text:Click to message <sendername>><click:suggest_command:/msg <sendername> ><sender></hover>: <white><message>";
     public static String URLFORMAT = "<click:OPEN_URL:<clickurl>><url></click>";
     private static void Chat() {

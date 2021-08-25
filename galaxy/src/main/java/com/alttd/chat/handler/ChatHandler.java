@@ -72,7 +72,7 @@ public class ChatHandler {
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = miniMessage.parse(Config.MESSAGESPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
-            if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) { // todo add a toggle for social spy
+            if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) {
                 pl.sendMessage(spymessage);
             }
         }
@@ -111,7 +111,7 @@ public class ChatHandler {
         }
 
         if(updatedMessage.contains("[i]"))
-            updatedMessage = updatedMessage.replace("[i]", "<[i]>"); // end of todo
+            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
 
         updatedMessage = Utility.formatText(updatedMessage);
 
@@ -201,7 +201,7 @@ public class ChatHandler {
 
         Component spyMessage = miniMessage.parse(Config.PARTY_SPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
-            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) { // todo add a toggle for social spy
+            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
                 pl.sendMessage(spyMessage);
             }
         }

@@ -48,7 +48,7 @@ public class PluginMessageListener {
                     case "globaladminchat":
                         VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
                         break;
-                    case "privatemessage": // TODO redirect this to the server that player is on
+                    case "privatemessage":
                         VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
                         break;
                     case "chatchannel": {
