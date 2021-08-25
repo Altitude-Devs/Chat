@@ -97,7 +97,7 @@
         <dependency><!-- Galaxy -->
             <groupId>com.alttd</groupId>
             <artifactId>galaxy-api</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

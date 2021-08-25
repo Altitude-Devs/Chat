@@ -1,6 +1,7 @@
 package com.alttd.chat.config;
 
 import com.alttd.chat.objects.channels.CustomChannel;
+import com.alttd.chat.util.Utility;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
@@ -163,6 +164,7 @@ public final class Config {
     public static String MINIMIUMSTAFFRANK = "trainee";
     public static String CONSOLENAME = "Console";
     public static UUID CONSOLEUUID = UUID.randomUUID();
+    public static String NOTIFICATIONFORMAT = "<red>[<prefix>] <displayname> <target> <input>";
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
@@ -173,6 +175,7 @@ public final class Config {
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);
         CONSOLEUUID = UUID.fromString(getString("settings.console-uuid", CONSOLEUUID.toString()));
         MINIMIUMSTAFFRANK = getString("settings.minimum-staff-rank", MINIMIUMSTAFFRANK);
+        NOTIFICATIONFORMAT = getString("settings.blockedmessage-notification", NOTIFICATIONFORMAT);
     }
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
