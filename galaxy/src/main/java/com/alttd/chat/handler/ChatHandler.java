@@ -255,17 +255,7 @@ public class ChatHandler {
 
     private boolean isMuted(Player player, String message, String prefix) {
         if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
-            MiniMessage miniMessage = MiniMessage.get();
-            Component blockedNotification = miniMessage.parse("<red>" + prefix
-                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                    + " tried to say: "
-                    + message + "</red>");
-
-            Bukkit.getOnlinePlayers().forEach(a ->{
-                if (a.hasPermission("chat.alert-blocked")) {
-                    a.sendMessage(blockedNotification);//TODO make configurable (along with all the messages)
-                }
-            });
+            GalaxyUtility.sendBlockedNotification(prefix, player, message, "");
             return true;
         }
         return false;

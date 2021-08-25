@@ -34,13 +34,7 @@ public class ChatListener implements Listener, ChatRenderer {
             event.setCancelled(true);
 
             Player player = event.getPlayer();
-            MiniMessage miniMessage = MiniMessage.get();
-            Component blockedNotification = miniMessage.parse("<red>[Chat Muted] "
-                    + Utility.getDisplayName(player.getUniqueId(), player.getName())
-                    + " tried to say: "
-                    + PlainComponentSerializer.plain().serialize(event.message()) + "</red>");
-
-            Bukkit.broadcast(blockedNotification, "chat.alert-blocked");
+            GalaxyUtility.sendBlockedNotification("Chat Muted", player, event.message(), "");
             return;
         }
 
