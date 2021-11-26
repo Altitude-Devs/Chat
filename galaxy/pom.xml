@@ -94,10 +94,10 @@
             <artifactId>configurate-yaml</artifactId>
             <version>3.7.1</version>
         </dependency>
-        <dependency><!-- Galaxy -->
+        <dependency>
             <groupId>com.alttd</groupId>
             <artifactId>galaxy-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18-pre5-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

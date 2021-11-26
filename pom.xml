@@ -70,8 +70,9 @@
             <url>https://repo.spongepowered.org/maven</url>
         </repository>
         <repository>
-            <id>Alttd-Nexus</id>
-            <url>http://leo:8081/</url>
+            <id>AlttdRepo-snapshots</id>
+            <name>Altitude Maven Repo</name>
+            <url>https://repo.destro.xyz/snapshots</url>
         </repository>
     </repositories>
 
