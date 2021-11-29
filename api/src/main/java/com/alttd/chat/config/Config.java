@@ -1,15 +1,12 @@
 package com.alttd.chat.config;
 
 import com.alttd.chat.objects.channels.CustomChannel;
-import com.alttd.chat.util.Utility;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.yaml.snakeyaml.DumperOptions;
+import io.leangen.geantyref.TypeToken;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.NodeStyle;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +15,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import org.spongepowered.configurate.ConfigurationOptions;
 
 public final class Config {
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
@@ -25,7 +24,7 @@ public final class Config {
 
     private static File CONFIG_FILE;
     public static ConfigurationNode config;
-    public static YAMLConfigurationLoader configLoader;
+    public static YamlConfigurationLoader configLoader;
 
     static int version;
     static boolean verbose;
@@ -34,9 +33,9 @@ public final class Config {
     public static void init() {
         CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "ChatPlugin");
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");
-        configLoader = YAMLConfigurationLoader.builder()
-                .setFile(CONFIG_FILE)
-                .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
+        configLoader = YamlConfigurationLoader.builder()
+                .file(CONFIG_FILE)
+                .nodeStyle(NodeStyle.FLOW)
                 .build();
         if (!CONFIG_FILE.getParentFile().exists()) {
             if(!CONFIG_FILE.getParentFile().mkdirs()) {
@@ -54,7 +53,7 @@ public final class Config {
         }
 
         try {
-            config = configLoader.load(ConfigurationOptions.defaults().setHeader(HEADER));
+            config = configLoader.load(ConfigurationOptions.defaults().header(HEADER));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,58 +102,62 @@ public final class Config {
     }
 
     private static void set(String path, Object def) {
-        if(config.getNode(splitPath(path)).isVirtual())
-            config.getNode(splitPath(path)).setValue(def);
+        if(config.node(splitPath(path)).virtual()) {
+            try {
+                config.node(splitPath(path)).set(def);
+            } catch (SerializationException e) {
+            }
+        }
     }
 
     private static void setString(String path, String def) {
         try {
-            if(config.getNode(splitPath(path)).isVirtual())
-                config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
-        } catch(ObjectMappingException ex) {
+            if(config.node(splitPath(path)).virtual())
+                config.node(splitPath(path)).set(io.leangen.geantyref.TypeToken.get(String.class), def);
+        } catch(SerializationException ex) {
         }
     }
 
     private static boolean getBoolean(String path, boolean def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getBoolean(def);
+        return config.node(splitPath(path)).getBoolean(def);
     }
 
     private static double getDouble(String path, double def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getDouble(def);
+        return config.node(splitPath(path)).getDouble(def);
     }
 
     private static int getInt(String path, int def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getInt(def);
+        return config.node(splitPath(path)).getInt(def);
     }
 
     private static String getString(String path, String def) {
         setString(path, def);
-        return config.getNode(splitPath(path)).getString(def);
+        return config.node(splitPath(path)).getString(def);
     }
 
     private static Long getLong(String path, Long def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getLong(def);
+        return config.node(splitPath(path)).getLong(def);
     }
 
     private static <T> List<String> getList(String path, T def) {
         try {
             set(path, def);
-            return config.getNode(splitPath(path)).getList(TypeToken.of(String.class));
-        } catch(ObjectMappingException ex) {
+            return config.node(splitPath(path)).getList(TypeToken.get(String.class));
+        } catch(SerializationException ex) {
         }
         return new ArrayList<>();
     }
 
     private static ConfigurationNode getNode(String path) {
-        if(config.getNode(splitPath(path)).isVirtual()) {
+        if(config.node(splitPath(path)).virtual()) {
             //new RegexConfig("Dummy");
         }
-        config.getChildrenMap();
-        return config.getNode(splitPath(path));
+        config.childrenMap();
+        return config.node(splitPath(path));
     }
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/
@@ -251,15 +254,15 @@ public final class Config {
 
     private static void chatChannels() {
         ConfigurationNode node = getNode("chat-channels");
-        if (node.isEmpty()) {
+        if (node.empty()) {
             getString("chat-channels.ac.format", "<white><gray><sender></gray> <hover:show_text:on <server>><yellow>to <channel></yellow></hover><gray>: <message>");
             getList("chat-channels.ac.servers", List.of("lobby"));
             getBoolean("chat-channels.ac.proxy", false);
             node = getNode("chat-channels");
         }
 
-        for (ConfigurationNode configurationNode : node.getChildrenMap().values()) {
-            String channelName = Objects.requireNonNull(configurationNode.getKey()).toString();
+        for (ConfigurationNode configurationNode : node.childrenMap().values()) {
+            String channelName = Objects.requireNonNull(configurationNode.key()).toString();
             String key = "chat-channels." + channelName + ".";
             new CustomChannel(channelName,
                     getString(key + "format", ""),

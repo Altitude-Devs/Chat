@@ -2,10 +2,11 @@ package com.alttd.chat.config;
 
 import com.google.common.base.Throwables;
 import com.google.common.reflect.TypeToken;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public final class PrefixConfig {
 
     private static File CONFIG_FILE;
     public static ConfigurationNode config;
-    public static YAMLConfigurationLoader configLoader;
+    public static YamlConfigurationLoader configLoader;
 
     private static String prefixName;
     private static String configPath;
@@ -38,9 +39,9 @@ public final class PrefixConfig {
 
     public void init() {
         CONFIG_FILE = new File(Config.CONFIGPATH, "prefix.yml");
-        configLoader = YAMLConfigurationLoader.builder()
-                .setFile(CONFIG_FILE)
-                .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
+        configLoader = YamlConfigurationLoader.builder()
+                .file(CONFIG_FILE)
+                .nodeStyle(NodeStyle.FLOW)
                 .build();
         if (!CONFIG_FILE.getParentFile().exists()) {
             if(!CONFIG_FILE.getParentFile().mkdirs()) {
@@ -58,7 +59,7 @@ public final class PrefixConfig {
         }
 
         try {
-            config = configLoader.load(ConfigurationOptions.defaults().setHeader(HEADER));
+            config = configLoader.load(ConfigurationOptions.defaults().header(HEADER));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,41 +105,44 @@ public final class PrefixConfig {
     }
 
     private static void set(String path, Object def) {
-        if(config.getNode(splitPath(path)).isVirtual()) {
-            config.getNode(splitPath(path)).setValue(def);
+        if(config.node(splitPath(path)).virtual()) {
+            try {
+                config.node(splitPath(path)).set(def);
+            } catch (SerializationException e) {
+            }
         }
     }
 
     private static void setString(String path, String def) {
         try {
-            if(config.getNode(splitPath(path)).isVirtual())
-                config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
-        } catch(ObjectMappingException ex) {
+            if(config.node(splitPath(path)).virtual())
+                config.node(splitPath(path)).set(io.leangen.geantyref.TypeToken.get(String.class), def);
+        } catch(SerializationException ex) {
         }
     }
 
     private static boolean getBoolean(String path, boolean def) {
         set(defaultPath + path, def);
-        return config.getNode(splitPath(configPath + path)).getBoolean(
-                config.getNode(splitPath(defaultPath + path)).getBoolean(def));
+        return config.node(splitPath(configPath + path)).getBoolean(
+                config.node(splitPath(defaultPath + path)).getBoolean(def));
     }
 
     private static double getDouble(String path, double def) {
         set(defaultPath + path, def);
-        return config.getNode(splitPath(configPath + path)).getDouble(
-                config.getNode(splitPath(defaultPath + path)).getDouble(def));
+        return config.node(splitPath(configPath + path)).getDouble(
+                config.node(splitPath(defaultPath + path)).getDouble(def));
     }
 
     private static int getInt(String path, int def) {
         set(defaultPath + path, def);
-        return config.getNode(splitPath(configPath + path)).getInt(
-                config.getNode(splitPath(defaultPath + path)).getInt(def));
+        return config.node(splitPath(configPath + path)).getInt(
+                config.node(splitPath(defaultPath + path)).getInt(def));
     }
 
     private static String getString(String path, String def) {
         set(defaultPath + path, def);
-        return config.getNode(splitPath(configPath + path)).getString(
-                config.getNode(splitPath(defaultPath + path)).getString(def));
+        return config.node(splitPath(configPath + path)).getString(
+                config.node(splitPath(defaultPath + path)).getString(def));
     }
 
     /** ONLY EDIT ANYTHING BELOW THIS LINE **/

@@ -1,7 +1,7 @@
 package com.alttd.chat.config;
 
-import com.google.common.reflect.TypeToken;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import io.leangen.geantyref.TypeToken;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.regex.Pattern;
 
@@ -29,41 +29,44 @@ public final class ServerConfig {
     }
 
     private static void set(String path, Object def) {
-        if(Config.config.getNode(splitPath(path)).isVirtual()) {
-            Config.config.getNode(splitPath(path)).setValue(def);
+        if(Config.config.node(splitPath(path)).virtual()) {
+            try {
+                Config.config.node(splitPath(path)).set(def);
+            } catch (SerializationException ex) {
+            }
         }
     }
 
     private static void setString(String path, String def) {
         try {
-            if(Config.config.getNode(splitPath(path)).isVirtual())
-                Config.config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
-        } catch(ObjectMappingException ex) {
+            if(Config.config.node(splitPath(path)).virtual())
+                Config.config.node(splitPath(path)).set(TypeToken.get(String.class), def);
+        } catch(SerializationException ex) {
         }
     }
 
     private boolean getBoolean(String path, boolean def) {
         set(defaultPath +path, def);
-        return Config.config.getNode(splitPath(configPath+path)).getBoolean(
-                Config.config.getNode(splitPath(defaultPath +path)).getBoolean(def));
+        return Config.config.node(splitPath(configPath+path)).getBoolean(
+                Config.config.node(splitPath(defaultPath +path)).getBoolean(def));
     }
 
     private double getDouble(String path, double def) {
         set(defaultPath +path, def);
-        return Config.config.getNode(splitPath(configPath+path)).getDouble(
-                Config.config.getNode(splitPath(defaultPath +path)).getDouble(def));
+        return Config.config.node(splitPath(configPath+path)).getDouble(
+                Config.config.node(splitPath(defaultPath +path)).getDouble(def));
     }
 
     private int getInt(String path, int def) {
         set(defaultPath +path, def);
-        return Config.config.getNode(splitPath(configPath+path)).getInt(
-                Config.config.getNode(splitPath(defaultPath +path)).getInt(def));
+        return Config.config.node(splitPath(configPath+path)).getInt(
+                Config.config.node(splitPath(defaultPath +path)).getInt(def));
     }
 
     private String getString(String path, String def) {
         set(defaultPath +path, def);
-        return Config.config.getNode(splitPath(configPath+path)).getString(
-                Config.config.getNode(splitPath(defaultPath +path)).getString(def));
+        return Config.config.node(splitPath(configPath+path)).getString(
+                Config.config.node(splitPath(defaultPath +path)).getString(def));
     }
 
     /** DO NOT EDIT ANYTHING ABOVE **/

@@ -4,11 +4,12 @@ import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatFilter;
 import com.alttd.chat.util.ALogger;
 import com.google.common.base.Throwables;
-import com.google.common.reflect.TypeToken;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import io.leangen.geantyref.TypeToken;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
 
 import java.io.File;
@@ -31,13 +32,13 @@ public final class RegexConfig {
 
     private static File CONFIG_FILE;
     public static ConfigurationNode config;
-    public static YAMLConfigurationLoader configLoader;
+    public static YamlConfigurationLoader configLoader;
 
     public static void init() {
-        CONFIG_FILE = new File(Config.CONFIGPATH, "filters.yml");;
-        configLoader = YAMLConfigurationLoader.builder()
-                .setFile(CONFIG_FILE)
-                .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
+        CONFIG_FILE = new File(Config.CONFIGPATH, "filters.yml");
+        configLoader = YamlConfigurationLoader.builder()
+                .file(CONFIG_FILE)
+                .nodeStyle(NodeStyle.FLOW)
                 .build();
 
         if (!CONFIG_FILE.getParentFile().exists()) {
@@ -56,7 +57,7 @@ public final class RegexConfig {
         }
 
         try {
-            config = configLoader.load(ConfigurationOptions.defaults().setHeader(HEADER));
+            config = configLoader.load(ConfigurationOptions.defaults().header(HEADER));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,48 +95,52 @@ public final class RegexConfig {
     }
 
     private static void set(String path, Object def) {
-        if(config.getNode(splitPath(path)).isVirtual())
-            config.getNode(splitPath(path)).setValue(def);
+        if(config.node(splitPath(path)).virtual()) {
+            try {
+                config.node(splitPath(path)).set(def);
+            } catch (SerializationException e) {
+            }
+        }
     }
 
     private static void setString(String path, String def) {
         try {
-            if(config.getNode(splitPath(path)).isVirtual())
-                config.getNode(splitPath(path)).setValue(TypeToken.of(String.class), def);
-        } catch(ObjectMappingException ex) {
+            if(config.node(splitPath(path)).virtual())
+                config.node(splitPath(path)).set(io.leangen.geantyref.TypeToken.get(String.class), def);
+        } catch(SerializationException ex) {
         }
     }
 
     private static boolean getBoolean(String path, boolean def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getBoolean(def);
+        return config.node(splitPath(path)).getBoolean(def);
     }
 
     private static double getDouble(String path, double def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getDouble(def);
+        return config.node(splitPath(path)).getDouble(def);
     }
 
     private static int getInt(String path, int def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getInt(def);
+        return config.node(splitPath(path)).getInt(def);
     }
 
     private static String getString(String path, String def) {
         setString(path, def);
-        return config.getNode(splitPath(path)).getString(def);
+        return config.node(splitPath(path)).getString(def);
     }
 
     private static Long getLong(String path, Long def) {
         set(path, def);
-        return config.getNode(splitPath(path)).getLong(def);
+        return config.node(splitPath(path)).getLong(def);
     }
 
     private static <T> List<String> getList(String path, T def) {
         try {
             set(path, def);
-            return config.getNode(splitPath(path)).getList(TypeToken.of(String.class));
-        } catch(ObjectMappingException ex) {
+            return config.node(splitPath(path)).getList(TypeToken.get(String.class));
+        } catch(SerializationException ex) {
         }
         return new ArrayList<>();
     }
@@ -145,11 +150,13 @@ public final class RegexConfig {
         ALogger.info("loading filters");
 //        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getChildrenMap().entrySet()) {
 //            String name = entry.getKey().toString(); // the name in the config this filter has
-//            String type = entry.getValue().getNode("type").getString(); // the type of filter, block or replace
+//            String type = entry.value
+//           ().node("type").getString(); // the type of filter, block or replace
 //            String regex = "";
 //            List<String> replacements = new ArrayList<>();
 //            List<String> exclusions = new ArrayList<>();
-//            Map<Object, ? extends ConfigurationNode> options = entry.getValue().getNode("options").getChildrenMap();
+//            Map<Object, ? extends ConfigurationNode> options = entry.value
+//           ().node("options").getChildrenMap();
 //            if (options.containsKey("filter")) {
 //                regex = options.get("filter").getString();
 //            }
@@ -166,13 +173,13 @@ public final class RegexConfig {
 //        }
 
         Map<String, Object> properties = new HashMap<>();
-        config.getChildrenMap().entrySet().forEach(entry -> {
+        config.childrenMap().entrySet().forEach(entry -> {
             try {
                 String name = entry.getKey().toString();
-                String type = entry.getValue().getNode("type").getString();
-                String regex = entry.getValue().getNode("regex").getString();
-                String replacement = entry.getValue().getNode("replacement").getString();
-                List<String> exclusions = entry.getValue().getNode("exclusions").getList(TypeToken.of(String.class), new ArrayList<>());
+                String type = entry.getValue().node("type").getString();
+                String regex = entry.getValue().node("regex").getString();
+                String replacement = entry.getValue().node("replacement").getString();
+                List<String> exclusions = entry.getValue().node("exclusions").getList(io.leangen.geantyref.TypeToken.get(String.class), new ArrayList<>());
                 if (type == null || type.isEmpty() || regex == null || regex.isEmpty()) {
                     ALogger.warn("Filter: " + name + " was set up incorrectly");
                 } else {
@@ -182,7 +189,7 @@ public final class RegexConfig {
                     ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions);
                     RegexManager.addFilter(chatFilter);
                 }
-            } catch(ObjectMappingException ex) {
+            } catch(SerializationException ex) {
             }
         });
 
