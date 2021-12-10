@@ -90,11 +90,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>configurate-yaml</artifactId>
-            <version>3.7.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.alttd</groupId>
             <artifactId>Galaxy-API</artifactId>
             <version>1.18.1-R0.1-SNAPSHOT</version>

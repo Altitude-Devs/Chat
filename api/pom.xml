@@ -53,14 +53,9 @@
         </dependency>
         <dependency>
             <groupId>com.alttd</groupId>
-            <artifactId>galaxy-api</artifactId>
-            <version>1.18-pre5-R0.1-SNAPSHOT</version>
+            <artifactId>Galaxy-API</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.3.0_291</version>
         </dependency>
     </dependencies>
     
