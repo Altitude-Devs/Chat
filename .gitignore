@@ -3,6 +3,8 @@
 .idea
 testserver
 run
+.gradle/
+build/
 
 # Compiled class file
 *.class
