@@ -59,11 +59,7 @@ public class DatabaseConnection {
     public static Connection getConnection() {
         try {
             instance.openConnection();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

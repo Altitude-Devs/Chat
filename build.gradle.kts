@@ -33,14 +33,22 @@ dependencies {
 //    implementation(project(":api"))
     implementation(project(":galaxy"))
     implementation(project(":velocity"))
-    implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT")
-    implementation("org.spongepowered", "configurate-yaml", "4.1.2")
+//    implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT") {
+//        exclude("net.kyori")
+//        exclude("net.kyori.examination")
+//    }
+//    implementation("org.spongepowered", "configurate-yaml", "4.1.2")
+//    implementation("mysql:mysql-connector-java:8.0.27") // mysql
 }
 
 tasks {
 
     shadowJar {
         archiveFileName.set("${project.name}-${project.version}.jar")
+        minimize() {
+            exclude { it.moduleName == "galaxy" }
+            exclude { it.moduleName == "velocity" }
+        }
         listOf(
             "net.kyori.adventure.text.minimessage",
             "org.spongepowered.configurate"
