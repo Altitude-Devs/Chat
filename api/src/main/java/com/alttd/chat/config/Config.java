@@ -35,7 +35,7 @@ public final class Config {
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");
         configLoader = YamlConfigurationLoader.builder()
                 .file(CONFIG_FILE)
-                .nodeStyle(NodeStyle.FLOW)
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
         if (!CONFIG_FILE.getParentFile().exists()) {
             if(!CONFIG_FILE.getParentFile().mkdirs()) {
