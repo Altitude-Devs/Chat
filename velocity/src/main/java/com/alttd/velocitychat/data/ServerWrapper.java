@@ -1,4 +1,4 @@
-package com.alttd.chat.data;
+package com.alttd.velocitychat.data;
 
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.managers.ChatUserManager;

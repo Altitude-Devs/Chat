@@ -1,20 +1,12 @@
-package com.alttd.chat.commands;
+package com.alttd.velocitychat.commands;
 
-import com.alttd.chat.VelocityChat;
-import com.alttd.chat.config.Config;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.alttd.velocitychat.VelocityChat;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class Reload {
 

@@ -1,6 +1,6 @@
-package com.alttd.chat.commands;
+package com.alttd.velocitychat.commands;
 
-import com.alttd.chat.VelocityChat;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

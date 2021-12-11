@@ -1,9 +1,9 @@
-package com.alttd.chat.listeners;
+package com.alttd.velocitychat.listeners;
 
-import com.alttd.chat.VelocityChat;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
-import com.alttd.chat.data.ServerWrapper;
-import com.alttd.chat.handlers.ServerHandler;
+import com.alttd.velocitychat.data.ServerWrapper;
+import com.alttd.velocitychat.handlers.ServerHandler;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
 import com.google.common.io.ByteArrayDataOutput;

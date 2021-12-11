@@ -1,7 +1,7 @@
-package com.alttd.chat.listeners;
+package com.alttd.velocitychat.listeners;
 
-import com.alttd.chat.VelocityChat;
-import com.alttd.chat.events.GlobalAdminChatEvent;
+import com.alttd.velocitychat.VelocityChat;
+import com.alttd.velocitychat.events.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;

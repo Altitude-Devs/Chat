@@ -1,20 +1,16 @@
-package com.alttd.chat.handlers;
+package com.alttd.velocitychat.handlers;
 
-import com.alttd.chat.VelocityChat;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
-import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.ALogger;
-import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

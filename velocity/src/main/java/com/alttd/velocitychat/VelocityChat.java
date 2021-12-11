@@ -1,19 +1,20 @@
-package com.alttd.chat;
+package com.alttd.velocitychat;
 
-import com.alttd.chat.commands.GlobalAdminChat;
-import com.alttd.chat.commands.Reload;
+import com.alttd.chat.ChatAPI;
+import com.alttd.chat.ChatImplementation;
+import com.alttd.velocitychat.commands.GlobalAdminChat;
+import com.alttd.velocitychat.commands.Reload;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
-import com.alttd.chat.handlers.ChatHandler;
-import com.alttd.chat.handlers.ServerHandler;
-import com.alttd.chat.listeners.ChatListener;
-import com.alttd.chat.listeners.ProxyPlayerListener;
-import com.alttd.chat.listeners.PluginMessageListener;
+import com.alttd.velocitychat.handlers.ChatHandler;
+import com.alttd.velocitychat.handlers.ServerHandler;
+import com.alttd.velocitychat.listeners.ChatListener;
+import com.alttd.velocitychat.listeners.ProxyPlayerListener;
+import com.alttd.velocitychat.listeners.PluginMessageListener;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
@@ -22,7 +23,6 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.slf4j.Logger;
 
 import java.io.File;

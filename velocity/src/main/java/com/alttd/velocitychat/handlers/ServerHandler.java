@@ -1,19 +1,15 @@
-package com.alttd.chat.handlers;
+package com.alttd.velocitychat.handlers;
 
-import com.alttd.chat.VelocityChat;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.ServerConfig;
-import com.alttd.chat.data.ServerWrapper;
+import com.alttd.velocitychat.data.ServerWrapper;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ServerHandler {
 
