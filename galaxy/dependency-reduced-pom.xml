@@ -40,8 +40,6 @@
           <artifactSet>
             <includes>
               <include>com.alttd.chat:chat-api</include>
-              <include>org.spongepowered:configurate-yaml</include>
-              <include>org.spongepowered:configurate-core</include>
             </includes>
             <excludes>
               <exclude>META-INF/*.MF</exclude>
