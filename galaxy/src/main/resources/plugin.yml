@@ -3,7 +3,7 @@ version: ${project.version}
 main: com.alttd.chat.ChatPlugin
 api-version: 1.16
 authors: [Destro, Teriuihi]
-depend: [LuckPerms, PlaceholderAPI]
+depend: [LuckPerms]
 commands:
   globalchat:
     permission: command.globalchat
