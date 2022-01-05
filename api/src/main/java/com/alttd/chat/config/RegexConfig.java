@@ -57,7 +57,7 @@ public final class RegexConfig {
         }
 
         try {
-            config = configLoader.load(ConfigurationOptions.defaults().header(HEADER));
+            config = configLoader.load(ConfigurationOptions.defaults().header(HEADER).shouldCopyDefaults(false));
         } catch (IOException e) {
             e.printStackTrace();
         }
