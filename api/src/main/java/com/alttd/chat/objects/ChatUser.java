@@ -26,6 +26,7 @@ public class ChatUser {
     private List<Mail> mails; // mails aren't finalized yet, so for now a table sender, reciever, sendtime, readtime(if emtpy mail isn't read yet?, could also do a byte to control this), the actual message
     private List<UUID> ignoredPlayers; // a list of UUID, a new table non unique, where one is is the player select * from ignores where ignoredby = thisplayer? where the result is the uuid of the player ignored by this player?
     private List<UUID> ignoredBy; // a list of UUID, same table as above but select * from ignores where ignored = thisplayer? result should be the other user that ignored this player?
+    private boolean isMuted;
 
     public ChatUser(UUID uuid, int partyId, Channel toggledChannel) {
         this.uuid = uuid;
@@ -49,6 +50,7 @@ public class ChatUser {
         ignoredPlayers = Queries.getIgnoredUsers(uuid);
         ignoredBy = new ArrayList<>(); // todo load ignoredPlayers
         spy = true;
+        isMuted = false; // TODO load from db
     }
 
     public UUID getUuid() {
@@ -146,4 +148,13 @@ public class ChatUser {
     public void toggleSpy() {
         this.spy = !spy;
     }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
+    public void setMuted(boolean muted) {
+        this.isMuted = muted;
+    }
+
 }

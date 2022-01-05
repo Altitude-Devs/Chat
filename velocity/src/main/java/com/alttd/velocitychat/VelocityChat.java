@@ -9,6 +9,7 @@ import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.velocitychat.handlers.ChatHandler;
 import com.alttd.velocitychat.handlers.ServerHandler;
 import com.alttd.velocitychat.listeners.ChatListener;
+import com.alttd.velocitychat.listeners.LiteBansListener;
 import com.alttd.velocitychat.listeners.ProxyPlayerListener;
 import com.alttd.velocitychat.listeners.PluginMessageListener;
 import com.alttd.chat.util.ALogger;
@@ -31,7 +32,7 @@ import java.nio.file.Path;
 @Plugin(id = "chatplugin", name = "ChatPlugin", version = "1.0.0",
         description = "A chat plugin for Altitude Minecraft Server",
         authors = {"destro174", "teri"},
-        dependencies = {@Dependency(id = "luckperms")}
+        dependencies = {@Dependency(id = "luckperms"), @Dependency(id = "litebans")}
         )
 public class VelocityChat {
 
@@ -65,6 +66,7 @@ public class VelocityChat {
         chatHandler = new ChatHandler();
         server.getEventManager().register(this, new ChatListener());
         server.getEventManager().register(this, new ProxyPlayerListener());
+        new LiteBansListener().init(); // init the litebans api listeners
         String[] channels = Config.MESSAGECHANNEL.split(":");// todo add a check for this?
         channelIdentifier = MinecraftChannelIdentifier.create(channels[0], channels[1]);
         server.getChannelRegistrar().register(channelIdentifier);

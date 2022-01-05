@@ -4,20 +4,18 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
-import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import litebans.api.Database;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -254,7 +252,10 @@ public class ChatHandler {
     // Start - move these to util
 
     private boolean isMuted(Player player, String message, String prefix) {
-        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
+        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+        if (user == null) return false;
+        if (user.isMuted() || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
+//        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
             GalaxyUtility.sendBlockedNotification(prefix, player, message, "");
             return true;
         }

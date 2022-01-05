@@ -162,6 +162,13 @@ public class PluginMessage implements PluginMessageListener {
             case "reloadconfig":
                 ChatPlugin.getInstance().ReloadConfig();
                 break;
+            case "chatpunishments":
+                UUID uuid = UUID.fromString(in.readUTF());
+                boolean mute = in.readBoolean();
+                ChatUser user = ChatUserManager.getChatUser(uuid);
+                if (user == null) return;
+                user.setMuted(mute);
+                break;
             default:
                 break;
         }

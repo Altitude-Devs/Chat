@@ -156,4 +156,11 @@ public class ChatHandler {
                 .filter(p -> !ignoredPlayers.contains(p.getUniqueId()))
                 .forEach(p -> p.sendMessage(message));
     }
+
+    public void mutePlayer(String uuid, boolean muted) {
+        ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+        buf.writeUTF("chatpunishments");
+        buf.writeUTF(uuid);
+        buf.writeBoolean(muted);
+    }
 }

@@ -13,6 +13,7 @@ dependencies {
         exclude("net.kyori")
         exclude("net.kyori.examination")
     }
+    compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5")
 }
 
 tasks {
