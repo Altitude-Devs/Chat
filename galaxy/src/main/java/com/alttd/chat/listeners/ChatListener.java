@@ -47,8 +47,6 @@ public class ChatListener implements Listener, ChatRenderer {
         Component input = event.message();
         String message = PlainComponentSerializer.plain().serialize(input);
 
-        MiniMessage miniMessage = MiniMessage.get();
-
         message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(message == null) {
             event.setCancelled(true);
@@ -56,9 +54,8 @@ public class ChatListener implements Listener, ChatRenderer {
             return; // the message was blocked
         }
 
-
         if(!player.hasPermission("chat.format")) {
-            message = miniMessage.stripTokens(message);
+            message = Utility.stripTokens(message);
         } else {
             message = Utility.parseColors(message);
         }
@@ -69,11 +66,11 @@ public class ChatListener implements Listener, ChatRenderer {
         message = Utility.formatText(message);
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("message", message),
-                Template.of("[i]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
+                Template.template("message", message),
+                Template.template("[i]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
         ));
 
-        Component component = miniMessage.parse("<message>", templates);
+        Component component = Utility.parseMiniMessage("<message>", templates);
 
         event.message(component);
         event.renderer(this);
@@ -84,15 +81,15 @@ public class ChatListener implements Listener, ChatRenderer {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("sender", user.getDisplayName()),
-                Template.of("sendername", player.getName()),
-                Template.of("prefix", user.getPrefix()),
-                Template.of("prefixall", user.getPrefixAll()),
-                Template.of("staffprefix", user.getStaffPrefix()),
-                Template.of("message", message)
+                Template.template("sender", user.getDisplayName()),
+                Template.template("sendername", player.getName()),
+                Template.template("prefix", user.getPrefix()),
+                Template.template("prefixall", user.getPrefixAll()),
+                Template.template("staffprefix", user.getStaffPrefix()),
+                Template.template("message", message)
         ));
 
-        return MiniMessage.get().parse(Config.CHATFORMAT, templates);
+        return Utility.parseMiniMessage(Config.CHATFORMAT, templates);
     }
 
 }

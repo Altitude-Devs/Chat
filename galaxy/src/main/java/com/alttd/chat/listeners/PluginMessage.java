@@ -11,6 +11,7 @@ import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.ALogger;
+import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
@@ -124,7 +125,7 @@ public class PluginMessage implements PluginMessageListener {
                     public void run() {
                         PartyUser user = party.getPartyUser(uuid);
                         if(user != null) {
-                            Component component = MiniMessage.get().parse("<dark_aqua>* " + user.getPlayerName() + " logged in to Altitude.");
+                            Component component = Utility.parseMiniMessage("<dark_aqua>* " + user.getPlayerName() + " logged in to Altitude.");
 
                             Bukkit.getOnlinePlayers().stream()
                                     .filter(p -> party.getPartyUsersUuid().contains(p.getUniqueId()))
@@ -148,7 +149,7 @@ public class PluginMessage implements PluginMessageListener {
                     public void run() {
                         PartyUser user = party.getPartyUser(uuid);
                         if(user != null) {
-                            Component component = MiniMessage.get().parse("<dark_aqua>* " + user.getPlayerName() + " logged out of Altitude.");
+                            Component component = Utility.parseMiniMessage("<dark_aqua>* " + user.getPlayerName() + " logged out of Altitude.");
 
                             Bukkit.getOnlinePlayers().stream()
                                     .filter(p -> party.getPartyUsersUuid().contains(p.getUniqueId()))

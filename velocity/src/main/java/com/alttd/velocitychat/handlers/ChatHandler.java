@@ -1,5 +1,6 @@
 package com.alttd.velocitychat.handlers;
 
+import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
@@ -33,21 +34,19 @@ public class ChatHandler {
         Player player2 = optionalPlayer2.get();
         ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 
-        MiniMessage miniMessage = MiniMessage.get();
-
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("sender", senderUser.getDisplayName()),
-                Template.of("sendername", player.getUsername()),
-                Template.of("receiver", targetUser.getDisplayName()),
-                Template.of("receivername", player2.getUsername()),
-                Template.of("message", GsonComponentSerializer.gson().deserialize(message)),
-                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
+                Template.template("sender", senderUser.getDisplayName()),
+                Template.template("sendername", player.getUsername()),
+                Template.template("receiver", targetUser.getDisplayName()),
+                Template.template("receivername", player2.getUsername()),
+                Template.template("message", GsonComponentSerializer.gson().deserialize(message)),
+                Template.template("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
 
         ServerConnection serverConnection;
         if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
             // redirect to the sender
             serverConnection = player.getCurrentServer().get();
-            Component component = miniMessage.parse(Config.MESSAGESENDER, templates);
+            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, templates);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessageout");
             buf.writeUTF(player.getUniqueId().toString());
@@ -58,7 +57,7 @@ public class ChatHandler {
 
             //redirect to the receiver
             serverConnection = player2.getCurrentServer().get();
-            component = miniMessage.parse(Config.MESSAGERECIEVER, templates);
+            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, templates);
             buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessagein");
             buf.writeUTF(player2.getUniqueId().toString());
@@ -70,16 +69,14 @@ public class ChatHandler {
 
 //        ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 //
-//        MiniMessage miniMessage = MiniMessage.get();
-//
 //        List<Template> templates = new ArrayList<>(List.of(
-//                Template.of("sender", senderUser.getDisplayName()),
-//                Template.of("receiver", targetUser.getDisplayName()),
-//                Template.of("message", message),
-//                Template.of("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
+//                Template.template("sender", senderUser.getDisplayName()),
+//                Template.template("receiver", targetUser.getDisplayName()),
+//                Template.template("message", message),
+//                Template.template("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
 //
-//        Component senderMessage = miniMessage.parse(Config.MESSAGESENDER, templates);
-//        Component receiverMessage = miniMessage.parse(Config.MESSAGERECIEVER, templates);
+//        Component senderMessage = Utility.parseMiniMessage(Config.MESSAGESENDER, templates);
+//        Component receiverMessage = Utility.parseMiniMessage(Config.MESSAGERECIEVER, templates);
 //
 //        player.sendMessage(senderMessage);
 //        player2.sendMessage(receiverMessage);
@@ -104,14 +101,12 @@ public class ChatHandler {
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
         }
 
-        MiniMessage miniMessage = MiniMessage.get();
-
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("message", message),
-                Template.of("sender", senderName),
-                Template.of("server", serverName)));
+                Template.template("message", message),
+                Template.template("sender", senderName),
+                Template.template("server", serverName)));
 
-        Component component = miniMessage.parse(Config.GACFORMAT, templates);
+        Component component = Utility.parseMiniMessage(Config.GACFORMAT, templates);
 
         VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);

@@ -13,22 +13,20 @@ import java.util.List;
 
 public class GalaxyUtility {
     public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
-        MiniMessage miniMessage = MiniMessage.get();
-
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("prefix", prefix),
-                Template.of("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
-                Template.of("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
-                Template.of("input", input)
+                Template.template("prefix", prefix),
+                Template.template("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
+                Template.template("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Template.template("input", input)
         ));
-        Component blockedNotification = miniMessage.parse(Config.NOTIFICATIONFORMAT, templates);
+        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, templates);
 
         Bukkit.getOnlinePlayers().forEach(a ->{
             if (a.hasPermission("chat.alert-blocked")) {
                 a.sendMessage(blockedNotification);
             }
         });
-        player.sendMessage(miniMessage.parse("<red>The language you used in your message is not allowed, " +
+        player.sendMessage(Utility.parseMiniMessage("<red>The language you used in your message is not allowed, " +
                 "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
     }
 

@@ -43,7 +43,6 @@ public class ChatParty implements CommandExecutor, TabCompleter {
         new BukkitRunnable() {
             @Override
             public void run() {
-                MiniMessage miniMessage = MiniMessage.get();
                 switch (args[0].toLowerCase()) {
                     case "create" -> {
                         if (args.length < 3 || !args[1].matches("[\\w]{3,16}") || !args[2].matches("[\\w]{3,16}")) {
@@ -51,14 +50,14 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                             break;
                         }
                         if (PartyManager.getParty(args[1]) != null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>A chat party with this name already exists.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>A chat party with this name already exists.</red>"));
                             break;
                         }
                         Party party = Queries.addParty(player.getUniqueId(), args[1], args[2]);
 //                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
                         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getName());
                         PartyManager.addParty(party);
-                        sender.sendMessage(MiniMessage.get().parse("<green>You created a chat party called: '<gold>" +
+                        sender.sendMessage(Utility.parseMiniMessage("<green>You created a chat party called: '<gold>" +
                                 party.getPartyName() + "</gold>' with the password: '<gold>" +
                                 party.getPartyPassword() + "</gold>'</green>"));
                         update(player, party.getPartyId());
@@ -70,22 +69,22 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         }
                         Party party = PartyManager.getParty(player.getUniqueId());
                         if (party == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You're not in a chat party.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You're not in a chat party.</red>"));
                             break;
                         }
                         if (!party.getOwnerUuid().equals(player.getUniqueId())) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You don't own this chat party.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You don't own this chat party.</red>"));
                             break;
                         }
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target == null || !target.isOnline()) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>The player must be on the same server to receive an invite.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>The player must be on the same server to receive an invite.</red>"));
                             break;
                         }
 
-                        target.sendMessage(MiniMessage.get().parse("<click:run_command:'/chatparty join " + party.getPartyName() + " " + party.getPartyPassword() +
+                        target.sendMessage(Utility.parseMiniMessage("<click:run_command:'/chatparty join " + party.getPartyName() + " " + party.getPartyPassword() +
                                 "'><dark_aqua>You received an invite to join " + party.getPartyName() + " click this message to accept.</dark_aqua></click>"));
-                        sender.sendMessage(MiniMessage.get().parse("<green>You send a chat party invite to " + target.getName() + "!</green>"));
+                        sender.sendMessage(Utility.parseMiniMessage("<green>You send a chat party invite to " + target.getName() + "!</green>"));
                     }
                     case "join" -> {
                         if (args.length < 3 || !args[1].matches("[\\w]{3,16}") || !args[2].matches("[\\w]{3,16}")) {
@@ -95,23 +94,23 @@ public class ChatParty implements CommandExecutor, TabCompleter {
 
                         Party party = PartyManager.getParty(args[1]);
                         if (party == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>This chat party does not exist.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>This chat party does not exist.</red>"));
                             break;
                         }
                         if (!party.getPartyPassword().equals(args[2])) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>Invalid password.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>Invalid password.</red>"));
                             break;
                         }
 
 //                        party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
                         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getName());
-                        sender.sendMessage(MiniMessage.get().parse("<green>You joined " + party.getPartyName() + "!</green>"));
+                        sender.sendMessage(Utility.parseMiniMessage("<green>You joined " + party.getPartyName() + "!</green>"));
                         update(player, party.getPartyId());
                     }
                     case "leave" -> {
                         Party party = PartyManager.getParty(player.getUniqueId());
                         if (party == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You're not in a chat party.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You're not in a chat party.</red>"));
                             break;
                         }
 
@@ -119,7 +118,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         if (party.getOwnerUuid().equals(player.getUniqueId())) {
                             if (party.getPartyUsers().size() > 0) {
                                 UUID uuid = party.newOwner();
-                                sender.sendMessage(MiniMessage.get().parse("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
+                                sender.sendMessage(Utility.parseMiniMessage("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
                                 ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
                                         player.getName() +
                                         " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
@@ -127,7 +126,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                                 party.delete();
                             }
                         } else {
-                            sender.sendMessage(MiniMessage.get().parse("<green>You have left the chat party!</green>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<green>You have left the chat party!</green>"));
                         }
                         update(player, party.getPartyId());
                     }
@@ -138,7 +137,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         }
                         Party party = PartyManager.getParty(player.getUniqueId());
                         if (party == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You're not in a chat party.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You're not in a chat party.</red>"));
                             break;
                         }
                         if (!party.getOwnerUuid().equals(player.getUniqueId())) {
@@ -147,28 +146,28 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         }
                         OfflinePlayer offlinePlayerIfCached = Bukkit.getOfflinePlayerIfCached((args[1]));
                         if (offlinePlayerIfCached == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>Unable to find this player.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>Unable to find this player.</red>"));
                             return;
                         }
                         party.removeUser(ChatUserManager.getChatUser(offlinePlayerIfCached.getUniqueId()));
 
                         if (offlinePlayerIfCached.getUniqueId().equals(party.getOwnerUuid())) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You can't remove yourself, please leave instead.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You can't remove yourself, please leave instead.</red>"));
                             return;
                         }
 
                         if (offlinePlayerIfCached.isOnline()) {
                             Objects.requireNonNull(offlinePlayerIfCached.getPlayer())
-                                    .sendMessage(MiniMessage.get().parse("<red>You were removed from the '" + party.getPartyName() + "' chat party."));
+                                    .sendMessage(Utility.parseMiniMessage("<red>You were removed from the '" + party.getPartyName() + "' chat party."));
                         }
 
-                        sender.sendMessage(MiniMessage.get().parse("<green>You removed " + offlinePlayerIfCached.getName() + " from the chat party!</green>"));
+                        sender.sendMessage(Utility.parseMiniMessage("<green>You removed " + offlinePlayerIfCached.getName() + " from the chat party!</green>"));
                         update(player, party.getPartyId());
                     }
                     case "info" -> {
                         Party party = PartyManager.getParty(player.getUniqueId());
                         if (party == null) {
-                            sender.sendMessage(MiniMessage.get().parse("<red>You're not in a chat party.</red>"));
+                            sender.sendMessage(Utility.parseMiniMessage("<red>You're not in a chat party.</red>"));
                             break;
                         }
 
@@ -183,13 +182,13 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         }
 
                         List<Template> templates = new ArrayList<>(List.of(
-                                Template.of("partyname", party.getPartyName()),
-                                Template.of("password", party.getPartyPassword()),
-                                Template.of("ownername", party.getPartyUser(party.getOwnerUuid()).getDisplayName()),
-                                Template.of("members", Component.join(Component.text(", "), displayNames)),
-                                Template.of("message", message)));
+                                Template.template("partyname", party.getPartyName()),
+                                Template.template("password", party.getPartyPassword()),
+                                Template.template("ownername", party.getPartyUser(party.getOwnerUuid()).getDisplayName()),
+                                Template.template("members", Component.join(Component.text(", "), displayNames)),
+                                Template.template("message", message)));
 
-                        sender.sendMessage(miniMessage.parse("<message>", templates));
+                        sender.sendMessage(Utility.parseMiniMessage("<message>", templates));
                     }
                     // TODO: 08/08/2021 add a way to change the password and owner (and name?)
                     default -> {
@@ -203,7 +202,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
     }
 
     private void invalidMessage(CommandSender sender, CommandUsage commandUsage) {
-        sender.sendMessage(MiniMessage.get().parse("<red>Invalid command, proper usage: %command%.</red>".replaceAll("%command%", commandUsage.message)));
+        sender.sendMessage(Utility.parseMiniMessage("<red>Invalid command, proper usage: %command%.</red>".replaceAll("%command%", commandUsage.message)));
     }
 
     private void helpMessage(CommandSender sender) {
@@ -213,7 +212,7 @@ public class ChatParty implements CommandExecutor, TabCompleter {
             stringBuilder.append("\n- ").append(commandUsage.message);
         }
         stringBuilder.append("</green>");
-        sender.sendMessage(MiniMessage.get().parse(stringBuilder.toString()));
+        sender.sendMessage(Utility.parseMiniMessage(stringBuilder.toString()));
     }
 
     @Override

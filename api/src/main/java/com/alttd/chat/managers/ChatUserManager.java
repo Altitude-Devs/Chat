@@ -9,27 +9,28 @@ import java.util.stream.Collectors;
 
 public final class ChatUserManager {
 
-    private static ArrayList<ChatUser> chatUsers;
+    private static Map<UUID, ChatUser> chatUsers;
 
     public static void initialize() {
-        chatUsers = new ArrayList<>();
+        chatUsers = new TreeMap<>();
     }
 
     public static void addUser(ChatUser user) {
-        chatUsers.add(user);
+        chatUsers.put(user.getUuid(), user);
     }
 
     public static void removeUser(ChatUser user) {
         chatUsers.remove(user);
     }
 
+    /**
+     * Get the ChatUser for this player or query the database to read the data.
+     *
+     * @param uuid the player who's ChatUser you'd like to get
+     * @return The ChatUser loaded from database or null if it's not existing.
+     */
     public static ChatUser getChatUser(UUID uuid) {
-        for(ChatUser user : chatUsers) {
-            if(uuid.equals(user.getUuid())) {
-                return user;
-            }
-        }
-        return Queries.loadChatUser(uuid);
+        return chatUsers.computeIfAbsent(uuid, k -> Queries.loadChatUser(uuid));
     }
 
     public List<Mail> getUnReadMail(ChatUser user) {
@@ -38,7 +39,4 @@ public final class ChatUserManager {
                 .collect(Collectors.toList());
     }
 
-    protected static List<ChatUser> getChatUsers() {
-        return Collections.unmodifiableList(chatUsers);
-    }
 }

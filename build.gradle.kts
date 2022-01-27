@@ -33,7 +33,7 @@ dependencies {
 //    implementation(project(":api"))
     implementation(project(":galaxy"))
     implementation(project(":velocity"))
-//    implementation("net.kyori", "adventure-text-minimessage", "4.1.0-SNAPSHOT") {
+//    implementation("net.kyori", "adventure-text-minimessage", "4.2.0-SNAPSHOT") {
 //        exclude("net.kyori")
 //        exclude("net.kyori.examination")
 //    }
@@ -52,7 +52,8 @@ tasks {
         listOf(
             "net.kyori.adventure.text.minimessage",
             "org.spongepowered.configurate"
-        ).forEach { relocate(it, "${rootProject.group}.lib.$it") }
+//        ).forEach { relocate(it, "${rootProject.group}.lib.$it") }
+        ).forEach { relocate(it, "${rootProject.group}.lib.${it.substringAfterLast(".")}") }
     }
 
     build {

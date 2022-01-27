@@ -3,6 +3,7 @@ package com.alttd.chat.commands;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
+import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
@@ -21,7 +22,7 @@ public class PartyChat implements CommandExecutor {
         }
         Party party = PartyManager.getParty(player.getUniqueId());
         if (party == null) {
-            sender.sendMessage(MiniMessage.get().parse("<red>You are not in a party. For more info do <gold>/party</gold>.</red>"));
+            sender.sendMessage(Utility.parseMiniMessage("<red>You are not in a party. For more info do <gold>/party</gold>.</red>"));
             return true;
         }
 

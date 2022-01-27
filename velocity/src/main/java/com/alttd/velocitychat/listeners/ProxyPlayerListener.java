@@ -1,5 +1,6 @@
 package com.alttd.velocitychat.listeners;
 
+import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.velocitychat.data.ServerWrapper;
@@ -57,31 +58,30 @@ public class ProxyPlayerListener {
     @Subscribe
     public void serverConnected(ServerConnectedEvent event) {
         ServerHandler serverHandler = VelocityChat.getPlugin().getServerHandler();
-        MiniMessage miniMessage = MiniMessage.get();
         if (event.getPreviousServer().isPresent()) {
             RegisteredServer previousServer = event.getPreviousServer().get();
 
             Player player = event.getPlayer();
 
             List<Template> templates = new ArrayList<>(List.of(
-                    Template.of("player", player.getUsername()),
-                    Template.of("from_server", previousServer.getServerInfo().getName()),
-                    Template.of("to_server", event.getServer().getServerInfo().getName())));
+                    Template.template("player", player.getUsername()),
+                    Template.template("from_server", previousServer.getServerInfo().getName()),
+                    Template.template("to_server", event.getServer().getServerInfo().getName())));
             ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERSWTICHMESSAGETO, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGETO, templates));
             }
             wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERSWTICHMESSAGEFROM, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGEFROM, templates));
             }
         } else {
             List<Template> templates = new ArrayList<>(List.of(
-                    Template.of("player", event.getPlayer().getUsername())
+                    Template.template("player", event.getPlayer().getUsername())
             ));
             ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERJOINMESSAGE, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERJOINMESSAGE, templates));
             }
         }
     }
@@ -89,17 +89,16 @@ public class ProxyPlayerListener {
     @Subscribe
     public void serverDisconnected(DisconnectEvent event) {
         ServerHandler serverHandler = VelocityChat.getPlugin().getServerHandler();
-        MiniMessage miniMessage = MiniMessage.get();
         if (event.getLoginStatus().equals(DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) && event.getPlayer().getCurrentServer().isPresent()) {
             RegisteredServer registeredServer = event.getPlayer().getCurrentServer().get().getServer();
 
             List<Template> templates = new ArrayList<>(List.of(
-                    Template.of("player", event.getPlayer().getUsername()),
-                    Template.of("from_server", registeredServer.getServerInfo().getName())));
+                    Template.template("player", event.getPlayer().getUsername()),
+                    Template.template("from_server", registeredServer.getServerInfo().getName())));
 
             ServerWrapper wrapper = serverHandler.getWrapper(registeredServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), miniMessage.parse(Config.SERVERLEAVEMESSAGE, templates));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERLEAVEMESSAGE, templates));
             }
         }
     }

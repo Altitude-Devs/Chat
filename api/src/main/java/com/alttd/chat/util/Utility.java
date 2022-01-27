@@ -7,6 +7,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
@@ -24,6 +26,8 @@ public class Utility {
 
     static final Pattern DEFAULT_URL_PATTERN = Pattern.compile("(?:(https?)://)?([-\\w_.]+\\.\\w{2,})(/\\S*)?");
     static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^[a-z][a-z0-9+\\-.]*:");
+
+    private static MiniMessage miniMessage = null;
 
     public static String stringRegen = "\\{#[A-Fa-f0-9]{6}(<)?(>)?}";
     public static HashMap<String, String> colors;
@@ -211,9 +215,8 @@ public class Utility {
                 stringBuilder.append("<").append(hexColor1).append(">").append(split[i]);
             }
         }
-        MiniMessage miniMessage = MiniMessage.get();
-        return stringBuilder.length()==0 ? miniMessage.parse(message)
-                : miniMessage.parse(stringBuilder.toString());
+        return stringBuilder.length() == 0 ? Utility.parseMiniMessage(message)
+                : Utility.parseMiniMessage(stringBuilder.toString());
     }
 
     public static String formatText(String message) {
@@ -239,6 +242,27 @@ public class Utility {
             message = message.replace(url, urlFormat.replaceAll("<url>", url).replaceAll("<clickurl>", clickUrl));
         }
         return message;
+    }
+
+    public static Component parseMiniMessage(String message) {
+        return parseMiniMessage(message, null);
+    }
+
+    public static Component parseMiniMessage(String message, List<Template> templates) {
+        if (templates == null) {
+            return getMiniMessage().deserialize(message);
+        } else {
+            return getMiniMessage().deserialize(message, TemplateResolver.templates(templates));
+        }
+    }
+
+    public static String stripTokens(String input) {
+        return getMiniMessage().stripTokens(input);
+    }
+
+    public static MiniMessage getMiniMessage() {
+        if (miniMessage == null) miniMessage = MiniMessage.miniMessage();
+        return miniMessage;
     }
 
 }

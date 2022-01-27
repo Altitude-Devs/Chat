@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -43,7 +44,7 @@ public class Ignore implements CommandExecutor {
                     StringBuilder ignoredMessage = new StringBuilder();
 
                     if (userNames.isEmpty()) {
-                        player.sendMessage(MiniMessage.get().parse("You don't have anyone ignored!")); //TODO load from config
+                        player.sendMessage(Utility.parseMiniMessage("You don't have anyone ignored!")); //TODO load from config
                         return;
                     }
 
@@ -51,7 +52,7 @@ public class Ignore implements CommandExecutor {
                     userNames.forEach(username -> ignoredMessage.append(username).append("\n"));
                     ignoredMessage.delete(ignoredMessage.length() - 1, ignoredMessage.length());
 
-                    player.sendMessage(MiniMessage.get().parse(ignoredMessage.toString()));
+                    player.sendMessage(Utility.parseMiniMessage(ignoredMessage.toString()));
                 }
             }.runTaskAsynchronously(plugin);
             return false;

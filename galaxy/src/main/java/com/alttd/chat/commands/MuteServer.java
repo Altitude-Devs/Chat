@@ -26,7 +26,7 @@ public class MuteServer implements CommandExecutor {
             public void run() {
                 UUID uuid = player.getUniqueId();
                 if (!Utility.hasPermission(uuid, Config.SERVERMUTEPERMISSION)) {
-                    sender.sendMessage(MiniMessage.get().parse("<red>You don't have permission to use this command.</red>"));
+                    sender.sendMessage(Utility.parseMiniMessage("<red>You don't have permission to use this command.</red>"));
                     return;
                 }
 
@@ -34,9 +34,9 @@ public class MuteServer implements CommandExecutor {
 
                 Component component;
                 if (ChatPlugin.getInstance().serverMuted()) {
-                    component = MiniMessage.get().parse(Utility.getDisplayName(player.getUniqueId(), player.getName()) + " <red>muted</red><white> chat.");
+                    component = Utility.parseMiniMessage(Utility.getDisplayName(player.getUniqueId(), player.getName()) + " <red>muted</red><white> chat.");
                 } else {
-                    component = MiniMessage.get().parse(Utility.getDisplayName(player.getUniqueId(), player.getName()) + " <green>un-muted</green><white> chat.");
+                    component = Utility.parseMiniMessage(Utility.getDisplayName(player.getUniqueId(), player.getName()) + " <green>un-muted</green><white> chat.");
                 }
 
                 Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(component));

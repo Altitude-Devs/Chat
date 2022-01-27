@@ -1,5 +1,6 @@
 package com.alttd.velocitychat.listeners;
 
+import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.events.GlobalAdminChatEvent;
 import com.alttd.chat.config.Config;
@@ -9,8 +10,11 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 // TODO code CLEANUP
 public class ChatListener {
@@ -32,15 +36,13 @@ public class ChatListener {
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
         }
 
-        MiniMessage miniMessage = MiniMessage.get();
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.template("sender", senderName),
+                Template.template("message", event.getMessage()),
+                Template.template("server", serverName)
+        ));
 
-        Map<String, String> map = new HashMap<>();
-
-        map.put("sender", senderName);
-        map.put("message", event.getMessage());
-        map.put("server", serverName);
-
-        Component message = miniMessage.parse(Config.GACFORMAT, map);
+        Component message = Utility.parseMiniMessage(Config.GACFORMAT, templates);
 
         plugin.getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")).forEach(target -> {
             target.sendMessage(message);

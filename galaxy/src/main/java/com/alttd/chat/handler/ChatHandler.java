@@ -30,13 +30,11 @@ public class ChatHandler {
 
     private final ChatPlugin plugin;
 
-    private final MiniMessage miniMessage;
     private final Component GCNOTENABLED;
 
     public ChatHandler() {
         plugin = ChatPlugin.getInstance();
-        miniMessage = MiniMessage.get();
-        GCNOTENABLED = miniMessage.parse(Config.GCNOTENABLED);
+        GCNOTENABLED = Utility.parseMiniMessage(Config.GCNOTENABLED);
     }
 
     public void privateMessage(Player player, String target, String message) {
@@ -49,7 +47,7 @@ public class ChatHandler {
         }
 
         if(!player.hasPermission("chat.format")) {
-            updatedMessage = miniMessage.stripTokens(updatedMessage);
+            updatedMessage = Utility.stripTokens(updatedMessage);
         } else {
             updatedMessage = Utility.parseColors(updatedMessage);
         }
@@ -60,15 +58,15 @@ public class ChatHandler {
         updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("message", updatedMessage),
-                Template.of("sendername", player.getName()),
-                Template.of("receivername", target),
-                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+                Template.template("message", updatedMessage),
+                Template.template("sendername", player.getName()),
+                Template.template("receivername", target),
+                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
-        Component component = miniMessage.parse("<message>", templates);
+        Component component = Utility.parseMiniMessage("<message>", templates);
 
         sendPrivateMessage(player, target, "privatemessage", component);
-        Component spymessage = miniMessage.parse(Config.MESSAGESPY, templates);
+        Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) {
                 pl.sendMessage(spymessage);
@@ -89,7 +87,7 @@ public class ChatHandler {
 
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
         if(timeLeft <= Config.GCCOOLDOWN && !player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
-            player.sendMessage(miniMessage.parse(Config.GCONCOOLDOWN, Template.of("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
+            player.sendMessage(Utility.parseMiniMessage(Config.GCONCOOLDOWN, List.of(Template.template("cooldown", Config.GCCOOLDOWN-timeLeft+""))));
             return;
         }
 
@@ -103,7 +101,7 @@ public class ChatHandler {
         }
 
         if(!player.hasPermission("chat.format")) {
-            updatedMessage = miniMessage.stripTokens(updatedMessage);
+            updatedMessage = Utility.stripTokens(updatedMessage);
         } else {
             updatedMessage = Utility.parseColors(updatedMessage);
         }
@@ -114,20 +112,20 @@ public class ChatHandler {
         updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("sender", senderName),
-                Template.of("prefix", prefix),
-                Template.of("message", updatedMessage),
-                Template.of("server", Bukkit.getServerName()),
-                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+                Template.template("sender", senderName),
+                Template.template("prefix", prefix),
+                Template.template("message", updatedMessage),
+                Template.template("server", Bukkit.getServerName()),
+                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
-        Component component = miniMessage.parse(Config.GCFORMAT, templates);
+        Component component = Utility.parseMiniMessage(Config.GCFORMAT, templates);
         user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
 
     public void chatChannel(Player player, CustomChannel channel, String message) {
         if (!player.hasPermission(channel.getPermission())) {
-            player.sendMessage(MiniMessage.get().parse("<red>You don't have permission to use this channel.</red>"));
+            player.sendMessage(Utility.parseMiniMessage("<red>You don't have permission to use this channel.</red>"));
             return;
         }
 
@@ -143,7 +141,7 @@ public class ChatHandler {
         }
 
         if(!player.hasPermission("chat.format")) {
-            updatedMessage = miniMessage.stripTokens(updatedMessage);
+            updatedMessage = Utility.stripTokens(updatedMessage);
         }
 
         if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
@@ -151,13 +149,13 @@ public class ChatHandler {
         updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("sender", senderName),
-                Template.of("message", updatedMessage),
-                Template.of("server", Bukkit.getServerName()),
-                Template.of("channel", channel.getChannelName()),
-                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+                Template.template("sender", senderName),
+                Template.template("message", updatedMessage),
+                Template.template("server", Bukkit.getServerName()),
+                Template.template("channel", channel.getChannelName()),
+                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
-        Component component = miniMessage.parse(channel.getFormat(), templates);
+        Component component = Utility.parseMiniMessage(channel.getFormat(), templates);
 
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
@@ -179,7 +177,7 @@ public class ChatHandler {
         }
 
         if(!player.hasPermission("chat.format")) {
-            updatedMessage = miniMessage.stripTokens(updatedMessage);
+            updatedMessage = Utility.stripTokens(updatedMessage);
         }
 
         if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
@@ -187,17 +185,17 @@ public class ChatHandler {
         updatedMessage = Utility.formatText(updatedMessage);
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.of("sender", senderName),
-                Template.of("sendername", senderName),
-                Template.of("partyname", party.getPartyName()),
-                Template.of("message", updatedMessage),
-                Template.of("server", Bukkit.getServerName()),
-                Template.of("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+                Template.template("sender", senderName),
+                Template.template("sendername", senderName),
+                Template.template("partyname", party.getPartyName()),
+                Template.template("message", updatedMessage),
+                Template.template("server", Bukkit.getServerName()),
+                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
-        Component component = miniMessage.parse(Config.PARTY_FORMAT, templates);
+        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
         sendPartyMessage(player, party.getPartyId(), component);
 
-        Component spyMessage = miniMessage.parse(Config.PARTY_SPY, templates);
+        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
                 pl.sendMessage(spyMessage);
