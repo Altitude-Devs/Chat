@@ -6,28 +6,28 @@ authors: [Destro, Teriuihi]
 depend: [LuckPerms]
 commands:
   globalchat:
-    permission: command.globalchat
+    permission: command.chat.globalchat
     permission-message: You do not have permission!
     aliases: gc
   toggleglobalchat:
-    permission: command.globalchat
+    permission: command.chat.globalchat
     permission-message: You do not have permission!
     aliases: togglegc
   message:
-    permission: command.message
+    permission: command.chat.message
     aliases: [msg, tell]
   reply:
-    permission: command.message
+    permission: command.chat.message
     aliases: r
   ignore:
-    permission: command.ignore
+    permission: command.chat.ignore
   unignore:
-    permission: command.ignore
+    permission: command.chat.ignore
   muteserver:
-    permission: command.mute-server
+    permission: command.chat.mute-server
   spy:
-    permission: command.togglespy
+    permission: command.chat.togglespy
   chatparty:
-    permission: command.chatparty
+    permission: command.chat.chatparty
   pc:
-    permission: command.pc
+    permission: command.chat.pc

@@ -85,7 +85,7 @@ public class ChatHandler {
     public void globalAdminChat(String message) {
         Component component = GsonComponentSerializer.gson().deserialize(message);
 
-        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);
         });
     }
@@ -108,7 +108,7 @@ public class ChatHandler {
 
         Component component = Utility.parseMiniMessage(Config.GACFORMAT, templates);
 
-        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")/*TODO permission*/).forEach(target -> {
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);
         });
     }

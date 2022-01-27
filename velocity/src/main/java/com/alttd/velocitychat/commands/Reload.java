@@ -13,7 +13,7 @@ public class Reload {
     public Reload(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("reloadchat")
-                .requires(ctx -> ctx.hasPermission("command.proxy.reloadchat"))
+                .requires(ctx -> ctx.hasPermission("command.chat.reloadchat"))
                 .executes(context -> {
                     VelocityChat.getPlugin().ReloadConfig();
                     return 1;

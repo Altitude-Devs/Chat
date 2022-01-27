@@ -42,7 +42,7 @@ public class SendMail {
 
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("mail")
-                .requires(ctx -> ctx.hasPermission("command.proxy.mail"))
+                .requires(ctx -> ctx.hasPermission("command.chat.mail"))
                 .then(LiteralArgumentBuilder.<CommandSource>literal("send")
                         .then(playerNode
                                 .then(RequiredArgumentBuilder
@@ -63,7 +63,7 @@ public class SendMail {
                         })
                 )
                 .then(LiteralArgumentBuilder.<CommandSource>literal("list")
-                        .requires(ctx -> ctx.hasPermission("command.proxy.list"))// TODO permission
+                        .requires(ctx -> ctx.hasPermission("command.chat.mail.list"))// TODO permission
                         .then(LiteralArgumentBuilder.<CommandSource>literal("unread")
                                 .executes(context -> {
                                     VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), true);
@@ -96,7 +96,7 @@ public class SendMail {
                         )
                 )
                 .then(LiteralArgumentBuilder.<CommandSource>literal("admin")
-                        .requires(ctx -> ctx.hasPermission("command.proxy.mail.admin"))// TODO permission
+                        .requires(ctx -> ctx.hasPermission("command.chat.mail.admin"))// TODO permission
                         // TODO admin command, remove, edit?
                         .executes(context -> {
                             sendAdminHelpMessage(context.getSource());

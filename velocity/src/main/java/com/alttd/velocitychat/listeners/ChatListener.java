@@ -44,7 +44,7 @@ public class ChatListener {
 
         Component message = Utility.parseMiniMessage(Config.GACFORMAT, templates);
 
-        plugin.getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.proxy.globaladminchat")).forEach(target -> {
+        plugin.getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")).forEach(target -> {
             target.sendMessage(message);
         });
     }

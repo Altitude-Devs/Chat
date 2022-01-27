@@ -111,7 +111,7 @@ public class ChatPlugin extends JavaPlugin {
         chatAPI.ReloadConfig();
         chatAPI.ReloadChatFilters();
         serverConfig = new ServerConfig(Bukkit.getServerName());
-        Bukkit.broadcast("Reloaded ChatPlugin Config.", "command.proxy.reloadchat");
+        Bukkit.broadcast("Reloaded ChatPlugin Config.", "command.chat.reloadchat");
         ALogger.info("Reloaded ChatPlugin config.");
     }
 }
