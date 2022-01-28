@@ -373,7 +373,7 @@ public class Queries {
                 String toggledChannel = resultSet.getString("toggled_channel");
                 Channel channel = toggledChannel == null ? null : Channel.getChatChannel(toggledChannel);
                 user = new ChatUser(uuid, partyId, channel);
-                ChatUserManager.addUser(user);
+//                ChatUserManager.addUser(user);
             }
 
         } catch (SQLException e) {

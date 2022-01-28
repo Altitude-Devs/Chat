@@ -20,15 +20,9 @@ public final class ChatUserManager {
     }
 
     public static void removeUser(ChatUser user) {
-        chatUsers.remove(user);
+        chatUsers.remove(user.getUuid());
     }
 
-    /**
-     * Get the ChatUser for this player or query the database to read the data.
-     *
-     * @param uuid the player who's ChatUser you'd like to get
-     * @return The ChatUser loaded from database or null if it's not existing.
-     */
     public static ChatUser getChatUser(UUID uuid) {
         return chatUsers.computeIfAbsent(uuid, k -> Queries.loadChatUser(uuid));
     }
