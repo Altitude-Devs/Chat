@@ -9,10 +9,7 @@ import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.ALogger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class Queries {
         tables.add("CREATE TABLE IF NOT EXISTS ignored_users (`uuid` VARCHAR(36) NOT NULL, `ignored_uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`uuid`, `ignored_uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
         tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_channel` VARCHAR(36) NULL DEFAULT NULL, PRIMARY KEY (`uuid`))");
-        tables.add("CREATE TABLE IF NOT EXISTS mails (`id` INT NOT NULL AUTO_INCREMENT, `uuid` VARCHAR(36) NOT NULL, `from` VARCHAR(36) NOT NULL, `message` VARCHAR(256) NOT NULL, `sendtime` BIGINT default 0, `readtime` BIGINT default 0, PRIMARY KEY (`id`))");
+        tables.add("CREATE TABLE IF NOT EXISTS mails (`id` INT NOT NULL AUTO_INCREMENT, `uuid` VARCHAR(36) NOT NULL, `sender` VARCHAR(36) NOT NULL, `message` VARCHAR(256) NOT NULL, `sendtime` BIGINT default 0, `readtime` BIGINT default 0, PRIMARY KEY (`id`))");
 
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -412,11 +409,12 @@ public class Queries {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                UUID fromUUID = UUID.fromString(resultSet.getString("from"));
+                int id = resultSet.getInt("id");
+                UUID fromUUID = UUID.fromString(resultSet.getString("sender"));
                 String message = resultSet.getString("message");
                 long sendTime = resultSet.getLong("sendtime");
                 long readTime = resultSet.getLong("readtime");
-                mails.add(new Mail(uuid, fromUUID, sendTime, readTime, message));
+                mails.add(new Mail(id, uuid, fromUUID, sendTime, readTime, message));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -503,5 +501,48 @@ public class Queries {
             e.printStackTrace();
         }
         return uuid;
+    }
+
+    public static int insertMail(Mail mail) {
+        String query = "INSERT INTO mails (uuid , sender, message, sendtime, readtime) VALUES (?, ?, ?, ?, ?)";
+        int id = 0;
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, mail.getUuid().toString());
+            statement.setString(2, mail.getSender().toString());
+            statement.setString(3, mail.getMessage());
+            statement.setLong(4, mail.getSendTime());
+            statement.setLong(5, mail.getReadTime());
+
+            statement.execute();
+
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public static void markMailRead(Mail mail) {
+        String query = "INSERT INTO mails (Id, uuid , sender, message, sendtime, readtime) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE readtime = ?";
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, mail.getId());
+            statement.setString(2, mail.getUuid().toString());
+            statement.setString(3, mail.getSender().toString());
+            statement.setString(4, mail.getMessage());
+            statement.setLong(5, mail.getSendTime());
+            statement.setLong(6, mail.getReadTime());
+            statement.setLong(7, mail.getReadTime());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

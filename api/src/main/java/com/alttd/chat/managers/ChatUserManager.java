@@ -27,10 +27,4 @@ public final class ChatUserManager {
         return chatUsers.computeIfAbsent(uuid, k -> Queries.loadChatUser(uuid));
     }
 
-    public List<Mail> getUnReadMail(ChatUser user) {
-        return user.getMails().stream()
-                .filter(Mail::isUnRead)
-                .collect(Collectors.toList());
-    }
-
 }

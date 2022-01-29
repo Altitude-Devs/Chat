@@ -1,5 +1,6 @@
 package com.alttd.velocitychat.commands;
 
+import com.alttd.chat.config.Config;
 import com.alttd.velocitychat.VelocityChat;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -77,20 +78,9 @@ public class MailCommand {
                                 })
                         )
                         .then(playerNode
-                                .then(LiteralArgumentBuilder.<CommandSource>literal("unread")
-                                        .executes(context -> {
-                                            VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class), true);
-                                            return 1;
-                                        })
-                                )
-                                .then(LiteralArgumentBuilder.<CommandSource>literal("all")
-                                        .executes(context -> {
-                                            VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class), false);
-                                            return 1;
-                                        })
-                                )
+                                .requires(ctx -> ctx.hasPermission("command.chat.mail.list.other"))// TODO permission
                                 .executes(context -> {
-                                    sendHelpMessage(context.getSource());
+                                    VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class));
                                     return 1;
                                 })
                         )
@@ -113,9 +103,9 @@ public class MailCommand {
 
         CommandMeta.Builder metaBuilder = proxyServer.getCommandManager().metaBuilder(brigadierCommand);
 
-        /*for (String alias : Config.MAILCOMMANDALIASES) {
+        for (String alias : Config.mailCommandAlias) {
             metaBuilder.aliases(alias);
-        }*/
+        }
 
         CommandMeta meta = metaBuilder.build();
 

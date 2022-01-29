@@ -1,16 +1,20 @@
 package com.alttd.chat.objects;
 
+import com.alttd.chat.database.Queries;
+
 import java.util.UUID;
 
 public class Mail {
 
+    private final int id;
     private final UUID uuid;
     private final UUID sender;
     private final long sendTime;
     private long readTime;
     private final String message;
 
-    public Mail(UUID player, UUID sender, long sendTime, long readTime, String message) {
+    public Mail(int id, UUID player, UUID sender, long sendTime, long readTime, String message) {
+        this.id = id;
         this.uuid = player;
         this.sender = sender;
         this.sendTime = sendTime;
@@ -21,9 +25,15 @@ public class Mail {
     public Mail(UUID player, UUID sender, String message) {
         this.uuid = player;
         this.sender = sender;
-        this.sendTime = System.currentTimeMillis();
-        this.readTime = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
+        this.sendTime = time;
+        this.readTime = time;
         this.message = message;
+        this.id = Queries.insertMail(this);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public UUID getUuid() {
@@ -35,7 +45,7 @@ public class Mail {
     }
 
     public boolean isUnRead() {
-        return getSendTime() != getReadTime();
+        return getSendTime() == getReadTime();
     }
 
     public long getSendTime() {

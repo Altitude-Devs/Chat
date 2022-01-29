@@ -1,6 +1,7 @@
 package com.alttd.velocitychat.handlers;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
@@ -139,37 +140,41 @@ public class ChatHandler {
         optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage("<yellow>New mail from " + finalSenderName)));
     }
 
-    public void readMail(CommandSource commandSource, String targetPlayer, boolean unread) {
+    public void readMail(CommandSource commandSource, String targetPlayer) {
         UUID uuid = ServerHandler.getPlayerUUID(targetPlayer);
         if (uuid == null) {
-            commandSource.sendMessage(Utility.parseMiniMessage("<red>A player with this name hasn't logged in recently.")); // TOOD load from config
+            commandSource.sendMessage(Utility.parseMiniMessage(Config.mailNoUser));
             return;
         }
         ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-        commandSource.sendMessage(getMails(chatUser.getMails(), false));
+        commandSource.sendMessage(parseMails(chatUser.getMails(), false));
     }
 
     public void readMail(CommandSource commandSource, boolean unread) {
         if (commandSource instanceof Player player) {
             ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
-            commandSource.sendMessage(getMails(chatUser.getMails(), unread));
+            commandSource.sendMessage(parseMails(unread ? chatUser.getUnReadMail() : chatUser.getMails(), unread));
         }
     }
 
-    private Component getMails(List<Mail> mails, boolean mark) {
-        Component component = Component.empty();
+    private Component parseMails(List<Mail> mails, boolean mark) {
+        Component component = Utility.parseMiniMessage(Config.mailHeader);
         for (Mail mail : mails) {
-            if (mail.isUnRead() && mark) mail.setReadTime(System.currentTimeMillis());
+            if (mail.isUnRead() && mark) {
+                mail.setReadTime(System.currentTimeMillis());
+                Queries.markMailRead(mail);
+            }
             ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
             List<Template> templates = new ArrayList<>(List.of(
                     Template.template("staffprefix", chatUser.getStaffPrefix()),
-                    Template.template("name", chatUser.getDisplayName()),
-                    Template.template("message", "<pre>" + mail.getMessage() + "<pre>"),
-                    Template.template("sendtime", new Date(mail.getSendTime()).toString())
+                    Template.template("sender", chatUser.getDisplayName()),
+                    Template.template("message", mail.getMessage()),
+                    Template.template("date", new Date(mail.getSendTime()).toString())
             ));
-            Component mailMessage = Utility.parseMiniMessage("", templates);
+            Component mailMessage = Utility.parseMiniMessage(Config.mailBody, templates);
             component = component.append(Component.newline()).append(mailMessage);
         }
+        component = component.append(Component.newline()).append(Utility.parseMiniMessage(Config.mailFooter));
         return component;
     }
 

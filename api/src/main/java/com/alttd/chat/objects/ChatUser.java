@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ChatUser {
     private final UUID uuid; // player uuid
@@ -106,6 +107,12 @@ public class ChatUser {
 
     public List<Mail> getMails() {
         return mails;
+    }
+
+    public List<Mail> getUnReadMail() {
+        return getMails().stream()
+                .filter(Mail::isUnRead)
+                .collect(Collectors.toList());
     }
 
     public void addMail(Mail mail) {

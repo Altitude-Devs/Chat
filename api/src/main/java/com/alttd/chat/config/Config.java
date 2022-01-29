@@ -296,4 +296,16 @@ public final class Config {
         NOTIFICATIONFORMAT = getString("settings.blockedmessage-notification", NOTIFICATIONFORMAT);
     }
 
+    public static String mailHeader = "===== List Mails ====='";
+    public static String mailBody = "<white>From:</white> <staffprefix><sender> <white>on:<date></white>\n<message>";
+    public static String mailFooter = "======================";
+    public static String mailNoUser = "<red>A player with this name hasn't logged in recently.";
+    public static List<String> mailCommandAlias = new ArrayList<>();
+    private static void mailSettings() {
+        mailHeader = getString("settings.mail.header", mailHeader);
+        mailBody = getString("settings.mail.message", mailBody);
+        mailFooter = getString("settings.mail.footer", mailFooter);
+        mailCommandAlias = getList("settings.mail.command-aliases", Lists.newArrayList("gmail"));
+    }
+
 }
