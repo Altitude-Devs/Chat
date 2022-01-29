@@ -28,7 +28,8 @@ public class ProxyPlayerListener {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerLogin(LoginEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
         if (party == null) return;
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -38,6 +39,8 @@ public class ProxyPlayerListener {
         VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), out.toByteArray()));
         // TODO setup ChatUser on Proxy
         //VelocityChat.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
+
+        ServerHandler.addPlayerUUID(player.getUsername(), uuid);
     }
 
     @Subscribe

@@ -4,11 +4,11 @@ import java.util.UUID;
 
 public class Mail {
 
-    private final UUID uuid; // the player
-    private final UUID sender; // the sender
-    private final long sendTime; // any other option for this? does the db store recordcreation and edit time?
-    private long readTime; // any other option for this?
-    private final String message; // do we want staff to edit this after being send but being unread?
+    private final UUID uuid;
+    private final UUID sender;
+    private final long sendTime;
+    private long readTime;
+    private final String message;
 
     public Mail(UUID player, UUID sender, long sendTime, long readTime, String message) {
         this.uuid = player;
@@ -21,8 +21,8 @@ public class Mail {
     public Mail(UUID player, UUID sender, String message) {
         this.uuid = player;
         this.sender = sender;
-        this.sendTime = System.nanoTime();
-        this.readTime = System.nanoTime();
+        this.sendTime = System.currentTimeMillis();
+        this.readTime = System.currentTimeMillis();
         this.message = message;
     }
 

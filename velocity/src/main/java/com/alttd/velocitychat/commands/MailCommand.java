@@ -15,9 +15,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SendMail {
+public class MailCommand {
 
-    public SendMail(ProxyServer proxyServer) {
+    public MailCommand(ProxyServer proxyServer) {
 
         RequiredArgumentBuilder<CommandSource, String> playerNode = RequiredArgumentBuilder
                 .<CommandSource, String>argument("player", StringArgumentType.string())

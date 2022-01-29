@@ -1,20 +1,20 @@
 package com.alttd.velocitychat.handlers;
 
-import com.alttd.chat.util.Utility;
-import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.ALogger;
+import com.alttd.chat.util.Utility;
+import com.alttd.velocitychat.VelocityChat;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
@@ -113,29 +113,64 @@ public class ChatHandler {
         });
     }
 
-    /**
-     * constructs a mail object and notifies all involved players about it
-     * / mail send playerA,playerB,playerC message
-     */
     public void sendMail(CommandSource commandSource, String recipient, String message) {
-        UUID uuid;
-        if (commandSource instanceof Player) {
-            uuid = ((Player) commandSource).getUniqueId();
-        } else {
-            uuid = Config.CONSOLEUUID;
+        UUID uuid = Config.CONSOLEUUID;;
+        String senderName = Config.CONSOLENAME;
+        UUID targetUUID;
+        if (commandSource instanceof Player player) {
+            uuid = player.getUniqueId();
+            senderName = player.getUsername();
         }
         Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(recipient);
-
-        //Mail mail = new Mail()
-        // todo construct the mail and notify the player if online?
+        if (optionalPlayer.isEmpty()) {
+            targetUUID = ServerHandler.getPlayerUUID(recipient);
+            if (targetUUID == null) {
+                commandSource.sendMessage(Utility.parseMiniMessage("<red>A player with this name hasn't logged in recently.")); // TOOD load from config
+                return;
+            }
+        } else {
+            targetUUID = optionalPlayer.get().getUniqueId();
+        }
+        Mail mail = new Mail(uuid, targetUUID, message);
+        ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
+        chatUser.addMail(mail);
+        // TODO load from config
+        String finalSenderName = senderName;
+        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage("<yellow>New mail from " + finalSenderName)));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer, boolean unread) {
-
+        UUID uuid = ServerHandler.getPlayerUUID(targetPlayer);
+        if (uuid == null) {
+            commandSource.sendMessage(Utility.parseMiniMessage("<red>A player with this name hasn't logged in recently.")); // TOOD load from config
+            return;
+        }
+        ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+        commandSource.sendMessage(getMails(chatUser.getMails(), false));
     }
 
     public void readMail(CommandSource commandSource, boolean unread) {
+        if (commandSource instanceof Player player) {
+            ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
+            commandSource.sendMessage(getMails(chatUser.getMails(), unread));
+        }
+    }
 
+    private Component getMails(List<Mail> mails, boolean mark) {
+        Component component = Component.empty();
+        for (Mail mail : mails) {
+            if (mail.isUnRead() && mark) mail.setReadTime(System.currentTimeMillis());
+            ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
+            List<Template> templates = new ArrayList<>(List.of(
+                    Template.template("staffprefix", chatUser.getStaffPrefix()),
+                    Template.template("name", chatUser.getDisplayName()),
+                    Template.template("message", "<pre>" + mail.getMessage() + "<pre>"),
+                    Template.template("sendtime", new Date(mail.getSendTime()).toString())
+            ));
+            Component mailMessage = Utility.parseMiniMessage("", templates);
+            component = component.append(Component.newline()).append(mailMessage);
+        }
+        return component;
     }
 
     public void partyChat(String partyId, UUID uuid, Component message) {

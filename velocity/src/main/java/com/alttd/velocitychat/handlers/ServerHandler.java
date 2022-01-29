@@ -1,24 +1,29 @@
 package com.alttd.velocitychat.handlers;
 
+import com.alttd.chat.database.Queries;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.velocitychat.data.ServerWrapper;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ServerHandler {
 
     private VelocityChat plugin;
 
     private static List<ServerWrapper> servers;
+    private static Map<String, UUID> serverPlayers;
+    public ScheduledTask cleanupTask; // add a better way to catch NULL uuid? early return? get from another source? ...
 
     public ServerHandler() {
         plugin = VelocityChat.getPlugin();
+        serverPlayers = new TreeMap<>();
         initialize();
     }
 
@@ -33,6 +38,11 @@ public class ServerHandler {
         for (RegisteredServer registeredServer : plugin.getProxy().getAllServers()) {
             servers.add(new ServerWrapper(registeredServer, new ServerConfig(registeredServer.getServerInfo().getName())));
         }
+
+        cleanupTask = plugin.getProxy().getScheduler().buildTask(plugin, () -> {
+            serverPlayers.values().removeIf(Objects::isNull);
+        }).repeat(60, TimeUnit.SECONDS).schedule();
+
     }
 
     public void sendGlobalChat(String uuid, String message) {
@@ -64,5 +74,13 @@ public class ServerHandler {
             }
         }
         return null;
+    }
+
+    public static UUID getPlayerUUID(String playerName) {
+        return serverPlayers.computeIfAbsent(playerName, k -> Queries.getPlayerUUID(playerName));
+    }
+
+    public static void addPlayerUUID(String playerName, UUID uuid) {
+        serverPlayers.putIfAbsent(playerName, uuid);
     }
 }

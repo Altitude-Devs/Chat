@@ -482,4 +482,26 @@ public class Queries {
 
         return userNames;
     }
+
+    public static UUID getPlayerUUID(String playerName) {
+        String query = "SELECT UUID FROM utility_users WHERE Username  = ?";
+        UUID uuid = null;
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, playerName);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                uuid = UUID.fromString(resultSet.getString("UUID"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return uuid;
+    }
 }

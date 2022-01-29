@@ -4,7 +4,6 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
