@@ -245,8 +245,8 @@ public final class Config {
 
     }
 
-    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray><hover:show_text:\"on <server>\"> → Party</hover>) <message>";
-    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
+    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray><hover:show_text:\"on <server>\"> → <party></hover>) <message>";
+    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sender></dark_gray>: <dark_gray><party></dark_gray> <message></dark_gray></i>";
     public static String NO_PERMISSION = "<red>You don't have permission to use this command.</red>";
     public static String NO_CONSOLE = "<red>This command can not be used by console</red>";
     public static String CREATED_PARTY = "<green>You created a chat party called: " +

@@ -144,8 +144,7 @@ public class ChatHandler {
 
         List<Template> templates = new ArrayList<>(List.of(
                 Template.template("sender", senderName),
-                Template.template("sendername", senderName),
-                Template.template("partyname", party.getPartyName()),
+                Template.template("party", party.getPartyName()),
                 Template.template("message", updatedMessage),
                 Template.template("server", serverConnection.getServer().getServerInfo().getName()),
                 Template.template("[i]", item)
