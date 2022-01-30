@@ -245,7 +245,7 @@ public final class Config {
 
     }
 
-    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
+    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray><hover:show_text:\"on <server>\"> → Party</hover>) <message>";
     public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
     public static String NO_PERMISSION = "<red>You don't have permission to use this command.</red>";
     public static String NO_CONSOLE = "<red>This command can not be used by console</red>";
@@ -266,7 +266,11 @@ public final class Config {
     public static String CANT_REMOVE_PARTY_OWNER = "<red>You can't remove yourself, please leave instead.</red>";
     public static String REMOVED_FROM_PARTY = "<red>You were removed from the '<party>' chat party.</red>";
     public static String REMOVED_USER_FROM_PARTY = "<green>You removed <player> from the chat party!</green>";
-    public static String NOT_A_PARTY_MEMBER = "<player> is not a member of your party!";
+    public static String NOT_A_PARTY_MEMBER = "<red><player> is not a member of your party!</red>";
+    public static String ALREADY_IN_PARTY = "<red>You're already in a party!</red>";
+    public static String SENT_PARTY_INV = "<green>You send a chat party invite to <player>!</green>";
+    public static String JOIN_PARTY_CLICK_MESSAGE = "<click:run_command:'/party join <party> <party_password>'>" +
+            "<dark_aqua>You received an invite to join <party> click this message to accept.</dark_aqua></click>";
     public static String PARTY_INFO = """
                 <gold><bold>Chat party info</bold>:
                 </gold><green>Name: <dark_aqua><party></dark_aqua>
@@ -292,6 +296,8 @@ public final class Config {
         CANT_REMOVE_PARTY_OWNER = getString("party.messages.cant-remove-owner", CANT_REMOVE_PARTY_OWNER);
         REMOVED_FROM_PARTY = getString("party.messages.removed-from-party", REMOVED_FROM_PARTY);
         NOT_A_PARTY_MEMBER = getString("party.messages.not-a-party-member", NOT_A_PARTY_MEMBER);
+        JOIN_PARTY_CLICK_MESSAGE = getString("party.messages.join-party-click-message", JOIN_PARTY_CLICK_MESSAGE);
+        SENT_PARTY_INV = getString("party.messages.sent-party-invite", SENT_PARTY_INV);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
     }
 
