@@ -17,7 +17,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
@@ -85,7 +84,18 @@ public class ChatHandler {
 //        player2.sendMessage(receiverMessage);
     }
 
-    public void partyMessage(Party party, Player player, String message, ServerConnection serverConnection) {
+    public void sendPartyMessage(Party party, Component message)
+    {
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
+                .filter(pl -> {
+                    UUID uuid = pl.getUniqueId();
+                    return party.getPartyUsers().stream().anyMatch(pu -> pu.getUuid().equals(uuid));
+                }).forEach(pl -> {
+                    pl.sendMessage(message);
+                });
+    }
+
+    public void sendPartyMessage(Party party, Player player, String message, ServerConnection serverConnection) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         Component senderName = user.getDisplayName();
 
@@ -113,13 +123,7 @@ public class ChatHandler {
         ));
 
         Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
-        VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
-                .filter(pl -> {
-                    UUID uuid = pl.getUniqueId();
-                    return party.getPartyUsers().stream().anyMatch(pu -> pu.getUuid().equals(uuid));
-                }).forEach(pl -> {
-                    pl.sendMessage(partyMessage);
-                });
+        sendPartyMessage(party, partyMessage);
 
         Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
         for(Player pl : serverConnection.getServer().getPlayersConnected()) {

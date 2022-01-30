@@ -9,7 +9,9 @@ import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
+import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,12 +41,13 @@ public class Leave implements SubCommand {
         party.removeUser(player.getUniqueId());
         if (party.getOwnerUuid().equals(player.getUniqueId())) {
             if (party.getPartyUsers().size() > 0) {
-                UUID uuid = party.newOwner();
+                UUID uuid = party.setNewOwner();
                 source.sendMessage(Utility.parseMiniMessage(Config.NOTIFY_FINDING_NEW_OWNER));
-                VelocityChat.getPlugin().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
-                        player.getUsername() +
-                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName(),
-                        currentServer.get());
+                VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+                        Utility.parseMiniMessage(Config.OWNER_LEFT_PARTY, List.of(
+                                Template.template("old_owner", player.getUsername()),
+                                Template.template("new_owner", party.getPartyUser(uuid).getPlayerName())
+                        )));
             } else {
                 party.delete();
             }
@@ -54,12 +57,12 @@ public class Leave implements SubCommand {
     }
 
     @Override
-    public List<String> suggest(String[] args) {
-        return null;
+    public List<String> suggest(String[] args, CommandSource source) {
+        return new ArrayList<>();
     }
 
     @Override
     public String getHelpMessage() {
-        return null;
+        return Config.PARTY_HELP_LEAVE;
     }
 }

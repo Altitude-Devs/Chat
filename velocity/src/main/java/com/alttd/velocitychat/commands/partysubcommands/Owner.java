@@ -11,17 +11,15 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.Template;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Invite implements SubCommand {
-
+public class Owner implements SubCommand {
     @Override
     public String getName() {
-        return "invite";
+        return "owner";
     }
 
     @Override
@@ -30,7 +28,7 @@ public class Invite implements SubCommand {
             source.sendMessage(Utility.parseMiniMessage(Config.NO_CONSOLE));
             return;
         }
-        if (args.length < 2) {
+        if (args.length != 2) {
             source.sendMessage(Utility.parseMiniMessage(getHelpMessage()));
             return;
         }
@@ -43,41 +41,39 @@ public class Invite implements SubCommand {
             source.sendMessage(Utility.parseMiniMessage(Config.NOT_YOUR_PARTY));
             return;
         }
-        Optional<Player> optional = VelocityChat.getPlugin().getProxy().getPlayer(args[1]);
-        if (optional.isEmpty()) {
-            source.sendMessage(Utility.parseMiniMessage(Config.INVALID_PLAYER));
-            return;
-        }
-        Player target = optional.get();
-
-        if (!target.isActive()) {
-            source.sendMessage(Utility.parseMiniMessage(Config.NOT_ONLINE, List.of(
-                    Template.template("player", target.getUsername())
+        PartyUser partyUser = party.getPartyUser(args[1]);
+        if (partyUser == null) {
+            source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER, List.of(
+                    Template.template("player", args[1])
             )));
             return;
         }
-
-        target.sendMessage(Utility.parseMiniMessage("<click:run_command:'/chatparty join " + party.getPartyName() + " " + party.getPartyPassword() +
-                "'><dark_aqua>You received an invite to join " + party.getPartyName() + " click this message to accept.</dark_aqua></click>"));
-        source.sendMessage(Utility.parseMiniMessage("<green>You send a chat party invite to <player>!</green>", List.of(
-                Template.template("player", target.getUsername())
-        )));
+        party.setNewOwner(partyUser.getUuid());
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+                Utility.parseMiniMessage(Config.NEW_PARTY_OWNER, List.of(
+                        Template.template("old_owner", player.getUsername()),
+                        Template.template("new_owner", partyUser.getPlayerName())
+                )));
     }
 
     @Override
     public List<String> suggest(String[] args, CommandSource source) {
         ArrayList<String> suggest = new ArrayList<>();
-        if (!(source instanceof Player))
+        if (!(source instanceof Player player))
+            return suggest;
+        UUID uuid = player.getUniqueId();
+        Party party = PartyManager.getParty(uuid);
+        if (party == null)
             return suggest;
         if (args.length == 1 || args.length == 2)
-            suggest.addAll(VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
-                    .map(Player::getUsername)
-                    .collect(Collectors.toList()));
+            suggest.addAll(party.getPartyUsers().stream()
+                    .filter(partyUser -> !partyUser.getUuid().equals(uuid))
+                    .map(PartyUser::getPlayerName).collect(Collectors.toList()));
         return suggest;
     }
 
     @Override
     public String getHelpMessage() {
-        return Config.PARTY_HELP_INVITE;
+        return Config.PARTY_HELP_OWNER;
     }
 }

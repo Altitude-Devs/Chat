@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Create implements SubCommand {
@@ -32,7 +33,9 @@ public class Create implements SubCommand {
             return;
         }
         if (PartyManager.getParty(args[1]) != null) {
-            source.sendMessage(Utility.parseMiniMessage("<red>A chat party with this name already exists.</red>"));
+            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS, List.of(
+                    Template.template("party", args[1])
+            )));
             return;
         }
         Party party = Queries.addParty(player.getUniqueId(), args[1], args[2]);
@@ -45,12 +48,12 @@ public class Create implements SubCommand {
     }
 
     @Override
-    public List<String> suggest(String[] args) {
-        return null;
+    public List<String> suggest(String[] args, CommandSource source) {
+        return new ArrayList<>();
     }
 
     @Override
     public String getHelpMessage() {
-        return null;
+        return Config.PARTY_HELP_CREATE;
     }
 }

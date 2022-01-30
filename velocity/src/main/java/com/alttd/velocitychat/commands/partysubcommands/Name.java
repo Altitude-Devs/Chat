@@ -1,7 +1,6 @@
 package com.alttd.velocitychat.commands.partysubcommands;
 
 import com.alttd.chat.config.Config;
-import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.Utility;
@@ -9,15 +8,15 @@ import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Join implements SubCommand {
-
+public class Name implements SubCommand {
     @Override
     public String getName() {
-        return "join";
+        return "name";
     }
 
     @Override
@@ -26,25 +25,30 @@ public class Join implements SubCommand {
             source.sendMessage(Utility.parseMiniMessage(Config.NO_CONSOLE));
             return;
         }
-        if (args.length < 3 || !args[1].matches("[\\w]{3,16}") || !args[2].matches("[\\w]{3,16}")) {
+        if (args.length != 2) {
             source.sendMessage(Utility.parseMiniMessage(getHelpMessage()));
             return;
         }
-
-        Party party = PartyManager.getParty(args[1]);
+        Party party = PartyManager.getParty(player.getUniqueId());
         if (party == null) {
-            source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY));
+            source.sendMessage(Utility.parseMiniMessage(Config.NOT_IN_A_PARTY));
             return;
         }
-        if (!party.getPartyPassword().equals(args[2])) {
-            source.sendMessage(Utility.parseMiniMessage(Config.INVALID_PASSWORD));
+        if (!party.getOwnerUuid().equals(player.getUniqueId())) {
+            source.sendMessage(Utility.parseMiniMessage(Config.NOT_YOUR_PARTY));
             return;
         }
-
-//      party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
-        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
-        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, List.of(
-                Template.template("party_name", party.getPartyName()))));
+        if (!args[1].matches("[\\w]{3,16}")) {
+            source.sendMessage(Utility.parseMiniMessage(getHelpMessage()));
+            return;
+        }
+        if (PartyManager.getParty(args[1]) != null) {
+            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS, List.of(
+                    Template.template("party", args[1])
+            )));
+            return;
+        }
+        party.setPartyName(args[1]);
     }
 
     @Override
@@ -54,6 +58,6 @@ public class Join implements SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return Config.PARTY_HELP_JOIN;
+        return Config.PARTY_HELP_NAME;
     }
 }

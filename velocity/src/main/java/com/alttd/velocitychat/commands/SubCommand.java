@@ -14,7 +14,7 @@ public interface SubCommand {
 
     void execute(String[] args, CommandSource source);
 
-    List<String> suggest(String[] args);
+    List<String> suggest(String[] args, CommandSource source);
 
     String getHelpMessage();
 

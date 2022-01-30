@@ -1,15 +1,13 @@
 package com.alttd.velocitychat.commands;
 
 import com.alttd.chat.config.Config;
-import com.alttd.velocitychat.commands.partysubcommands.Create;
-import com.alttd.velocitychat.commands.partysubcommands.Invite;
-import com.alttd.velocitychat.commands.partysubcommands.Join;
+import com.alttd.chat.util.Utility;
+import com.alttd.velocitychat.commands.partysubcommands.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
@@ -18,13 +16,19 @@ import java.util.List;
 
 public class Party implements SimpleCommand {
     private final List<SubCommand> subCommands;
-    private final MiniMessage miniMessage;
 
     public Party() {
-        subCommands = Arrays.asList(new Create(),
+        subCommands = Arrays.asList(
+                new Help(this),
+                new Create(),
+                new Info(),
                 new Invite(),
-                new Join());
-        miniMessage = MiniMessage.get();
+                new Join(),
+                new Leave(),
+                new Name(),
+                new Owner(),
+                new Password(),
+                new Remove());
     }
 
     @Override
@@ -34,19 +38,23 @@ public class Party implements SimpleCommand {
 
         if (args.length < 1) {
             if (!source.hasPermission("party.use"))
-                source.sendMessage(miniMessage.parse(Config.NO_PERMISSION));
+                source.sendMessage(Utility.parseMiniMessage(Config.NO_PERMISSION));
             else if (source instanceof Player)
-                source.sendMessage(miniMessage.parse(Config.PARTY_HELP));
+                source.sendMessage(getHelpMessage(source));
             else
-                source.sendMessage(miniMessage.parse(Config.NO_CONSOLE));
+                source.sendMessage(Utility.parseMiniMessage(Config.NO_CONSOLE));
             return;
         }
 
         subCommands.stream()
                 .filter(subCommand -> subCommand.getName().equalsIgnoreCase(args[0]))
                 .findFirst()
-                .ifPresentOrElse(subCommand -> subCommand.execute(args, source),
-                        () -> source.sendMessage(getHelpMessage(source)));
+                .ifPresentOrElse(subCommand -> {
+                    if (source.hasPermission(subCommand.getPermission()))
+                        subCommand.execute(args, source);
+                    else
+                        source.sendMessage(Utility.parseMiniMessage(Config.NO_PERMISSION));
+                    }, () -> source.sendMessage(getHelpMessage(source)));
     }
 
     @Override
@@ -58,7 +66,7 @@ public class Party implements SimpleCommand {
             subCommands.stream()
                     .filter(subCommand -> invocation.source().hasPermission(subCommand.getPermission()))
                     .forEach(subCommand -> suggest.add(subCommand.getName()));
-        } else if (args.length <= 1) {
+        } else if (args.length == 1) {
             subCommands.stream()
                     .filter(subCommand -> invocation.source().hasPermission(subCommand.getPermission()))
                     .filter(subCommand -> subCommand.getName().startsWith(args[0].toLowerCase()))
@@ -68,7 +76,7 @@ public class Party implements SimpleCommand {
                     .filter(subCommand -> invocation.source().hasPermission(subCommand.getPermission()))
                     .filter(subCommand -> subCommand.getName().equalsIgnoreCase(args[0]))
                     .findFirst()
-                    .ifPresent(subCommand -> suggest.addAll(subCommand.suggest(args)));
+                    .ifPresent(subCommand -> suggest.addAll(subCommand.suggest(args, invocation.source())));
         }
 
         if (args.length == 0)
@@ -89,7 +97,7 @@ public class Party implements SimpleCommand {
         return finalValues;
     }
 
-    private Component getHelpMessage(CommandSource source) {
+    public Component getHelpMessage(CommandSource source) {
         StringBuilder stringBuilder = new StringBuilder();
 
         subCommands.stream()
@@ -98,6 +106,12 @@ public class Party implements SimpleCommand {
         if (stringBuilder.length() != 0)
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
 
-        return miniMessage.parse(Config.PARTY_HELP, Template.of("commands", stringBuilder.toString()));
+        return Utility.parseMiniMessage(Config.PARTY_HELP_WRAPPER, List.of(
+                Template.template("commands", stringBuilder.toString())
+        ));
+    }
+
+    public List<SubCommand> getSubCommands() {
+        return subCommands;
     }
 }

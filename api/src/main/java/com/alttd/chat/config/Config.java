@@ -247,7 +247,6 @@ public final class Config {
 
     public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
     public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
-    public static String PARTY_HELP = "";
     public static String NO_PERMISSION = "<red>You don't have permission to use this command.</red>";
     public static String NO_CONSOLE = "<red>This command can not be used by console</red>";
     public static String CREATED_PARTY = "<green>You created a chat party called: " +
@@ -255,16 +254,28 @@ public final class Config {
     public static String NOT_IN_A_PARTY = "<red>You're not in a chat party.</red>";
     public static String NOT_YOUR_PARTY = "<red>You don't own this chat party.</red>";
     public static String NOT_A_PARTY = "<red>This chat party does not exist.</red>";
+    public static String PARTY_EXISTS = "<red>A chat party called <party> already exists.</red>";
     public static String INVALID_PLAYER = "<red>Invalid player.</red>";
     public static String NOT_ONLINE = "<red><player> must be online to receive an invite.</red>";
     public static String INVALID_PASSWORD = "<red>Invalid password.</red>";
     public static String JOINED_PARTY = "<green>You joined <party_name>!</green>";
     public static String NOTIFY_FINDING_NEW_OWNER = "<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>";
     public static String LEFT_PARTY = "<green>You have left the chat party!</green>";
+    public static String OWNER_LEFT_PARTY = "<dark_aqua>[ChatParty]: <old_owner> left the chat party, the new party owner is <new_owner>";
+    public static String NEW_PARTY_OWNER = "<dark_aqua>[ChatParty]: <old_owner> transferred the party to <new_owner>!";
+    public static String CANT_REMOVE_PARTY_OWNER = "<red>You can't remove yourself, please leave instead.</red>";
+    public static String REMOVED_FROM_PARTY = "<red>You were removed from the '<party>' chat party.</red>";
+    public static String REMOVED_USER_FROM_PARTY = "<green>You removed <player> from the chat party!</green>";
+    public static String NOT_A_PARTY_MEMBER = "<player> is not a member of your party!";
+    public static String PARTY_INFO = """
+                <gold><bold>Chat party info</bold>:
+                </gold><green>Name: <dark_aqua><party></dark_aqua>
+                Password: <dark_aqua><password></dark_aqua>
+                Owner: <owner>
+                Members: <members>""";
     private static void party() {
         PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
         PARTY_SPY = getString("party.spy", PARTY_SPY);
-        PARTY_HELP = getString("party.messages.help", PARTY_HELP);
         NO_PERMISSION = getString("party.messages.no-permission", NO_PERMISSION);
         NO_CONSOLE = getString("party.messages.no-console", NO_CONSOLE);
         CREATED_PARTY = getString("party.messages.created-party", CREATED_PARTY);
@@ -276,6 +287,37 @@ public final class Config {
         INVALID_PASSWORD = getString("party.messages.invalid-password", INVALID_PASSWORD);
         NOTIFY_FINDING_NEW_OWNER = getString("party.messages.notify-finding-new-owner", NOTIFY_FINDING_NEW_OWNER);
         LEFT_PARTY = getString("party.messages.left-party", LEFT_PARTY);
+        OWNER_LEFT_PARTY = getString("party.messages.owner-left-party", OWNER_LEFT_PARTY);
+        NEW_PARTY_OWNER = getString("party.messages.new-owner", NEW_PARTY_OWNER);
+        CANT_REMOVE_PARTY_OWNER = getString("party.messages.cant-remove-owner", CANT_REMOVE_PARTY_OWNER);
+        REMOVED_FROM_PARTY = getString("party.messages.removed-from-party", REMOVED_FROM_PARTY);
+        NOT_A_PARTY_MEMBER = getString("party.messages.not-a-party-member", NOT_A_PARTY_MEMBER);
+        PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
+    }
+
+    public static String PARTY_HELP_WRAPPER = "<gold>ChatParty help:\n<commands></gold>";
+    public static String PARTY_HELP_HELP = "<green>Show this menu: <gold>/party help</gold></green>";
+    public static String PARTY_HELP_CREATE = "<green>Create a party: <gold>/party create <party_name> <party_password></gold></green>";
+    public static String PARTY_HELP_INFO = "<green>Show info about your current party: <gold>/party info</gold></green>";
+    public static String PARTY_HELP_INVITE = "<green>Invite a user to your party: <gold>/party invite <username></gold></green>";
+    public static String PARTY_HELP_JOIN = "<green>Join a party: <gold>/party join <party_name> <party_password></gold></green>";
+    public static String PARTY_HELP_LEAVE = "<green>Leave your current party: <gold>/party leave</gold></green>";
+    public static String PARTY_HELP_NAME = "<green>Change the name of your party: <gold>/party name <new_name></gold></green>";
+    public static String PARTY_HELP_OWNER = "<green>Change the owner of your party: <gold>/party owner <new_owner_name></gold></green>";
+    public static String PARTY_HELP_PASSWORD = "<green>Change the password of your party: <gold>/party password <new_password></gold></green>";
+    public static String PARTY_HELP_REMOVE = "<green>Remove a member from your party: <gold>/party remove <member_name></gold></green>";
+    private static void partyHelp() {
+        PARTY_HELP_WRAPPER = getString("party.help.wrapper", PARTY_HELP_WRAPPER);
+        PARTY_HELP_HELP = getString("party.help.help", PARTY_HELP_HELP);
+        PARTY_HELP_CREATE = getString("party.help.create", PARTY_HELP_CREATE);
+        PARTY_HELP_INFO = getString("party.help.info", PARTY_HELP_INFO);
+        PARTY_HELP_INVITE = getString("party.help.invite", PARTY_HELP_INVITE);
+        PARTY_HELP_JOIN = getString("party.help.join", PARTY_HELP_JOIN);
+        PARTY_HELP_LEAVE = getString("party.help.leave", PARTY_HELP_LEAVE);
+        PARTY_HELP_NAME = getString("party.help.name", PARTY_HELP_NAME);
+        PARTY_HELP_OWNER = getString("party.help.owner", PARTY_HELP_OWNER);
+        PARTY_HELP_PASSWORD = getString("party.help.password", PARTY_HELP_PASSWORD);
+        PARTY_HELP_REMOVE = getString("party.help.remove", PARTY_HELP_REMOVE);
     }
 
     private static void chatChannels() {
