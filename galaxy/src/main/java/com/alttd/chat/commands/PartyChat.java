@@ -31,7 +31,7 @@ public class PartyChat implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChatPlugin.getInstance().getChatHandler().partyMessage(player, message); //TODO send over proxy
+                ChatPlugin.getInstance().getChatHandler().partyMessage(player, message);
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
 
