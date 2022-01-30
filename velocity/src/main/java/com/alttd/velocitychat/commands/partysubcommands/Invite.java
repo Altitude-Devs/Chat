@@ -3,7 +3,6 @@ package com.alttd.velocitychat.commands.partysubcommands;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
-import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
@@ -11,7 +10,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.Template;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +55,11 @@ public class Invite implements SubCommand {
             return;
         }
 
-        target.sendMessage(Utility.parseMiniMessage("<click:run_command:'/chatparty join " + party.getPartyName() + " " + party.getPartyPassword() +
-                "'><dark_aqua>You received an invite to join " + party.getPartyName() + " click this message to accept.</dark_aqua></click>"));
-        source.sendMessage(Utility.parseMiniMessage("<green>You send a chat party invite to <player>!</green>", List.of(
+        target.sendMessage(Utility.parseMiniMessage(Config.JOIN_PARTY_CLICK_MESSAGE, List.of(
+                Template.template("party", party.getPartyName()),
+                Template.template("party_password", party.getPartyPassword())
+        )));
+        source.sendMessage(Utility.parseMiniMessage(Config.SENT_PARTY_INV, List.of(
                 Template.template("player", target.getUsername())
         )));
     }
