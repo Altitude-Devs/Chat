@@ -9,8 +9,6 @@ import com.alttd.velocitychat.data.ServerWrapper;
 import com.alttd.velocitychat.handlers.ServerHandler;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -18,8 +16,6 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import litebans.api.Events;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
@@ -38,7 +34,7 @@ public class ProxyPlayerListener {
         if (chatUser == null)
             return;
         VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
-                Utility.parseMiniMessage(Config.PARTY_MEMBER_ONLINE, List.of(
+                Utility.parseMiniMessage(Config.PARTY_MEMBER_LOGGED_ON, List.of(
                         Template.template("player", chatUser.getDisplayName())
                 )),
                 chatUser.getIgnoredPlayers());
@@ -53,11 +49,14 @@ public class ProxyPlayerListener {
         UUID uuid = event.getPlayer().getUniqueId();
         Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
         if (party == null) return;
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("partylogout");
-        out.writeUTF(String.valueOf(party.getPartyId()));
-        out.writeUTF(uuid.toString());
-        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), out.toByteArray()));
+        ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+        if (chatUser == null)
+            return;
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+                Utility.parseMiniMessage(Config.PARTY_MEMBER_LOGGED_OFF, List.of(
+                        Template.template("player", chatUser.getDisplayName())
+                )),
+                chatUser.getIgnoredPlayers());
         // TODO setup ChatUser on Proxy
         //VelocityChat.getPlugin().getChatHandler().removePlayer(event.getPlayer().getUniqueId());
     }

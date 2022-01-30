@@ -271,7 +271,8 @@ public final class Config {
     public static String SENT_PARTY_INV = "<green>You send a chat party invite to <player>!</green>";
     public static String JOIN_PARTY_CLICK_MESSAGE = "<click:run_command:'/party join <party> <party_password>'>" +
             "<dark_aqua>You received an invite to join <party> click this message to accept.</dark_aqua></click>";
-    public static String PARTY_MEMBER_ONLINE = "<dark_aqua>[ChatParty] <player> joined Altitude!</dark_aqua>";
+    public static String PARTY_MEMBER_LOGGED_ON = "<dark_aqua>[ChatParty] <player> joined Altitude...</dark_aqua>";
+    public static String PARTY_MEMBER_LOGGED_OFF = "<dark_aqua>[ChatParty] <player> left Altitude...</dark_aqua>";
     public static String PARTY_INFO = """
                 <gold><bold>Chat party info</bold>:
                 </gold><green>Name: <dark_aqua><party></dark_aqua>
@@ -299,7 +300,8 @@ public final class Config {
         NOT_A_PARTY_MEMBER = getString("party.messages.not-a-party-member", NOT_A_PARTY_MEMBER);
         JOIN_PARTY_CLICK_MESSAGE = getString("party.messages.join-party-click-message", JOIN_PARTY_CLICK_MESSAGE);
         SENT_PARTY_INV = getString("party.messages.sent-party-invite", SENT_PARTY_INV);
-        PARTY_MEMBER_ONLINE = getString("party.messages.party-member-online", PARTY_MEMBER_ONLINE);
+        PARTY_MEMBER_LOGGED_ON = getString("party.messages.party-member-logged-on", PARTY_MEMBER_LOGGED_ON);
+        PARTY_MEMBER_LOGGED_OFF = getString("party.messages.party-member-logged-off", PARTY_MEMBER_LOGGED_OFF);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
     }
 
