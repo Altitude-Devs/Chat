@@ -108,7 +108,7 @@ public class PartyCommand implements SimpleCommand {
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
 
         return Utility.parseMiniMessage(Config.PARTY_HELP_WRAPPER, List.of(
-                Template.template("commands", stringBuilder.toString())
+                Template.template("commands", Utility.parseMiniMessage(stringBuilder.toString()))
         ));
     }
 
