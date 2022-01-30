@@ -14,7 +14,7 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private static ArrayList<PartyUser> partyUsers; //TODO might need to be a map?
+    private static ArrayList<PartyUser> partyUsers;
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
@@ -29,9 +29,6 @@ public class Party {
     }
 
     public void addUser(ChatUser chatUser, String playerName) {
-//        this.partyUsers.put(partyUser.getUuid(), PlainComponentSerializer.plain().serialize(partyUser.getDisplayName()));
-//        partyUser.setPartyId(getPartyId());
-//        Queries.addPartyUser(partyUser);
         partyUsers.add(new PartyUser(chatUser.getUuid(), chatUser.getDisplayName(), playerName));
         chatUser.setPartyId(getPartyId());
         Queries.addPartyUser(chatUser);
@@ -41,9 +38,14 @@ public class Party {
         removeUser(ChatUserManager.getChatUser(uuid));
     }
 
-    public void removeUser(ChatUser partyUser) {
-        partyUsers.remove(partyUser.getUuid());
-        Queries.removePartyUser(partyUser.getUuid());
+    public void removeUser(ChatUser chatUser) {
+        UUID uuid = chatUser.getUuid();
+        Optional<PartyUser> first = partyUsers.stream()
+                .filter(partyUser -> partyUser.getUuid().equals(uuid))
+                .findFirst();
+        if (first.isEmpty()) return;
+        partyUsers.remove(first.get());
+        Queries.removePartyUser(uuid);
     }
 
     public int getPartyId() {
@@ -54,7 +56,11 @@ public class Party {
         return ownerUuid;
     }
 
-    public UUID newOwner() {
+    public void setNewOwner(UUID uuid) {
+        setOwnerUuid(uuid);
+    }
+
+    public UUID setNewOwner() {
         UUID uuid = partyUsers.iterator().next().getUuid();
         setOwnerUuid(uuid);
         return uuid;
@@ -62,7 +68,7 @@ public class Party {
 
     public void setOwnerUuid(UUID ownerUuid) {
         this.ownerUuid = ownerUuid;
-        Queries.setPartyOwner(ownerUuid, partyId); //TODO: Async pls
+        Queries.setPartyOwner(ownerUuid, partyId);
     }
 
     public String getPartyName() {
@@ -71,7 +77,7 @@ public class Party {
 
     public void setPartyName(String partyName) {
         this.partyName = partyName;
-        Queries.setPartyName(partyName, partyId); //TODO: Async pls
+        Queries.setPartyName(partyName, partyId);
     }
 
     public String getPartyPassword() {
@@ -80,7 +86,7 @@ public class Party {
 
     public void setPartyPassword(String partyPassword) {
         this.partyPassword = partyPassword;
-        Queries.setPartyPassword(partyPassword, partyId); //TODO: Async pls
+        Queries.setPartyPassword(partyPassword, partyId);
     }
 
     public boolean hasPartyPassword() {
@@ -107,6 +113,15 @@ public class Party {
     public PartyUser getPartyUser(UUID uuid) {
         for(PartyUser user : partyUsers) {
             if(uuid.equals(user.getUuid())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public PartyUser getPartyUser(String name) {
+        for(PartyUser user : partyUsers) {
+            if(name.equalsIgnoreCase(user.getPlayerName())) {
                 return user;
             }
         }

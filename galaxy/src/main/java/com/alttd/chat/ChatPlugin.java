@@ -50,8 +50,8 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
         registerCommand("spy", new Spy());
-        registerCommand("chatparty", new ChatParty());
-        registerCommand("pc", new PartyChat());
+//        registerCommand("chatparty", new ChatParty());
+        registerCommand("p", new PartyChat());
         for (Channel channel : Channel.getChannels()) {
             if (!(channel instanceof CustomChannel customChannel)) continue;
            this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(customChannel));

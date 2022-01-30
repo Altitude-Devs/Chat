@@ -34,7 +34,6 @@ public class ChatImplementation implements ChatAPI{
 
         ChatUserManager.initialize(); // loads all the users from the db and adds them.
         RegexManager.initialize(); // load the filters and regexes from config
-        PartyManager.initialize(); // load the parties from the db and add the previously loaded users to them
     }
 
     public static ChatAPI get() {

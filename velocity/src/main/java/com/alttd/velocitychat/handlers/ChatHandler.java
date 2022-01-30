@@ -4,6 +4,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
+import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
@@ -18,6 +19,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -81,6 +83,83 @@ public class ChatHandler {
 //
 //        player.sendMessage(senderMessage);
 //        player2.sendMessage(receiverMessage);
+    }
+
+    public static void sendBlockedNotification(String prefix, Player player, String input, String target, ServerConnection serverConnection) {
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.template("prefix", prefix),
+                Template.template("displayname", Utility.getDisplayName(player.getUniqueId(), player.getUsername())),
+                Template.template("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Template.template("input", input)
+        ));
+        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, templates);
+
+        serverConnection.getServer().getPlayersConnected().forEach(pl ->{
+            if (pl.hasPermission("chat.alert-blocked")) {
+                pl.sendMessage(blockedNotification);
+            }
+        });
+        player.sendMessage(Utility.parseMiniMessage("<red>The language you used in your message is not allowed, " +
+                "this constitutes as your only warning. Any further attempts at bypassing the filter will result in staff intervention.</red>"));
+    }
+
+    public void sendPartyMessage(Party party, Component message, @Nullable List<UUID> ignoredPlayers)
+    {
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
+                .filter(pl -> {
+                    UUID uuid = pl.getUniqueId();
+                    if (ignoredPlayers != null && ignoredPlayers.contains(uuid))
+                        return false;
+                    return party.getPartyUsers().stream().anyMatch(pu -> pu.getUuid().equals(uuid));
+                }).forEach(pl -> {
+                    pl.sendMessage(message);
+                });
+    }
+
+    public void sendPartyMessage(UUID uuid, String message, Component item, ServerConnection serverConnection) {
+        Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(uuid);
+        if (optionalPlayer.isEmpty()) return;
+        Player player = optionalPlayer.get();
+        ChatUser user = ChatUserManager.getChatUser(uuid);
+        Party party = PartyManager.getParty(user.getPartyId());
+        if (party == null) {
+            player.sendMessage(Utility.parseMiniMessage(Config.NOT_IN_A_PARTY));
+            return;
+        }
+        Component senderName = user.getDisplayName();
+
+        String updatedMessage = RegexManager.replaceText(player.getUsername(), uuid, message);
+        if(updatedMessage == null) {
+            sendBlockedNotification("Party Language", player, message, "", serverConnection);
+            return; // the message was blocked
+        }
+
+        if(!player.hasPermission("chat.format")) {
+            updatedMessage = Utility.stripTokens(updatedMessage);
+        }
+
+        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+
+        updatedMessage = Utility.formatText(updatedMessage);
+
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.template("sender", senderName),
+                Template.template("sendername", senderName),
+                Template.template("partyname", party.getPartyName()),
+                Template.template("message", updatedMessage),
+                Template.template("server", serverConnection.getServer().getServerInfo().getName()),
+                Template.template("[i]", item)
+        ));
+
+        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
+        sendPartyMessage(party, partyMessage, user.getIgnoredBy());
+
+        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
+        for(Player pl : serverConnection.getServer().getPlayersConnected()) {
+            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
+                pl.sendMessage(spyMessage);
+            }
+        }
     }
 
     public void globalAdminChat(String message) {

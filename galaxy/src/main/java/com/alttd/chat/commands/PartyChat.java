@@ -20,11 +20,6 @@ public class PartyChat implements CommandExecutor {
         if(!(sender instanceof Player player)) { // must be a player
             return true;
         }
-        Party party = PartyManager.getParty(player.getUniqueId());
-        if (party == null) {
-            sender.sendMessage(Utility.parseMiniMessage("<red>You are not in a party. For more info do <gold>/party</gold>.</red>"));
-            return true;
-        }
 
         if(args.length == 0) {
             // TODO: 08/08/2021 lock into party chat
@@ -36,7 +31,7 @@ public class PartyChat implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, message);
+                ChatPlugin.getInstance().getChatHandler().partyMessage(player, message); //TODO send over proxy
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
 

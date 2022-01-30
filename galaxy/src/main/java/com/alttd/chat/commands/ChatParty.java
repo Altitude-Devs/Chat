@@ -5,16 +5,13 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
-import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -27,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ChatParty implements CommandExecutor, TabCompleter {
 
@@ -117,11 +113,11 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                         party.removeUser(player.getUniqueId());
                         if (party.getOwnerUuid().equals(player.getUniqueId())) {
                             if (party.getPartyUsers().size() > 0) {
-                                UUID uuid = party.newOwner();
+                                UUID uuid = party.setNewOwner();
                                 sender.sendMessage(Utility.parseMiniMessage("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
-                                ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
-                                        player.getName() +
-                                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
+//                                ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
+//                                        player.getName() +
+//                                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
                             } else {
                                 party.delete();
                             }

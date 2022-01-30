@@ -3,10 +3,11 @@ package com.alttd.velocitychat;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.ChatImplementation;
 import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.commands.GlobalAdminChat;
 import com.alttd.velocitychat.commands.MailCommand;
+import com.alttd.velocitychat.commands.PartyCommand;
 import com.alttd.velocitychat.commands.Reload;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
@@ -65,6 +66,7 @@ public class VelocityChat {
 
         chatAPI = new ChatImplementation();
         DatabaseConnection.initialize();
+        PartyManager.initialize(); // load the parties from the db and add the previously loaded users to them
 
         serverHandler = new ServerHandler();
         chatHandler = new ChatHandler();
@@ -112,6 +114,7 @@ public class VelocityChat {
         new GlobalAdminChat(server);
         new Reload(server);
         new MailCommand(server);
+        server.getCommandManager().register("party", new PartyCommand());
         // all (proxy)commands go here
     }
 
