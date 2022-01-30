@@ -4,6 +4,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.Utility;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -49,6 +50,7 @@ public class Name implements SubCommand {
             return;
         }
         party.setPartyName(args[1]);
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party, Utility.parseMiniMessage(Config.RENAMED_PARTY), null);
     }
 
     @Override
