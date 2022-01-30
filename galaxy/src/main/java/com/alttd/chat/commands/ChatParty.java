@@ -115,9 +115,9 @@ public class ChatParty implements CommandExecutor, TabCompleter {
                             if (party.getPartyUsers().size() > 0) {
                                 UUID uuid = party.setNewOwner();
                                 sender.sendMessage(Utility.parseMiniMessage("<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>"));
-                                ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
-                                        player.getName() +
-                                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
+//                                ChatPlugin.getInstance().getChatHandler().partyMessage(party, player, "<dark_aqua>" +
+//                                        player.getName() +
+//                                        " left the chat party, the new party owner is " + party.getPartyUser(uuid).getPlayerName());
                             } else {
                                 party.delete();
                             }

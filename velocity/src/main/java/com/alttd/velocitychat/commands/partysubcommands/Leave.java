@@ -47,7 +47,7 @@ public class Leave implements SubCommand {
                         Utility.parseMiniMessage(Config.OWNER_LEFT_PARTY, List.of(
                                 Template.template("old_owner", player.getUsername()),
                                 Template.template("new_owner", party.getPartyUser(uuid).getPlayerName())
-                        )));
+                        )), null);
             } else {
                 party.delete();
             }

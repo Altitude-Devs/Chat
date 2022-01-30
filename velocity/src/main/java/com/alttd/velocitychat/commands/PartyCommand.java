@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Party implements SimpleCommand {
+public class PartyCommand implements SimpleCommand {
     private final List<SubCommand> subCommands;
 
-    public Party() {
+    public PartyCommand() {
         subCommands = Arrays.asList(
                 new Help(this),
                 new Create(),
@@ -29,6 +29,7 @@ public class Party implements SimpleCommand {
                 new Owner(),
                 new Password(),
                 new Remove());
+
     }
 
     @Override

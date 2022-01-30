@@ -1,7 +1,7 @@
 package com.alttd.velocitychat.commands.partysubcommands;
 
 import com.alttd.chat.config.Config;
-import com.alttd.velocitychat.commands.Party;
+import com.alttd.velocitychat.commands.PartyCommand;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 
@@ -10,9 +10,9 @@ import java.util.List;
 
 public class Help implements SubCommand {
 
-    private final Party partyCommand;
+    private final PartyCommand partyCommand;
 
-    public Help(Party partyCommand)
+    public Help(PartyCommand partyCommand)
     {
         this.partyCommand = partyCommand;
     }

@@ -27,7 +27,5 @@ commands:
     permission: command.chat.mute-server
   spy:
     permission: command.chat.togglespy
-  chatparty:
-    permission: command.chat.chatparty
-  pc:
-    permission: command.chat.pc
+  p:
+    permission: command.chat.p

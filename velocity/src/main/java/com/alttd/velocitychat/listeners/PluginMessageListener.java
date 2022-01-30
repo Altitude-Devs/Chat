@@ -28,61 +28,58 @@ public class PluginMessageListener {
 
     @Subscribe
     public void onPluginMessageEvent(PluginMessageEvent event){
-        if(event.getIdentifier().equals(identifier)){
-            event.setResult(PluginMessageEvent.ForwardResult.handled());
+        if (!event.getIdentifier().equals(identifier)) return;
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
 
-            if(event.getSource() instanceof Player){
-                // if this happens there's an oopsie
-            }
-            if(event.getSource() instanceof ServerConnection){
-                // Read the data written to the message
-                ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
-                String channel = in.readUTF();
-                VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
-                switch (channel) {
-                    case "globalchat":
-                        VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF(), in.readUTF());
-                        break;
-                    case "globaladminchat":
-                        VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
-                        break;
-                    case "privatemessage":
-                        VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
-                        break;
-                    case "chatchannel": {
-                        String channelName = in.readUTF();
-                        CustomChannel chatChannel = (CustomChannel) CustomChannel.getChatChannel(channelName);
+        if(event.getSource() instanceof Player) {
+            ALogger.warn("Received plugin message from a player");
+            return;
+        }
+        if (!(event.getSource() instanceof ServerConnection serverConnection)) return;
+        // Read the data written to the message
+        ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+        String channel = in.readUTF();
+        VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
+        switch (channel) {
+            case "globalchat":
+                VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF(), in.readUTF());
+                break;
+            case "globaladminchat":
+                VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
+                break;
+            case "privatemessage":
+                VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
+                break;
+            case "chatchannel": {
+                String channelName = in.readUTF();
+                CustomChannel chatChannel = (CustomChannel) CustomChannel.getChatChannel(channelName);
 
-                        if (chatChannel == null) {
-                            ALogger.warn("Received non existent channel" + channelName +".");
-                            break;
-                        }
-
-                        ProxyServer proxy = VelocityChat.getPlugin().getProxy();
-                        chatChannel.getServers().forEach(server -> proxy.getServer(server).ifPresent(registeredServer ->
-                                registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData())));
-                        break;
-                    }
-                    case "party": {
-                        VelocityChat.getPlugin().getChatHandler().partyChat(in.readUTF(), UUID.fromString(in.readUTF()), GsonComponentSerializer.gson().deserialize(in.readUTF()));
-                        break;
-                    }
-                    case "tmppartyupdate": {
-                        int id = Integer.parseInt(in.readUTF());
-                        Queries.loadPartyUsers(id);
-                        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
-                        break;
-                    }
-                    default:
-                        VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
-                        ProxyServer proxy = VelocityChat.getPlugin().getProxy();
-
-                        for (RegisteredServer registeredServer : proxy.getAllServers()) {
-                            registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData());
-                        }
-                        break;
+                if (chatChannel == null) {
+                    ALogger.warn("Received non existent channel" + channelName +".");
+                    break;
                 }
+
+                ProxyServer proxy = VelocityChat.getPlugin().getProxy();
+                chatChannel.getServers().forEach(server -> proxy.getServer(server).ifPresent(registeredServer ->
+                        registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData())));
+                break;
             }
+            case "party": {
+                VelocityChat.getPlugin().getChatHandler().sendPartyMessage(
+                        UUID.fromString(in.readUTF()),
+                        in.readUTF(),
+                        GsonComponentSerializer.gson().deserialize(in.readUTF()),
+                        serverConnection);
+                break;
+            }
+            default:
+                VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
+                ProxyServer proxy = VelocityChat.getPlugin().getProxy();
+
+                for (RegisteredServer registeredServer : proxy.getAllServers()) {
+                    registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData());
+                }
+                break;
         }
     }
 

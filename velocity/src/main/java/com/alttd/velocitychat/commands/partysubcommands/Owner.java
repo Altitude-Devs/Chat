@@ -53,7 +53,7 @@ public class Owner implements SubCommand {
                 Utility.parseMiniMessage(Config.NEW_PARTY_OWNER, List.of(
                         Template.template("old_owner", player.getUsername()),
                         Template.template("new_owner", partyUser.getPlayerName())
-                )));
+                )), null);
     }
 
     @Override

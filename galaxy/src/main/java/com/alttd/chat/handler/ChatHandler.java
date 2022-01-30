@@ -164,43 +164,53 @@ public class ChatHandler {
         }
     }
 
-    public void partyMessage(Party party, Player player, String message) {
-        if (isMuted(player, message, "[" + party.getPartyName() + " Muted] ")) return;
+    public void partyMessage(Player player, String message) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("party");
+        out.writeUTF(player.getUniqueId().toString());
+        out.writeUTF(message);
+        out.writeUTF(GsonComponentSerializer.gson().serialize(
+                itemComponent(player.getInventory().getItemInMainHand())
+        ));
+        player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
 
-        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-        Component senderName = user.getDisplayName();
 
-        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message);
-        if(updatedMessage == null) {
-            GalaxyUtility.sendBlockedNotification("Party Language", player, message, "");
-            return; // the message was blocked
-        }
-
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        }
-
-        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
-        updatedMessage = Utility.formatText(updatedMessage);
-
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", senderName),
-                Template.template("sendername", senderName),
-                Template.template("partyname", party.getPartyName()),
-                Template.template("message", updatedMessage),
-                Template.template("server", Bukkit.getServerName()),
-                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
-
-        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
-//        sendPartyMessage(player, party.getPartyId(), component);
-
-        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
-        for(Player pl : Bukkit.getOnlinePlayers()) {
-            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
-                pl.sendMessage(spyMessage);
-            }
-        }
+//        if (isMuted(player, message, "[" + party.getPartyName() + " Muted] ")) return;
+//
+//        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+//        Component senderName = user.getDisplayName();
+//
+//        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message);
+//        if(updatedMessage == null) {
+//            GalaxyUtility.sendBlockedNotification("Party Language", player, message, "");
+//            return; // the message was blocked
+//        }
+//
+//        if(!player.hasPermission("chat.format")) {
+//            updatedMessage = Utility.stripTokens(updatedMessage);
+//        }
+//
+//        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+//
+//        updatedMessage = Utility.formatText(updatedMessage);
+//
+//        List<Template> templates = new ArrayList<>(List.of(
+//                Template.template("sender", senderName),
+//                Template.template("sendername", senderName),
+//                Template.template("partyname", party.getPartyName()),
+//                Template.template("message", updatedMessage),
+//                Template.template("server", Bukkit.getServerName()),
+//                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+//
+//        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
+////        sendPartyMessage(player, party.getPartyId(), component);
+//
+//        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
+//        for(Player pl : Bukkit.getOnlinePlayers()) {
+//            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
+//                pl.sendMessage(spyMessage);
+//            }
+//        }
     }
 
     private void sendChatChannelMessage(CustomChannel chatChannel, UUID uuid, Component component) {
