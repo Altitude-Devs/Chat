@@ -51,7 +51,6 @@ public class Leave implements SubCommand {
         } else {
             source.sendMessage(Utility.parseMiniMessage(Config.LEFT_PARTY));
         }
-//        update(player, party.getPartyId()); TODO update party
     }
 
     @Override

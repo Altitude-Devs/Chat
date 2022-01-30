@@ -44,7 +44,6 @@ public class Join implements SubCommand {
         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
         source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, List.of(
                 Template.template("party_name", party.getPartyName()))));
-//        update(player, party.getPartyId()); TODO update party
     }
 
     @Override

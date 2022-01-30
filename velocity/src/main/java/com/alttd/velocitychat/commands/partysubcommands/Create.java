@@ -42,8 +42,6 @@ public class Create implements SubCommand {
         source.sendMessage(Utility.parseMiniMessage(Config.CREATED_PARTY,
                 List.of(Template.template("party_name", party.getPartyName()),
                         Template.template("party_password", party.getPartyPassword()))));
-//        update(player, party.getPartyId());
-        //TODO put party in active party list
     }
 
     @Override
