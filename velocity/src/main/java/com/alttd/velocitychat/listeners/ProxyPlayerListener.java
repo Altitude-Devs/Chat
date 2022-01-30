@@ -1,5 +1,7 @@
 package com.alttd.velocitychat.listeners;
 
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
@@ -32,11 +34,14 @@ public class ProxyPlayerListener {
         UUID uuid = player.getUniqueId();
         Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
         if (party == null) return;
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("partylogin");
-        out.writeUTF(String.valueOf(party.getPartyId()));
-        out.writeUTF(uuid.toString());
-        VelocityChat.getPlugin().getProxy().getAllServers().forEach(registeredServer -> registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), out.toByteArray()));
+        ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+        if (chatUser == null)
+            return;
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+                Utility.parseMiniMessage(Config.PARTY_MEMBER_ONLINE, List.of(
+                        Template.template("player", chatUser.getDisplayName())
+                )),
+                chatUser.getIgnoredPlayers());
         // TODO setup ChatUser on Proxy
         //VelocityChat.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
 
