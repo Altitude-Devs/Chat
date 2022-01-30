@@ -273,6 +273,8 @@ public final class Config {
             "<dark_aqua>You received an invite to join <party> click this message to accept.</dark_aqua></click>";
     public static String PARTY_MEMBER_LOGGED_ON = "<dark_aqua>[ChatParty] <player> joined Altitude...</dark_aqua>";
     public static String PARTY_MEMBER_LOGGED_OFF = "<dark_aqua>[ChatParty] <player> left Altitude...</dark_aqua>";
+    public static String RENAMED_PARTY = "<dark_aqua>[ChatParty] <owner> changed the party name from <old_name> to <new_name>!</dark_aqua>";
+    public static String CHANGED_PASSWORD = "<green>Password was set to <password></green>";
     public static String PARTY_INFO = """
                 <gold><bold>Chat party info</bold>:
                 </gold><green>Name: <dark_aqua><party></dark_aqua>
@@ -302,6 +304,8 @@ public final class Config {
         SENT_PARTY_INV = getString("party.messages.sent-party-invite", SENT_PARTY_INV);
         PARTY_MEMBER_LOGGED_ON = getString("party.messages.party-member-logged-on", PARTY_MEMBER_LOGGED_ON);
         PARTY_MEMBER_LOGGED_OFF = getString("party.messages.party-member-logged-off", PARTY_MEMBER_LOGGED_OFF);
+        RENAMED_PARTY = getString("party.messages.renamed-party", RENAMED_PARTY);
+        CHANGED_PASSWORD = getString("party.messages.changed-password", CHANGED_PASSWORD);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
     }
 

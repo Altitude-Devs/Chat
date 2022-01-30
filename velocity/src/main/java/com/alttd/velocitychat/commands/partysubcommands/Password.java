@@ -41,6 +41,7 @@ public class Password implements SubCommand {
             return;
         }
         party.setPartyPassword(args[1]);
+        source.sendMessage(Utility.parseMiniMessage(Config.CHANGED_PASSWORD));
     }
 
     @Override
