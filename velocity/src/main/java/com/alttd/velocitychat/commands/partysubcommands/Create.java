@@ -32,6 +32,11 @@ public class Create implements SubCommand {
             source.sendMessage(Utility.parseMiniMessage(getHelpMessage()));
             return;
         }
+        if (PartyManager.getParty(player.getUniqueId()) != null)
+        {
+            source.sendMessage(Utility.parseMiniMessage(Config.ALREADY_IN_PARTY));
+            return;
+        }
         if (PartyManager.getParty(args[1]) != null) {
             source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS, List.of(
                     Template.template("party", args[1])
