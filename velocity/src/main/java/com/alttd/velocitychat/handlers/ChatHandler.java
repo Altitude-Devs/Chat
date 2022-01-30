@@ -4,6 +4,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
+import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
 import com.alttd.chat.objects.Party;
@@ -16,6 +17,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
@@ -81,6 +83,50 @@ public class ChatHandler {
 //
 //        player.sendMessage(senderMessage);
 //        player2.sendMessage(receiverMessage);
+    }
+
+    public void partyMessage(Party party, Player player, String message, ServerConnection serverConnection) {
+        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+        Component senderName = user.getDisplayName();
+
+        String updatedMessage = RegexManager.replaceText(player.getUsername(), player.getUniqueId(), message);
+        if(updatedMessage == null) {
+//            GalaxyUtility.sendBlockedNotification("Party Language", player, message, "");
+            return; // the message was blocked
+        }
+
+        if(!player.hasPermission("chat.format")) {
+            updatedMessage = Utility.stripTokens(updatedMessage);
+        }
+
+        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+
+        updatedMessage = Utility.formatText(updatedMessage);
+
+        List<Template> templates = new ArrayList<>(List.of(
+                Template.template("sender", senderName),
+                Template.template("sendername", senderName),
+                Template.template("partyname", party.getPartyName()),
+                Template.template("message", updatedMessage),
+                Template.template("server", serverConnection.getServer().getServerInfo().getName()),
+                Template.template("[i]", "item")
+        ));
+
+        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
+        VelocityChat.getPlugin().getProxy().getAllPlayers().stream()
+                .filter(pl -> {
+                    UUID uuid = pl.getUniqueId();
+                    return party.getPartyUsers().stream().anyMatch(pu -> pu.getUuid().equals(uuid));
+                }).forEach(pl -> {
+                    pl.sendMessage(partyMessage);
+                });
+
+        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
+        for(Player pl : serverConnection.getServer().getPlayersConnected()) {
+            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
+                pl.sendMessage(spyMessage);
+            }
+        }
     }
 
     public void globalAdminChat(String message) {

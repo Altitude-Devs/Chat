@@ -193,7 +193,7 @@ public class ChatHandler {
                 Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 
         Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
-        sendPartyMessage(player, party.getPartyId(), component);
+//        sendPartyMessage(player, party.getPartyId(), component);
 
         Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
         for(Player pl : Bukkit.getOnlinePlayers()) {
@@ -233,15 +233,6 @@ public class ChatHandler {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
         out.writeUTF(chatChannelName);
-        out.writeUTF(player.getUniqueId().toString());
-        out.writeUTF(GsonComponentSerializer.gson().serialize(component));
-        player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());
-    }
-
-    private void sendPartyMessage(Player player, int partyId, Component component) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("party");
-        out.writeUTF(String.valueOf(partyId));
         out.writeUTF(player.getUniqueId().toString());
         out.writeUTF(GsonComponentSerializer.gson().serialize(component));
         player.sendPluginMessage(plugin, Config.MESSAGECHANNEL, out.toByteArray());

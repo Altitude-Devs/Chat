@@ -209,13 +209,6 @@ public final class Config {
         GCCOOLDOWN = getInt("commands.globalchat.cooldown", GCCOOLDOWN);
     }
 
-    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
-    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
-    private static void party() {
-        PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
-        PARTY_SPY = getString("party.spy", PARTY_SPY);
-    }
-
     public static String CHATFORMAT = "<white><light_purple><prefixall> <gray><hover:show_text:Click to message <sendername>><click:suggest_command:/msg <sendername> ><sender></hover>: <white><message>";
     public static String URLFORMAT = "<click:OPEN_URL:<clickurl>><url></click>";
     private static void Chat() {
@@ -250,6 +243,39 @@ public final class Config {
         SERVERJOINMESSAGE = getString("messages.join-server", SERVERJOINMESSAGE);
         SERVERLEAVEMESSAGE = getString("messages.leave-server", SERVERLEAVEMESSAGE);
 
+    }
+
+    public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray> <hover:show_text:on <server>> → Party</hover>) <message>";
+    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sendername></dark_gray>: <dark_gray><partyname></dark_gray> <message></dark_gray></i>";
+    public static String PARTY_HELP = "";
+    public static String NO_PERMISSION = "<red>You don't have permission to use this command.</red>";
+    public static String NO_CONSOLE = "<red>This command can not be used by console</red>";
+    public static String CREATED_PARTY = "<green>You created a chat party called: " +
+            "'<gold><party_name></gold>' with the password: '<gold><party_password></gold>'</green>";
+    public static String NOT_IN_A_PARTY = "<red>You're not in a chat party.</red>";
+    public static String NOT_YOUR_PARTY = "<red>You don't own this chat party.</red>";
+    public static String NOT_A_PARTY = "<red>This chat party does not exist.</red>";
+    public static String INVALID_PLAYER = "<red>Invalid player.</red>";
+    public static String NOT_ONLINE = "<red><player> must be online to receive an invite.</red>";
+    public static String INVALID_PASSWORD = "<red>Invalid password.</red>";
+    public static String JOINED_PARTY = "<green>You joined <party_name>!</green>";
+    public static String NOTIFY_FINDING_NEW_OWNER = "<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>";
+    public static String LEFT_PARTY = "<green>You have left the chat party!</green>";
+    private static void party() {
+        PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
+        PARTY_SPY = getString("party.spy", PARTY_SPY);
+        PARTY_HELP = getString("party.messages.help", PARTY_HELP);
+        NO_PERMISSION = getString("party.messages.no-permission", NO_PERMISSION);
+        NO_CONSOLE = getString("party.messages.no-console", NO_CONSOLE);
+        CREATED_PARTY = getString("party.messages.created-party", CREATED_PARTY);
+        NOT_IN_A_PARTY = getString("party.messages.not-in-a-party", NOT_IN_A_PARTY);
+        NOT_YOUR_PARTY = getString("party.messages.not-your-party", NOT_YOUR_PARTY);
+        NOT_A_PARTY = getString("party.messages.not-a-party", NOT_A_PARTY);
+        INVALID_PLAYER = getString("party.messages.invalid-player", INVALID_PLAYER);
+        NOT_ONLINE = getString("party.messages.not-online", NOT_ONLINE);
+        INVALID_PASSWORD = getString("party.messages.invalid-password", INVALID_PASSWORD);
+        NOTIFY_FINDING_NEW_OWNER = getString("party.messages.notify-finding-new-owner", NOTIFY_FINDING_NEW_OWNER);
+        LEFT_PARTY = getString("party.messages.left-party", LEFT_PARTY);
     }
 
     private static void chatChannels() {
