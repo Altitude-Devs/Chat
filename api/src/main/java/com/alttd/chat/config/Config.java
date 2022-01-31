@@ -296,6 +296,7 @@ public final class Config {
         INVALID_PLAYER = getString("party.messages.invalid-player", INVALID_PLAYER);
         NOT_ONLINE = getString("party.messages.not-online", NOT_ONLINE);
         INVALID_PASSWORD = getString("party.messages.invalid-password", INVALID_PASSWORD);
+        JOINED_PARTY = getString("party.messages.joined-party", JOINED_PARTY);
         NOTIFY_FINDING_NEW_OWNER = getString("party.messages.notify-finding-new-owner", NOTIFY_FINDING_NEW_OWNER);
         LEFT_PARTY = getString("party.messages.left-party", LEFT_PARTY);
         OWNER_LEFT_PARTY = getString("party.messages.owner-left-party", OWNER_LEFT_PARTY);
@@ -339,6 +340,7 @@ public final class Config {
         PARTY_HELP_OWNER = getString("party.help.owner", PARTY_HELP_OWNER);
         PARTY_HELP_PASSWORD = getString("party.help.password", PARTY_HELP_PASSWORD);
         PARTY_HELP_REMOVE = getString("party.help.remove", PARTY_HELP_REMOVE);
+        PARTY_HELP_DISBAND = getString("party.help.disband", PARTY_HELP_DISBAND);
         PARTY_HELP_CHAT = getString("party.help.chat", PARTY_HELP_CHAT);
     }
 
