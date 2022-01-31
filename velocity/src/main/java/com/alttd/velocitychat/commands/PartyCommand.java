@@ -104,6 +104,7 @@ public class PartyCommand implements SimpleCommand {
         subCommands.stream()
                 .filter(subCommand -> source.hasPermission(subCommand.getPermission()))
                 .forEach(subCommand -> stringBuilder.append(subCommand.getHelpMessage()).append("\n"));
+        stringBuilder.append(Config.PARTY_HELP_CHAT).append("\n");
         if (stringBuilder.length() != 0)
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
 

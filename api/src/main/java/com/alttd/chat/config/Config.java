@@ -320,6 +320,7 @@ public final class Config {
     public static String PARTY_HELP_OWNER = "<green>Change the owner of your party: <gold>/party owner <new_owner_name></gold></green>";
     public static String PARTY_HELP_PASSWORD = "<green>Change the password of your party: <gold>/party password <new_password></gold></green>";
     public static String PARTY_HELP_REMOVE = "<green>Remove a member from your party: <gold>/party remove <member_name></gold></green>";
+    public static String PARTY_HELP_CHAT = "<green>Talk in party chat: <gold>/p <message></gold></green>";
     private static void partyHelp() {
         PARTY_HELP_WRAPPER = getString("party.help.wrapper", PARTY_HELP_WRAPPER);
         PARTY_HELP_HELP = getString("party.help.help", PARTY_HELP_HELP);
@@ -332,6 +333,7 @@ public final class Config {
         PARTY_HELP_OWNER = getString("party.help.owner", PARTY_HELP_OWNER);
         PARTY_HELP_PASSWORD = getString("party.help.password", PARTY_HELP_PASSWORD);
         PARTY_HELP_REMOVE = getString("party.help.remove", PARTY_HELP_REMOVE);
+        PARTY_HELP_CHAT = getString("party.help.chat", PARTY_HELP_CHAT);
     }
 
     private static void chatChannels() {
