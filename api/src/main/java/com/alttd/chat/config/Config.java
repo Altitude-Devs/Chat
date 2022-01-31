@@ -275,6 +275,9 @@ public final class Config {
     public static String PARTY_MEMBER_LOGGED_OFF = "<dark_aqua>[ChatParty] <player> left Altitude...</dark_aqua>";
     public static String RENAMED_PARTY = "<dark_aqua>[ChatParty] <owner> changed the party name from <old_name> to <new_name>!</dark_aqua>";
     public static String CHANGED_PASSWORD = "<green>Password was set to <password></green>";
+    public static String DISBAND_PARTY_CONFIRM = "<green><bold>Are you sure you want to disband your party?</bold> " +
+            "Type <gold>/party disband confirm <party></gold> to confirm.";
+    public static String DISBANDED_PARTY = "<dark_aqua>[ChatParty] <owner> has disbanded <party>, everyone has been removed.</dark_aqua>";
     public static String PARTY_INFO = """
                 <gold><bold>Chat party info</bold>:
                 </gold><green>Name: <dark_aqua><party></dark_aqua>
@@ -306,6 +309,8 @@ public final class Config {
         PARTY_MEMBER_LOGGED_OFF = getString("party.messages.party-member-logged-off", PARTY_MEMBER_LOGGED_OFF);
         RENAMED_PARTY = getString("party.messages.renamed-party", RENAMED_PARTY);
         CHANGED_PASSWORD = getString("party.messages.changed-password", CHANGED_PASSWORD);
+        DISBAND_PARTY_CONFIRM = getString("party.messages.disband-party-confirm", DISBAND_PARTY_CONFIRM);
+        DISBANDED_PARTY = getString("party.messages.disbanded-party", DISBANDED_PARTY);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
     }
 
@@ -320,6 +325,7 @@ public final class Config {
     public static String PARTY_HELP_OWNER = "<green>Change the owner of your party: <gold>/party owner <new_owner_name></gold></green>";
     public static String PARTY_HELP_PASSWORD = "<green>Change the password of your party: <gold>/party password <new_password></gold></green>";
     public static String PARTY_HELP_REMOVE = "<green>Remove a member from your party: <gold>/party remove <member_name></gold></green>";
+    public static String PARTY_HELP_DISBAND = "<green>Remove everyone from your party and disband it: <gold>/party disband</gold></green>";
     public static String PARTY_HELP_CHAT = "<green>Talk in party chat: <gold>/p <message></gold></green>";
     private static void partyHelp() {
         PARTY_HELP_WRAPPER = getString("party.help.wrapper", PARTY_HELP_WRAPPER);

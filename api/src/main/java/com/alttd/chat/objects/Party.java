@@ -98,6 +98,9 @@ public class Party {
     }
 
     public void delete() {
+        if (partyUsers.size() != 0) {
+            Queries.removeAllPartyUsers(partyUsers);
+        }
         Queries.removeParty(partyId);
         PartyManager.removeParty(this);
     }
