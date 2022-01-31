@@ -64,7 +64,9 @@ public class PartyCommand implements SimpleCommand {
         String[] args = invocation.arguments();
         List<String> suggest = new ArrayList<>();
 
-        if (args.length == 0) {
+        if (!invocation.source().hasPermission("party.use"))
+            return suggest;
+        else if (args.length == 0) {
             subCommands.stream()
                     .filter(subCommand -> invocation.source().hasPermission(subCommand.getPermission()))
                     .forEach(subCommand -> suggest.add(subCommand.getName()));
@@ -105,16 +107,13 @@ public class PartyCommand implements SimpleCommand {
         subCommands.stream()
                 .filter(subCommand -> source.hasPermission(subCommand.getPermission()))
                 .forEach(subCommand -> stringBuilder.append(subCommand.getHelpMessage()).append("\n"));
-        stringBuilder.append(Config.PARTY_HELP_CHAT).append("\n");
+        if (source.hasPermission("command.chat.p"))
+            stringBuilder.append(Config.PARTY_HELP_CHAT).append("\n");
         if (stringBuilder.length() != 0)
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
 
         return Utility.parseMiniMessage(Config.PARTY_HELP_WRAPPER, List.of(
                 Template.template("commands", Utility.parseMiniMessage(stringBuilder.toString()))
         ));
-    }
-
-    public List<SubCommand> getSubCommands() {
-        return subCommands;
     }
 }
