@@ -316,6 +316,24 @@ public class Queries {
         }
     }
 
+    public static void removeAllPartyUsers(ArrayList<PartyUser> partyUsers) {
+        String query = "UPDATE chat_users SET party_id = -1 WHERE uuid = ?";
+
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            for (PartyUser partyUser : partyUsers) {
+                statement.setString(1, partyUser.getUuid().toString());
+                statement.addBatch();
+            }
+
+            statement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void removePartyUser(UUID uuid) {
         String query = "UPDATE chat_users SET party_id = -1 WHERE uuid = ?";
 

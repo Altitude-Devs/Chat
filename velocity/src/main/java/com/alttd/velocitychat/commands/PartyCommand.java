@@ -21,6 +21,7 @@ public class PartyCommand implements SimpleCommand {
         subCommands = Arrays.asList(
                 new Help(this),
                 new Create(),
+                new Disband(),
                 new Info(),
                 new Invite(),
                 new Join(),
