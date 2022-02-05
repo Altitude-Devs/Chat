@@ -9,7 +9,7 @@ import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +44,10 @@ public class Leave implements SubCommand {
                 UUID uuid = party.setNewOwner();
                 source.sendMessage(Utility.parseMiniMessage(Config.NOTIFY_FINDING_NEW_OWNER));
                 VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
-                        Utility.parseMiniMessage(Config.OWNER_LEFT_PARTY, List.of(
-                                Template.template("old_owner", player.getUsername()),
-                                Template.template("new_owner", party.getPartyUser(uuid).getPlayerName())
-                        )), null);
+                        Utility.parseMiniMessage(Config.OWNER_LEFT_PARTY,
+                                Placeholder.miniMessage("old_owner", player.getUsername()),
+                                Placeholder.miniMessage("new_owner", party.getPartyUser(uuid).getPlayerName())
+                        ), null);
             } else {
                 party.delete();
             }

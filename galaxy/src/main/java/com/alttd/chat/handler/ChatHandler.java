@@ -12,16 +12,14 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ChatHandler {
@@ -55,16 +53,16 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("message", updatedMessage),
-                Template.template("sendername", player.getName()),
-                Template.template("receivername", target),
-                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("message", Replacement.miniMessage(updatedMessage));
+        placeholders.put("sendername", Replacement.miniMessage(player.getName()));
+        placeholders.put("receivername", Replacement.miniMessage(target));
+        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
 
-        Component component = Utility.parseMiniMessage("<message>", templates);
+        Component component = Utility.parseMiniMessage("<message>", placeholders);
 
         sendPrivateMessage(player, target, "privatemessage", component);
-        Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, templates);
+        Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
         for(Player pl : Bukkit.getOnlinePlayers()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) {
                 pl.sendMessage(spymessage);
@@ -85,7 +83,9 @@ public class ChatHandler {
 
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
         if(timeLeft <= Config.GCCOOLDOWN && !player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
-            player.sendMessage(Utility.parseMiniMessage(Config.GCONCOOLDOWN, List.of(Template.template("cooldown", Config.GCCOOLDOWN-timeLeft+""))));
+            Map<String, Replacement<?>> placeholders = new HashMap<>();
+            placeholders.put("cooldown", Replacement.miniMessage(Config.GCCOOLDOWN-timeLeft+""));
+            player.sendMessage(Utility.parseMiniMessage(Config.GCONCOOLDOWN, placeholders));
             return;
         }
 
@@ -109,14 +109,14 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", senderName),
-                Template.template("prefix", prefix),
-                Template.template("message", updatedMessage),
-                Template.template("server", Bukkit.getServerName()),
-                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.component(senderName));
+        placeholders.put("prefix", Replacement.component(prefix));
+        placeholders.put("message", Replacement.miniMessage(updatedMessage));
+        placeholders.put("server", Replacement.miniMessage(Bukkit.getServerName()));
+        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
 
-        Component component = Utility.parseMiniMessage(Config.GCFORMAT, templates);
+        Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders);
         user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
@@ -146,14 +146,14 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", senderName),
-                Template.template("message", updatedMessage),
-                Template.template("server", Bukkit.getServerName()),
-                Template.template("channel", channel.getChannelName()),
-                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.component(senderName));
+        placeholders.put("message", Replacement.miniMessage(updatedMessage));
+        placeholders.put("server", Replacement.miniMessage(Bukkit.getServerName()));
+        placeholders.put("channel", Replacement.miniMessage(channel.getChannelName()));
+        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
 
-        Component component = Utility.parseMiniMessage(channel.getFormat(), templates);
+        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
 
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
@@ -193,12 +193,12 @@ public class ChatHandler {
 //        updatedMessage = Utility.formatText(updatedMessage);
 //
 //        List<Template> templates = new ArrayList<>(List.of(
-//                Template.template("sender", senderName),
-//                Template.template("sendername", senderName),
-//                Template.template("partyname", party.getPartyName()),
-//                Template.template("message", updatedMessage),
-//                Template.template("server", Bukkit.getServerName()),
-//                Template.template("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
+//                Placeholder.miniMessage("sender", senderName),
+//                Placeholder.miniMessage("sendername", senderName),
+//                Placeholder.miniMessage("partyname", party.getPartyName()),
+//                Placeholder.miniMessage("message", updatedMessage),
+//                Placeholder.miniMessage("server", Bukkit.getServerName()),
+//                Placeholder.miniMessage("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 //
 //        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
 ////        sendPartyMessage(player, party.getPartyId(), component);

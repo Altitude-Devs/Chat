@@ -33,7 +33,7 @@ dependencies {
 //    implementation(project(":api"))
     implementation(project(":galaxy"))
     implementation(project(":velocity"))
-//    implementation("net.kyori", "adventure-text-minimessage", "4.2.0-SNAPSHOT") {
+//    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-SNAPSHOT") {
 //        exclude("net.kyori")
 //        exclude("net.kyori.examination")
 //    }
