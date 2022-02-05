@@ -4,6 +4,7 @@ import com.alttd.chat.objects.channels.CustomChannel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import io.leangen.geantyref.TypeToken;
+import net.kyori.adventure.text.Component;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -389,15 +390,19 @@ public final class Config {
     }
 
     public static String mailHeader = "===== List Mails ====='";
-    public static String mailBody = "<white>From:</white> <staffprefix><sender> <white>on:<date></white>\n<message>";
+    public static String mailBody = "<white>From:</white> [<staffprefix>] <sender> <white><hover:show_text:'<date>'><time_ago> day(s) ago</hover>: </white><message>";
     public static String mailFooter = "======================";
     public static String mailNoUser = "<red>A player with this name hasn't logged in recently.";
+    public static String mailReceived = "<yellow><click:run_command:/mail list unread>New mail from <sender>, click to view</click></yellow>";
+    public static String mailUnread = "<green><click:run_command:/mail list unread>You have <amount> unread mail, click to view it.</click></green>";
     public static List<String> mailCommandAlias = new ArrayList<>();
     private static void mailSettings() {
         mailHeader = getString("settings.mail.header", mailHeader);
         mailBody = getString("settings.mail.message", mailBody);
         mailFooter = getString("settings.mail.footer", mailFooter);
         mailCommandAlias = getList("settings.mail.command-aliases", Lists.newArrayList("gmail"));
+        mailReceived = getString("settings.mail.mail-received", mailReceived);
+        mailUnread = getString("settings.mail.mail-unread", mailUnread);
     }
 
 }
