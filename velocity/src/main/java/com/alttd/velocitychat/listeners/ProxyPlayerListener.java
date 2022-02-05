@@ -2,6 +2,7 @@ package com.alttd.velocitychat.listeners;
 
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.Mail;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
@@ -14,6 +15,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.minimessage.Template;
@@ -42,6 +44,20 @@ public class ProxyPlayerListener {
         //VelocityChat.getPlugin().getChatHandler().addPlayer(new ChatPlayer(event.getPlayer().getUniqueId()));
 
         ServerHandler.addPlayerUUID(player.getUsername(), uuid);
+    }
+
+    @Subscribe(order = PostOrder.LAST)
+    public void afterPlayerLogin(ServerPostConnectEvent event) {
+        if (event.getPreviousServer() != null)
+            return;
+        Player player = event.getPlayer();
+        ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
+        List<Mail> unReadMail = chatUser.getUnReadMail();
+        if (unReadMail.isEmpty())
+            return;
+        player.sendMessage(Utility.parseMiniMessage(Config.mailUnread, List.of(
+                Template.template("amount", String.valueOf(unReadMail.size()))
+        )));
     }
 
     @Subscribe

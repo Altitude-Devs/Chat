@@ -22,6 +22,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ChatHandler {
 
@@ -215,7 +216,9 @@ public class ChatHandler {
         chatUser.addMail(mail);
         // TODO load from config
         String finalSenderName = senderName;
-        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage("<yellow>New mail from " + finalSenderName)));
+        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage(Config.mailReceived, List.of(
+                Template.template("sender", finalSenderName))
+        )));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer) {
@@ -243,11 +246,13 @@ public class ChatHandler {
                 Queries.markMailRead(mail);
             }
             ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
+            Date sentTime = new Date(mail.getSendTime());
             List<Template> templates = new ArrayList<>(List.of(
                     Template.template("staffprefix", chatUser.getStaffPrefix()),
                     Template.template("sender", chatUser.getDisplayName()),
                     Template.template("message", mail.getMessage()),
-                    Template.template("date", new Date(mail.getSendTime()).toString())
+                    Template.template("date", sentTime.toString()),
+                    Template.template("time_ago", String.valueOf(TimeUnit.MILLISECONDS.toDays(new Date().getTime() - sentTime.getTime())))
             ));
             Component mailMessage = Utility.parseMiniMessage(Config.mailBody, templates);
             component = component.append(Component.newline()).append(mailMessage);
