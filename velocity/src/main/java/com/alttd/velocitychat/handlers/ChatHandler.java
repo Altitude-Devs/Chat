@@ -182,7 +182,7 @@ public class ChatHandler {
         }
 
         List<Template> templates = new ArrayList<>(List.of(
-                Template.template("message", message),
+                Template.template("message", Utility.formatText(message)),
                 Template.template("sender", senderName),
                 Template.template("server", serverName)));
 
