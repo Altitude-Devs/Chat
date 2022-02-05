@@ -10,20 +10,18 @@ import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import litebans.api.Database;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatListener implements Listener, ChatRenderer {
 
@@ -45,7 +43,7 @@ public class ChatListener implements Listener, ChatRenderer {
                 && ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()));
 
         Component input = event.message();
-        String message = PlainComponentSerializer.plain().serialize(input);
+        String message = PlainTextComponentSerializer.plainText().serialize(input);
 
         message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
         if(message == null) {
@@ -65,12 +63,11 @@ public class ChatListener implements Listener, ChatRenderer {
 
         message = Utility.formatText(message);
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("message", message),
-                Template.template("[i]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
-        ));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("message", Replacement.miniMessage(message));
+        placeholders.put("[i]", Replacement.component(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())));
 
-        Component component = Utility.parseMiniMessage("<message>", templates);
+        Component component = Utility.parseMiniMessage("<message>", placeholders);
 
         event.message(component);
         event.renderer(this);
@@ -80,16 +77,15 @@ public class ChatListener implements Listener, ChatRenderer {
     public @NotNull Component render(@NotNull Player player, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", user.getDisplayName()),
-                Template.template("sendername", player.getName()),
-                Template.template("prefix", user.getPrefix()),
-                Template.template("prefixall", user.getPrefixAll()),
-                Template.template("staffprefix", user.getStaffPrefix()),
-                Template.template("message", message)
-        ));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.component(user.getDisplayName()));
+        placeholders.put("sendername", Replacement.component(player.name()));
+        placeholders.put("prefix", Replacement.component(user.getPrefix()));
+        placeholders.put("prefixall", Replacement.component(user.getPrefixAll()));
+        placeholders.put("staffprefix", Replacement.component(user.getStaffPrefix()));
+        placeholders.put("message", Replacement.component(message));
 
-        return Utility.parseMiniMessage(Config.CHATFORMAT, templates);
+        return Utility.parseMiniMessage(Config.CHATFORMAT, placeholders);
     }
 
 }

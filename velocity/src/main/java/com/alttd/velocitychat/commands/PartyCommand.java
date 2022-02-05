@@ -8,7 +8,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,8 +112,8 @@ public class PartyCommand implements SimpleCommand {
         if (stringBuilder.length() != 0)
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
 
-        return Utility.parseMiniMessage(Config.PARTY_HELP_WRAPPER, List.of(
-                Template.template("commands", Utility.parseMiniMessage(stringBuilder.toString()))
-        ));
+        return Utility.parseMiniMessage(Config.PARTY_HELP_WRAPPER,
+                Placeholder.component("commands", Utility.parseMiniMessage(stringBuilder.toString()))
+        );
     }
 }

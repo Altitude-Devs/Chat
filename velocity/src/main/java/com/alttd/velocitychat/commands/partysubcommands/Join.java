@@ -8,7 +8,7 @@ import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,7 @@ public class Join implements SubCommand {
 
 //      party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
-        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, List.of(
-                Template.template("party_name", party.getPartyName()))));
+        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.miniMessage("party_name", party.getPartyName())));
     }
 
     @Override

@@ -10,7 +10,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,18 +49,18 @@ public class Remove implements SubCommand {
         if (optionalPlayer.isEmpty()) {
             partyUser = party.getPartyUser(args[1]);
             if (partyUser == null) {
-                source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER, List.of(
-                        Template.template("player", args[1])
-                )));
+                source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER,
+                        Placeholder.miniMessage("player", args[1])
+                ));
                 return;
             }
         } else {
             onlinePlayer = optionalPlayer.get();
             partyUser = party.getPartyUser(onlinePlayer.getUniqueId());
             if (partyUser == null) {
-                source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER, List.of(
-                        Template.template("player", onlinePlayer.getUsername())
-                )));
+                source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER,
+                        Placeholder.miniMessage("player", onlinePlayer.getUsername())
+                ));
                 return;
             }
         }
@@ -72,14 +72,14 @@ public class Remove implements SubCommand {
         }
 
         if (onlinePlayer != null && onlinePlayer.isActive()) {
-            onlinePlayer.sendMessage(Utility.parseMiniMessage(Config.REMOVED_FROM_PARTY, List.of(
-                    Template.template("party", party.getPartyName())
-            )));
+            onlinePlayer.sendMessage(Utility.parseMiniMessage(Config.REMOVED_FROM_PARTY,
+                    Placeholder.miniMessage("party", party.getPartyName())
+            ));
         }
 
-        source.sendMessage(Utility.parseMiniMessage(Config.REMOVED_USER_FROM_PARTY, List.of(
-                Template.template("player", onlinePlayer == null ? partyUser.getPlayerName() : onlinePlayer.getUsername())
-        )));
+        source.sendMessage(Utility.parseMiniMessage(Config.REMOVED_USER_FROM_PARTY,
+                Placeholder.miniMessage("player", onlinePlayer == null ? partyUser.getPlayerName() : onlinePlayer.getUsername())
+        ));
     }
 
     @Override

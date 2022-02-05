@@ -11,8 +11,7 @@ import com.alttd.chat.listeners.PluginMessage;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import com.alttd.chat.util.Utility;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -111,7 +110,7 @@ public class ChatPlugin extends JavaPlugin {
         chatAPI.ReloadConfig();
         chatAPI.ReloadChatFilters();
         serverConfig = new ServerConfig(Bukkit.getServerName());
-        Bukkit.broadcast("Reloaded ChatPlugin Config.", "command.chat.reloadchat");
+        Bukkit.broadcast(Utility.parseMiniMessage("Reloaded ChatPlugin Config."), "command.chat.reloadchat");
         ALogger.info("Reloaded ChatPlugin config.");
     }
 }

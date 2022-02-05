@@ -8,8 +8,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.units.qual.A;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +43,9 @@ public class Name implements SubCommand {
             return;
         }
         if (PartyManager.getParty(args[1]) != null) {
-            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS, List.of(
-                    Template.template("party", args[1])
-            )));
+            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS,
+                    Placeholder.miniMessage("party", args[1])
+            ));
             return;
         }
         party.setPartyName(args[1]);

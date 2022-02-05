@@ -8,6 +8,7 @@ import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,12 +47,12 @@ public class PlayerListener implements Listener {
         for (int i = 0; i < 4; i++) {
             Component component = event.line(i);
             if (component != null) {
-                String message = PlainComponentSerializer.plain().serialize(component);
+                String message = PlainTextComponentSerializer.plainText().serialize(component);
                 Player player = event.getPlayer();
                 message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message, false); // todo a better way for this
 
                 if (message == null) {
-                    GalaxyUtility.sendBlockedNotification("Sign Language" , player, PlainComponentSerializer.plain().serialize(component), "");
+                    GalaxyUtility.sendBlockedNotification("Sign Language" , player, PlainTextComponentSerializer.plainText().serialize(component), "");
                 }
 
                 component = message == null ? Component.empty() : Component.text(message);

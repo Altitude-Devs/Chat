@@ -9,7 +9,7 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.0.0")
     implementation("mysql:mysql-connector-java:8.0.27") // mysql
     implementation("org.spongepowered", "configurate-yaml", "4.1.2")
-    implementation("net.kyori", "adventure-text-minimessage", "4.2.0-SNAPSHOT") {
+    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-SNAPSHOT") {
         exclude("net.kyori")
         exclude("net.kyori.examination")
     }

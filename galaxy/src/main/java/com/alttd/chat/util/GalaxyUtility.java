@@ -2,24 +2,23 @@ package com.alttd.chat.util;
 
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GalaxyUtility {
     public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("prefix", prefix),
-                Template.template("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
-                Template.template("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
-                Template.template("input", input)
-        ));
-        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, templates);
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("prefix", Replacement.miniMessage(prefix));
+        placeholders.put("displayname", Replacement.miniMessage(Utility.getDisplayName(player.getUniqueId(), player.getName())));
+        placeholders.put("target", Replacement.miniMessage((target.isEmpty() ? " tried to say: " : " -> " + target + ": ")));
+        placeholders.put("input", Replacement.miniMessage(input));
+        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
 
         Bukkit.getOnlinePlayers().forEach(a ->{
             if (a.hasPermission("chat.alert-blocked")) {
@@ -31,6 +30,6 @@ public class GalaxyUtility {
     }
 
     public static void sendBlockedNotification(String prefix, Player player, Component input, String target) {
-        sendBlockedNotification(prefix, player, PlainComponentSerializer.plain().serialize(input), target);
+        sendBlockedNotification(prefix, player, PlainTextComponentSerializer.plainText().serialize(input), target);
     }
 }

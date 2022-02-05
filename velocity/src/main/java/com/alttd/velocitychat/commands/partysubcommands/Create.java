@@ -9,8 +9,7 @@ import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +37,9 @@ public class Create implements SubCommand {
             return;
         }
         if (PartyManager.getParty(args[1]) != null) {
-            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS, List.of(
-                    Template.template("party", args[1])
-            )));
+            source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS,
+                    Placeholder.miniMessage("party", args[1])
+            ));
             return;
         }
         Party party = Queries.addParty(player.getUniqueId(), args[1], args[2]);
@@ -48,8 +47,8 @@ public class Create implements SubCommand {
         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
         PartyManager.addParty(party);
         source.sendMessage(Utility.parseMiniMessage(Config.CREATED_PARTY,
-                List.of(Template.template("party_name", party.getPartyName()),
-                        Template.template("party_password", party.getPartyPassword()))));
+                Placeholder.miniMessage("party_name", party.getPartyName()),
+                Placeholder.miniMessage("party_password", party.getPartyPassword())));
     }
 
     @Override

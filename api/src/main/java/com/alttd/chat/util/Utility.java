@@ -3,19 +3,15 @@ package com.alttd.chat.util;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
+import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import net.md_5.bungee.api.ChatColor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -245,14 +241,22 @@ public class Utility {
     }
 
     public static Component parseMiniMessage(String message) {
-        return parseMiniMessage(message, null);
+        return getMiniMessage().deserialize(message);
     }
 
-    public static Component parseMiniMessage(String message, List<Template> templates) {
-        if (templates == null) {
+    public static Component parseMiniMessage(String message, Map<String, Replacement<?>> placeholders) {
+        if (placeholders == null) {
             return getMiniMessage().deserialize(message);
         } else {
-            return getMiniMessage().deserialize(message, TemplateResolver.templates(templates));
+            return getMiniMessage().deserialize(message, PlaceholderResolver.map(placeholders));
+        }
+    }
+
+    public static Component parseMiniMessage(String message, Placeholder<?> ... placeholders) {
+        if (placeholders == null) {
+            return getMiniMessage().deserialize(message);
+        } else {
+            return getMiniMessage().deserialize(message, PlaceholderResolver.placeholders(placeholders));
         }
     }
 

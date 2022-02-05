@@ -17,7 +17,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,19 +38,19 @@ public class ChatHandler {
         Player player2 = optionalPlayer2.get();
         ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", senderUser.getDisplayName()),
-                Template.template("sendername", player.getUsername()),
-                Template.template("receiver", targetUser.getDisplayName()),
-                Template.template("receivername", player2.getUsername()),
-                Template.template("message", GsonComponentSerializer.gson().deserialize(message)),
-                Template.template("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.component(senderUser.getDisplayName()));
+        placeholders.put("sendername", Replacement.miniMessage(player.getUsername()));
+        placeholders.put("receiver", Replacement.component(targetUser.getDisplayName()));
+        placeholders.put("receivername", Replacement.miniMessage(player2.getUsername()));
+        placeholders.put("message", Replacement.component(GsonComponentSerializer.gson().deserialize(message)));
+        placeholders.put("server", Replacement.miniMessage(player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude"));
 
         ServerConnection serverConnection;
         if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
             // redirect to the sender
             serverConnection = player.getCurrentServer().get();
-            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, templates);
+            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, placeholders);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessageout");
             buf.writeUTF(player.getUniqueId().toString());
@@ -61,7 +61,7 @@ public class ChatHandler {
 
             //redirect to the receiver
             serverConnection = player2.getCurrentServer().get();
-            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, templates);
+            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, placeholders);
             buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessagein");
             buf.writeUTF(player2.getUniqueId().toString());
@@ -71,29 +71,15 @@ public class ChatHandler {
             serverConnection.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), buf.toByteArray());
         }
 
-//        ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
-//
-//        List<Template> templates = new ArrayList<>(List.of(
-//                Template.template("sender", senderUser.getDisplayName()),
-//                Template.template("receiver", targetUser.getDisplayName()),
-//                Template.template("message", message),
-//                Template.template("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")));
-//
-//        Component senderMessage = Utility.parseMiniMessage(Config.MESSAGESENDER, templates);
-//        Component receiverMessage = Utility.parseMiniMessage(Config.MESSAGERECIEVER, templates);
-//
-//        player.sendMessage(senderMessage);
-//        player2.sendMessage(receiverMessage);
     }
 
     public static void sendBlockedNotification(String prefix, Player player, String input, String target, ServerConnection serverConnection) {
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("prefix", prefix),
-                Template.template("displayname", Utility.getDisplayName(player.getUniqueId(), player.getUsername())),
-                Template.template("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
-                Template.template("input", input)
-        ));
-        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, templates);
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("prefix", Replacement.miniMessage(prefix));
+        placeholders.put("displayname", Replacement.miniMessage(Utility.getDisplayName(player.getUniqueId(), player.getUsername())));
+        placeholders.put("target", Replacement.miniMessage((target.isEmpty() ? " tried to say: " : " -> " + target + ": ")));
+        placeholders.put("input", Replacement.miniMessage(input));
+        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
 
         serverConnection.getServer().getPlayersConnected().forEach(pl ->{
             if (pl.hasPermission("chat.alert-blocked")) {
@@ -143,18 +129,17 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("sender", senderName),
-                Template.template("party", party.getPartyName()),
-                Template.template("message", updatedMessage),
-                Template.template("server", serverConnection.getServer().getServerInfo().getName()),
-                Template.template("[i]", item)
-        ));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.component(senderName));
+        placeholders.put("party", Replacement.miniMessage(party.getPartyName()));
+        placeholders.put("message", Replacement.miniMessage(updatedMessage));
+        placeholders.put("server", Replacement.miniMessage(serverConnection.getServer().getServerInfo().getName()));
+        placeholders.put("[i]", Replacement.component(item));
 
-        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
+        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, placeholders);
         sendPartyMessage(party, partyMessage, user.getIgnoredBy());
 
-        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
+        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, placeholders);
         for(Player pl : serverConnection.getServer().getPlayersConnected()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
                 pl.sendMessage(spyMessage);
@@ -181,12 +166,12 @@ public class ChatHandler {
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
         }
 
-        List<Template> templates = new ArrayList<>(List.of(
-                Template.template("message", Utility.formatText(message)),
-                Template.template("sender", senderName),
-                Template.template("server", serverName)));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("message", Replacement.miniMessage(Utility.formatText(message)));
+        placeholders.put("sender", Replacement.component(senderName));
+        placeholders.put("server", Replacement.miniMessage(serverName));
 
-        Component component = Utility.parseMiniMessage(Config.GACFORMAT, templates);
+        Component component = Utility.parseMiniMessage(Config.GACFORMAT, placeholders);
 
         VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);
@@ -215,10 +200,9 @@ public class ChatHandler {
         ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
         chatUser.addMail(mail);
         // TODO load from config
-        String finalSenderName = senderName;
-        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage(Config.mailReceived, List.of(
-                Template.template("sender", finalSenderName))
-        )));
+        Map<String, Replacement<?>> placeholders = new HashMap<>();
+        placeholders.put("sender", Replacement.miniMessage(senderName));
+        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage(Config.mailReceived, placeholders)));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer) {
@@ -247,14 +231,13 @@ public class ChatHandler {
             }
             ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
             Date sentTime = new Date(mail.getSendTime());
-            List<Template> templates = new ArrayList<>(List.of(
-                    Template.template("staffprefix", chatUser.getStaffPrefix()),
-                    Template.template("sender", chatUser.getDisplayName()),
-                    Template.template("message", mail.getMessage()),
-                    Template.template("date", sentTime.toString()),
-                    Template.template("time_ago", String.valueOf(TimeUnit.MILLISECONDS.toDays(new Date().getTime() - sentTime.getTime())))
-            ));
-            Component mailMessage = Utility.parseMiniMessage(Config.mailBody, templates);
+            Map<String, Replacement<?>> placeholders = new HashMap<>();
+            placeholders.put("staffprefix", Replacement.component(chatUser.getStaffPrefix()));
+            placeholders.put("sender", Replacement.component(chatUser.getDisplayName()));
+            placeholders.put("message", Replacement.miniMessage(mail.getMessage()));
+            placeholders.put("date", Replacement.miniMessage(sentTime.toString()));
+            placeholders.put("time_ago", Replacement.miniMessage(String.valueOf(TimeUnit.MILLISECONDS.toDays(new Date().getTime() - sentTime.getTime()))));
+            Component mailMessage = Utility.parseMiniMessage(Config.mailBody, placeholders);
             component = component.append(Component.newline()).append(mailMessage);
         }
         component = component.append(Component.newline()).append(Utility.parseMiniMessage(Config.mailFooter));
