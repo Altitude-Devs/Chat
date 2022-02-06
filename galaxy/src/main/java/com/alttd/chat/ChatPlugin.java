@@ -49,6 +49,7 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());
         registerCommand("spy", new Spy());
+        registerCommand("chatclear", new ChatClear());
 //        registerCommand("chatparty", new ChatParty());
         registerCommand("p", new PartyChat());
         for (Channel channel : Channel.getChannels()) {

@@ -29,3 +29,5 @@ commands:
     permission: command.chat.togglespy
   p:
     permission: command.chat.p
+  chatclear:
+    permission: chat.command.clear-chat
