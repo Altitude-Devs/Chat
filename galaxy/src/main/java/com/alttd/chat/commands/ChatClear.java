@@ -3,6 +3,8 @@ package com.alttd.chat.commands;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 public class ChatClear implements CommandExecutor {
 
     private static final Component component = MiniMessage.miniMessage().deserialize("\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n");
+    MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -22,7 +25,10 @@ public class ChatClear implements CommandExecutor {
         for (Player player : Bukkit.getOnlinePlayers())
             if (!player.hasPermission("chat.clear-bypass"))
                 player.sendMessage(component);
-        sender.sendMiniMessage("<green>Cleared chat for all players.</green>", null);
+        Bukkit.getServer().sendMessage(miniMessage.deserialize(
+                "<gold><player> cleared chat.</gold>", PlaceholderResolver.placeholders(
+                        Placeholder.component("player", miniMessage.deserialize(sender.getName()))
+        )));
         return true;
     }
 }
