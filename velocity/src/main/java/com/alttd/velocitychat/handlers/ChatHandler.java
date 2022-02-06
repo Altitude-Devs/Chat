@@ -186,6 +186,7 @@ public class ChatHandler {
             uuid = player.getUniqueId();
             senderName = player.getUsername();
         }
+
         Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(recipient);
         if (optionalPlayer.isEmpty()) {
             targetUUID = ServerHandler.getPlayerUUID(recipient);
@@ -196,6 +197,12 @@ public class ChatHandler {
         } else {
             targetUUID = optionalPlayer.get().getUniqueId();
         }
+
+        if (!commandSource.hasPermission("chat.format"))
+            message = Utility.stripTokens(message);
+        else
+            message = Utility.parseColors(message);
+
         Mail mail = new Mail(uuid, targetUUID, message);
         ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
         chatUser.addMail(mail);
