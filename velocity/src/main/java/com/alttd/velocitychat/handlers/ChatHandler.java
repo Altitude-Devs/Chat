@@ -203,7 +203,7 @@ public class ChatHandler {
         else
             message = Utility.parseColors(message);
 
-        Mail mail = new Mail(uuid, targetUUID, message);
+        Mail mail = new Mail(targetUUID, uuid, message);
         ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
         chatUser.addMail(mail);
         // TODO load from config
