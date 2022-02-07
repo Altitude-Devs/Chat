@@ -271,7 +271,7 @@ public final class Config {
     public static String ALREADY_IN_PARTY = "<red>You're already in a party!</red>";
     public static String SENT_PARTY_INV = "<green>You send a chat party invite to <player>!</green>";
     public static String JOIN_PARTY_CLICK_MESSAGE = "<click:run_command:'/party join <party> <party_password>'>" +
-            "<dark_aqua>You received an invite to join <party> click this message to accept.</dark_aqua></click>";
+            "<dark_aqua>You received an invite to join <party>, click this message to accept.</dark_aqua></click>";
     public static String PARTY_MEMBER_LOGGED_ON = "<dark_aqua>[ChatParty] <player> joined Altitude...</dark_aqua>";
     public static String PARTY_MEMBER_LOGGED_OFF = "<dark_aqua>[ChatParty] <player> left Altitude...</dark_aqua>";
     public static String RENAMED_PARTY = "<dark_aqua>[ChatParty] <owner> changed the party name from <old_name> to <new_name>!</dark_aqua>";
