@@ -14,7 +14,7 @@ public class Party {
     private UUID ownerUuid;
     private String partyName;
     private String partyPassword;
-    private static ArrayList<PartyUser> partyUsers;
+    private final ArrayList<PartyUser> partyUsers;
 
     public Party(int partyId, UUID ownerUuid, String partyName, String partyPassword) {
         this.partyId = partyId;
@@ -29,6 +29,9 @@ public class Party {
     }
 
     public void addUser(ChatUser chatUser, String playerName) {
+        Party party = PartyManager.getParty(chatUser.getPartyId());
+        if (party != null)
+            party.removeUser(chatUser);
         partyUsers.add(new PartyUser(chatUser.getUuid(), chatUser.getDisplayName(), playerName));
         chatUser.setPartyId(getPartyId());
         Queries.addPartyUser(chatUser);
