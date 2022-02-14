@@ -1,6 +1,5 @@
 package com.alttd.chat.database;
 
-import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
@@ -10,8 +9,10 @@ import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.ALogger;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 public class Queries {
 
@@ -185,6 +186,7 @@ public class Queries {
                     ALogger.warn("Unable to retrieve party: " + id);
                     continue;
                 }
+                System.out.println("ADDING PARTY USER " + party.getPartyName() + " " + playerName);
                 party.putPartyUser(new PartyUser(uuid, displayName, playerName));
             }
 
