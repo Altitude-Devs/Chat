@@ -14,6 +14,7 @@ dependencies {
         exclude("net.kyori.examination")
     }
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5")
+    compileOnly("com.alttd.proxydiscordlink:ProxyDiscordLink:1.0.0-BETA-SNAPSHOT")
 }
 
 tasks {
