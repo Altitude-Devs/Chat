@@ -53,6 +53,10 @@ public class Leave implements SubCommand {
             }
         } else {
             source.sendMessage(Utility.parseMiniMessage(Config.LEFT_PARTY));
+            VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+            Utility.parseMiniMessage(Config.PLAYER_LEFT_PARTY,
+                    Placeholder.miniMessage("player_name", player.getUsername())
+            ), null);
         }
     }
 
