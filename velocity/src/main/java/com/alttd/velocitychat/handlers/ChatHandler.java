@@ -17,6 +17,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.Nullable;
@@ -211,6 +212,10 @@ public class ChatHandler {
         Map<String, Replacement<?>> placeholders = new HashMap<>();
         placeholders.put("sender", Replacement.miniMessage(senderName));
         optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage(Config.mailReceived, placeholders)));
+        commandSource.sendMessage(Utility.parseMiniMessage(Config.mailSent,
+                Placeholder.component("player_name", chatUser.getDisplayName()),
+                Placeholder.miniMessage("message", message)
+        ));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer) {

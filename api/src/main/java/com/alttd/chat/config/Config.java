@@ -397,6 +397,7 @@ public final class Config {
     public static String mailNoUser = "<red>A player with this name hasn't logged in recently.";
     public static String mailReceived = "<yellow><click:run_command:/mail list unread>New mail from <sender>, click to view</click></yellow>";
     public static String mailUnread = "<green><click:run_command:/mail list unread>You have <amount> unread mail, click to view it.</click></green>";
+    public static String mailSent = "<green>Successfully send mail to <player_name></green>: <#2e8b57><message></#2e8b57>";
     public static List<String> mailCommandAlias = new ArrayList<>();
     private static void mailSettings() {
         mailHeader = getString("settings.mail.header", mailHeader);
@@ -405,6 +406,7 @@ public final class Config {
         mailCommandAlias = getList("settings.mail.command-aliases", Lists.newArrayList("gmail"));
         mailReceived = getString("settings.mail.mail-received", mailReceived);
         mailUnread = getString("settings.mail.mail-unread", mailUnread);
+        mailSent = getString("settings.mail.mail-sent", mailSent);
     }
 
 }
