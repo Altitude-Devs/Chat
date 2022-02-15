@@ -263,7 +263,8 @@ public final class Config {
     public static String PLAYER_JOINED_PARTY = "<green><player_name> joined <party_name>!</green>";
     public static String NOTIFY_FINDING_NEW_OWNER = "<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>";
     public static String LEFT_PARTY = "<green>You have left the chat party!</green>";
-    public static String OWNER_LEFT_PARTY = "<dark_aqua>[ChatParty]: <old_owner> left the chat party, the new party owner is <new_owner>";
+    public static String OWNER_LEFT_PARTY = "<dark_aqua>[ChatParty]: <old_owner> left the chat party, the new party owner is <new_owner></dark_aqua>";
+    public static String PLAYER_LEFT_PARTY = "<dark_aqua>[ChatParty]: <player_name> left the chat party!</dark_aqua>";
     public static String NEW_PARTY_OWNER = "<dark_aqua>[ChatParty]: <old_owner> transferred the party to <new_owner>!";
     public static String CANT_REMOVE_PARTY_OWNER = "<red>You can't remove yourself, please leave instead.</red>";
     public static String REMOVED_FROM_PARTY = "<red>You were removed from the '<party>' chat party.</red>";
