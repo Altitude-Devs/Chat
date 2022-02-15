@@ -1,5 +1,7 @@
 package com.alttd.velocitychat.listeners;
 
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.channels.CustomChannel;
@@ -15,6 +17,8 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.util.UUID;
 
 public class PluginMessageListener {
@@ -71,6 +75,22 @@ public class PluginMessageListener {
                         GsonComponentSerializer.gson().deserialize(in.readUTF()),
                         serverConnection);
                 break;
+            }
+            case "NickNameAccepted": {
+                try {
+                    short len = in.readShort();
+                    byte[] msgbytes = new byte[len];
+                    in.readFully(msgbytes);
+
+                    DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
+                    UUID uuid = UUID.fromString(msgin.readUTF());
+                    ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                    chatUser.reloadDisplayName();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
             }
             default:
                 VelocityChat.getPlugin().getLogger().info("server " + event.getSource());

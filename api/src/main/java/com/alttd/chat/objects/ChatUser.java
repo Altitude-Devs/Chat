@@ -163,4 +163,11 @@ public class ChatUser {
         this.isMuted = muted;
     }
 
+    public void reloadDisplayName() {
+        name = Queries.getDisplayName(uuid);
+        if (name == null) {
+            name = Utility.getDisplayName(uuid, "");
+        }
+        setDisplayName(name);
+    }
 }
