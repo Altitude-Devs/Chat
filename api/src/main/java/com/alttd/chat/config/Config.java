@@ -247,7 +247,7 @@ public final class Config {
     }
 
     public static String PARTY_FORMAT = "<dark_aqua>(<gray><sender></gray><hover:show_text:\"on <server>\"> → <party></hover>) <message>";
-    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><sender></dark_gray>: <dark_gray><party></dark_gray> <message></dark_gray></i>";
+    public static String PARTY_SPY = "<i><gray>PC:</gray><dark_gray> <dark_gray><username></dark_gray>: <dark_gray><party></dark_gray> <message></dark_gray></i>";
     public static String NO_PERMISSION = "<red>You don't have permission to use this command.</red>";
     public static String NO_CONSOLE = "<red>This command can not be used by console</red>";
     public static String CREATED_PARTY = "<green>You created a chat party called: " +
@@ -260,6 +260,7 @@ public final class Config {
     public static String NOT_ONLINE = "<red><player> must be online to receive an invite.</red>";
     public static String INVALID_PASSWORD = "<red>Invalid password.</red>";
     public static String JOINED_PARTY = "<green>You joined <party_name>!</green>";
+    public static String PLAYER_JOINED_PARTY = "<green><player_name> joined <party_name>!</green>";
     public static String NOTIFY_FINDING_NEW_OWNER = "<dark_aqua>Since you own this chat party a new party owner will be chosen.<dark_aqua>";
     public static String LEFT_PARTY = "<green>You have left the chat party!</green>";
     public static String OWNER_LEFT_PARTY = "<dark_aqua>[ChatParty]: <old_owner> left the chat party, the new party owner is <new_owner>";
@@ -298,6 +299,7 @@ public final class Config {
         NOT_ONLINE = getString("party.messages.not-online", NOT_ONLINE);
         INVALID_PASSWORD = getString("party.messages.invalid-password", INVALID_PASSWORD);
         JOINED_PARTY = getString("party.messages.joined-party", JOINED_PARTY);
+        PLAYER_JOINED_PARTY = getString("party.messages.player-joined-party", PLAYER_JOINED_PARTY);
         NOTIFY_FINDING_NEW_OWNER = getString("party.messages.notify-finding-new-owner", NOTIFY_FINDING_NEW_OWNER);
         LEFT_PARTY = getString("party.messages.left-party", LEFT_PARTY);
         OWNER_LEFT_PARTY = getString("party.messages.owner-left-party", OWNER_LEFT_PARTY);

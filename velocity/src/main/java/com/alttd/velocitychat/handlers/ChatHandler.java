@@ -131,6 +131,7 @@ public class ChatHandler {
 
         Map<String, Replacement<?>> placeholders = new HashMap<>();
         placeholders.put("sender", Replacement.component(senderName));
+        placeholders.put("username", Replacement.miniMessage(player.getUsername()));
         placeholders.put("party", Replacement.miniMessage(party.getPartyName()));
         placeholders.put("message", Replacement.miniMessage(updatedMessage));
         placeholders.put("server", Replacement.miniMessage(serverConnection.getServer().getServerInfo().getName()));

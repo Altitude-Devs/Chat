@@ -3,8 +3,10 @@ package com.alttd.velocitychat.commands.partysubcommands;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.Utility;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -42,8 +44,14 @@ public class Join implements SubCommand {
         }
 
 //      party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
-        party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
+        ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
+        party.addUser(chatUser, player.getUsername());
         source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.miniMessage("party_name", party.getPartyName())));
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
+                Utility.parseMiniMessage(Config.PLAYER_JOINED_PARTY,
+                        Placeholder.component("player_name", chatUser.getDisplayName()),
+                        Placeholder.miniMessage("party_name", party.getPartyName())
+                ), null);
     }
 
     @Override
