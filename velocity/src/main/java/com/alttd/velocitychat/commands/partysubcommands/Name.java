@@ -1,6 +1,7 @@
 package com.alttd.velocitychat.commands.partysubcommands;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.Utility;
@@ -48,8 +49,14 @@ public class Name implements SubCommand {
             ));
             return;
         }
+
+        String oldName = party.getPartyName();
         party.setPartyName(args[1]);
-        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party, Utility.parseMiniMessage(Config.RENAMED_PARTY), null);
+        VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party, Utility.parseMiniMessage(Config.RENAMED_PARTY,
+                Placeholder.component("owner", ChatUserManager.getChatUser(player.getUniqueId()).getDisplayName()),
+                Placeholder.miniMessage("old_name", oldName),
+                Placeholder.miniMessage("new_name", args[1])
+        ), null);
     }
 
     @Override
