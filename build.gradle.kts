@@ -26,6 +26,10 @@ subprojects {
         withType<Javadoc> {
             options.encoding = Charsets.UTF_8.name()
         }
+
+        withType<JavaCompile> {
+            options.isDeprecation = true
+        }
     }
 }
 
