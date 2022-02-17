@@ -49,6 +49,7 @@ public class Utility {
     }
 
     public static String parseColors(String message) {
+        if (message == null) return "";
         // split string in sections and check those vs looping hashmap?:/
         // think this is better, but will check numbers on this
         for (String key : colors.keySet()) {
