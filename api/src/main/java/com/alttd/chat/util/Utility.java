@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class Utility {
 
     static final Pattern DEFAULT_URL_PATTERN = Pattern.compile("(?:(https?)://)?([-\\w_.]+\\.\\w{2,})(/\\S*)?");
-    static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^[a-z][a-z0-9+\\-.]*:");
 
     private static MiniMessage miniMessage = null;
 
@@ -233,9 +232,6 @@ public class Utility {
             String url = matcher.group();
             String clickUrl = url;
             String urlFormat = Config.URLFORMAT;
-            if (!URL_SCHEME_PATTERN.matcher(clickUrl).find()) {
-                clickUrl = "http://" + clickUrl;
-            }
             message = message.replace(url, urlFormat.replaceAll("<url>", url).replaceAll("<clickurl>", clickUrl));
         }
         return message;
