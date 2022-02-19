@@ -2,22 +2,20 @@ package com.alttd.chat.util;
 
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GalaxyUtility {
     public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("prefix", Replacement.miniMessage(prefix));
-        placeholders.put("displayname", Replacement.miniMessage(Utility.getDisplayName(player.getUniqueId(), player.getName())));
-        placeholders.put("target", Replacement.miniMessage((target.isEmpty() ? " tried to say: " : " -> " + target + ": ")));
-        placeholders.put("input", Replacement.miniMessage(input));
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.parsed("prefix", prefix),
+                Placeholder.parsed("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
+                Placeholder.parsed("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Placeholder.parsed("input", input)
+        );
         Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
 
         Bukkit.getOnlinePlayers().forEach(a ->{

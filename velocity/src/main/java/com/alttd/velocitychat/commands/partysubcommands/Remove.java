@@ -10,7 +10,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class Remove implements SubCommand {
             partyUser = party.getPartyUser(args[1]);
             if (partyUser == null) {
                 source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER,
-                        Placeholder.miniMessage("player", args[1])
+                        Placeholder.unparsed("player", args[1])
                 ));
                 return;
             }
@@ -59,7 +59,7 @@ public class Remove implements SubCommand {
             partyUser = party.getPartyUser(onlinePlayer.getUniqueId());
             if (partyUser == null) {
                 source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER,
-                        Placeholder.miniMessage("player", onlinePlayer.getUsername())
+                        Placeholder.unparsed("player", onlinePlayer.getUsername())
                 ));
                 return;
             }
@@ -73,12 +73,12 @@ public class Remove implements SubCommand {
 
         if (onlinePlayer != null && onlinePlayer.isActive()) {
             onlinePlayer.sendMessage(Utility.parseMiniMessage(Config.REMOVED_FROM_PARTY,
-                    Placeholder.miniMessage("party", party.getPartyName())
+                    Placeholder.unparsed("party", party.getPartyName())
             ));
         }
 
         source.sendMessage(Utility.parseMiniMessage(Config.REMOVED_USER_FROM_PARTY,
-                Placeholder.miniMessage("player", onlinePlayer == null ? partyUser.getPlayerName() : onlinePlayer.getUsername())
+                Placeholder.unparsed("player", onlinePlayer == null ? partyUser.getPlayerName() : onlinePlayer.getUsername())
         ));
     }
 

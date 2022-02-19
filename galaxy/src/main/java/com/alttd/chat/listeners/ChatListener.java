@@ -12,8 +12,8 @@ import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +21,6 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class ChatListener implements Listener, ChatRenderer {
 
@@ -62,10 +61,10 @@ public class ChatListener implements Listener, ChatRenderer {
             message = message.replace("[i]", "<[i]>"); // end of todo
 
         message = Utility.formatText(message);
-
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("message", Replacement.miniMessage(message));
-        placeholders.put("[i]", Replacement.component(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())));
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.parsed("message", message),
+                Placeholder.component("[i]]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
+        );
 
         Component component = Utility.parseMiniMessage("<message>", placeholders);
 
@@ -76,14 +75,14 @@ public class ChatListener implements Listener, ChatRenderer {
     @Override
     public @NotNull Component render(@NotNull Player player, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("sender", Replacement.component(user.getDisplayName()));
-        placeholders.put("sendername", Replacement.component(player.name()));
-        placeholders.put("prefix", Replacement.component(user.getPrefix()));
-        placeholders.put("prefixall", Replacement.component(user.getPrefixAll()));
-        placeholders.put("staffprefix", Replacement.component(user.getStaffPrefix()));
-        placeholders.put("message", Replacement.component(message));
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("sender", user.getDisplayName()),
+                Placeholder.component("sendername", player.name()),
+                Placeholder.component("prefix", user.getPrefix()),
+                Placeholder.component("prefixall", user.getPrefixAll()),
+                Placeholder.component("staffprefix", user.getStaffPrefix()),
+                Placeholder.component("message ", message)
+        );
 
         return Utility.parseMiniMessage(Config.CHATFORMAT, placeholders);
     }

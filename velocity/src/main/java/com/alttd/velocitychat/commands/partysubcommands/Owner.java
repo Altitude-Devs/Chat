@@ -9,7 +9,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +44,15 @@ public class Owner implements SubCommand {
         PartyUser partyUser = party.getPartyUser(args[1]);
         if (partyUser == null) {
             source.sendMessage(Utility.parseMiniMessage(Config.NOT_A_PARTY_MEMBER,
-                    Placeholder.miniMessage("player", args[1])
+                    Placeholder.unparsed("player", args[1])
             ));
             return;
         }
         party.setNewOwner(partyUser.getUuid());
         VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
                 Utility.parseMiniMessage(Config.NEW_PARTY_OWNER,
-                        Placeholder.miniMessage("old_owner", player.getUsername()),
-                        Placeholder.miniMessage("new_owner", partyUser.getPlayerName())
+                        Placeholder.unparsed("old_owner", player.getUsername()),
+                        Placeholder.unparsed("new_owner", partyUser.getPlayerName())
                 ), null);
     }
 

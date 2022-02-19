@@ -1,6 +1,7 @@
 package com.alttd.velocitychat.commands;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -20,8 +21,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class Report {
-
-    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public Report(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
@@ -46,7 +45,7 @@ public class Report {
                                 .<CommandSource, String>argument("report",  StringArgumentType.greedyString())
                                 .executes(context -> {
                                     if (!(context.getSource() instanceof Player player)) {
-                                        context.getSource().sendMessage(miniMessage.deserialize(Config.NO_CONSOLE));
+                                        context.getSource().sendMessage(Utility.parseMiniMessage(Config.NO_CONSOLE));
                                         return 1;
                                     }
                                     Optional<ServerConnection> optionalServerConnection = player.getCurrentServer();

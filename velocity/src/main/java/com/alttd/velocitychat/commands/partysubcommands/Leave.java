@@ -9,7 +9,7 @@ import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,8 @@ public class Leave implements SubCommand {
                 source.sendMessage(Utility.parseMiniMessage(Config.NOTIFY_FINDING_NEW_OWNER));
                 VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
                         Utility.parseMiniMessage(Config.OWNER_LEFT_PARTY,
-                                Placeholder.miniMessage("old_owner", player.getUsername()),
-                                Placeholder.miniMessage("new_owner", party.getPartyUser(uuid).getPlayerName())
+                                Placeholder.unparsed("old_owner", player.getUsername()),
+                                Placeholder.unparsed("new_owner", party.getPartyUser(uuid).getPlayerName())
                         ), null);
             } else {
                 party.delete();
@@ -55,7 +55,7 @@ public class Leave implements SubCommand {
             source.sendMessage(Utility.parseMiniMessage(Config.LEFT_PARTY));
             VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
             Utility.parseMiniMessage(Config.PLAYER_LEFT_PARTY,
-                    Placeholder.miniMessage("player_name", player.getUsername())
+                    Placeholder.unparsed("player_name", player.getUsername())
             ), null);
         }
     }

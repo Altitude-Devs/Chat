@@ -18,8 +18,8 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.*;
 
@@ -55,7 +55,7 @@ public class ProxyPlayerListener {
         if (unReadMail.isEmpty())
             return;
         player.sendMessage(Utility.parseMiniMessage(Config.mailUnread,
-                Placeholder.miniMessage("amount", String.valueOf(unReadMail.size()))
+                Placeholder.unparsed("amount", String.valueOf(unReadMail.size()))
         ));
     }
 
@@ -85,10 +85,11 @@ public class ProxyPlayerListener {
 
             Player player = event.getPlayer();
 
-            Map<String, Replacement<?>> placeholders = new HashMap<>();
-            placeholders.put("player", Replacement.miniMessage(player.getUsername()));
-            placeholders.put("from_server", Replacement.miniMessage(previousServer.getServerInfo().getName()));
-            placeholders.put("to_server", Replacement.miniMessage(event.getServer().getServerInfo().getName()));
+            TagResolver placeholders = TagResolver.resolver(
+                    Placeholder.parsed("player", player.getUsername()),
+                    Placeholder.parsed("from_server", previousServer.getServerInfo().getName()),
+                    Placeholder.parsed("to_server", event.getServer().getServerInfo().getName())
+            );
 
             ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
@@ -101,7 +102,7 @@ public class ProxyPlayerListener {
         } else {
             ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERJOINMESSAGE, Placeholder.miniMessage("player", event.getPlayer().getUsername())));
+                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERJOINMESSAGE, Placeholder.unparsed("player", event.getPlayer().getUsername())));
             }
         }
     }
@@ -115,8 +116,8 @@ public class ProxyPlayerListener {
             ServerWrapper wrapper = serverHandler.getWrapper(registeredServer.getServerInfo().getName());
             if(wrapper != null) {
                 wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERLEAVEMESSAGE,
-                        Placeholder.miniMessage("player", event.getPlayer().getUsername()),
-                        Placeholder.miniMessage("from_server", registeredServer.getServerInfo().getName())
+                        Placeholder.unparsed("player", event.getPlayer().getUsername()),
+                        Placeholder.unparsed("from_server", registeredServer.getServerInfo().getName())
                 ));
             }
         }

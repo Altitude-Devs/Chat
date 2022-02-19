@@ -4,9 +4,8 @@ import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
-import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
@@ -245,24 +244,24 @@ public class Utility {
         return getMiniMessage().deserialize(message);
     }
 
-    public static Component parseMiniMessage(String message, Map<String, Replacement<?>> placeholders) {
+    public static Component parseMiniMessage(String message, TagResolver placeholders) {
         if (placeholders == null) {
             return getMiniMessage().deserialize(message);
         } else {
-            return getMiniMessage().deserialize(message, PlaceholderResolver.map(placeholders));
+            return getMiniMessage().deserialize(message, placeholders);
         }
     }
 
-    public static Component parseMiniMessage(String message, Placeholder<?> ... placeholders) {
+    public static Component parseMiniMessage(String message, TagResolver ... placeholders) {
         if (placeholders == null) {
             return getMiniMessage().deserialize(message);
         } else {
-            return getMiniMessage().deserialize(message, PlaceholderResolver.placeholders(placeholders));
+            return getMiniMessage().deserialize(message, TagResolver.resolver(placeholders));
         }
     }
 
     public static String stripTokens(String input) {
-        return getMiniMessage().stripTokens(input);
+        return getMiniMessage().stripTags(input);
     }
 
     public static MiniMessage getMiniMessage() {

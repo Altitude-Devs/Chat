@@ -10,7 +10,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +46,11 @@ public class Join implements SubCommand {
 //      party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
         ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
         party.addUser(chatUser, player.getUsername());
-        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.miniMessage("party_name", party.getPartyName())));
+        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.unparsed("party_name", party.getPartyName())));
         VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
                 Utility.parseMiniMessage(Config.PLAYER_JOINED_PARTY,
                         Placeholder.component("player_name", chatUser.getDisplayName()),
-                        Placeholder.miniMessage("party_name", party.getPartyName())
+                        Placeholder.unparsed("party_name", party.getPartyName())
                 ), null);
     }
 

@@ -12,7 +12,8 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -53,11 +54,12 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("message", Replacement.miniMessage(updatedMessage));
-        placeholders.put("sendername", Replacement.miniMessage(player.getName()));
-        placeholders.put("receivername", Replacement.miniMessage(target));
-        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("sendername", player.name()),
+                Placeholder.parsed("receivername", target),
+                Placeholder.component("[i]", itemComponent(player.getInventory().getItemInMainHand()))
+        );
 
         Component component = Utility.parseMiniMessage("<message>", placeholders);
 
@@ -83,9 +85,7 @@ public class ChatHandler {
 
         long timeLeft = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - user.getGcCooldown());
         if(timeLeft <= Config.GCCOOLDOWN && !player.hasPermission("chat.globalchat.cooldownbypass")) { // player is on cooldown and should wait x seconds
-            Map<String, Replacement<?>> placeholders = new HashMap<>();
-            placeholders.put("cooldown", Replacement.miniMessage(Config.GCCOOLDOWN-timeLeft+""));
-            player.sendMessage(Utility.parseMiniMessage(Config.GCONCOOLDOWN, placeholders));
+            player.sendMessage(Utility.parseMiniMessage(Config.GCONCOOLDOWN, Placeholder.parsed("cooldown", Config.GCCOOLDOWN-timeLeft+"")));
             return;
         }
 
@@ -108,13 +108,13 @@ public class ChatHandler {
             updatedMessage = updatedMessage.replace("[i]", "<[i]>");
 
         updatedMessage = Utility.formatText(updatedMessage);
-
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("sender", Replacement.component(senderName));
-        placeholders.put("prefix", Replacement.component(prefix));
-        placeholders.put("message", Replacement.miniMessage(updatedMessage));
-        placeholders.put("server", Replacement.miniMessage(Bukkit.getServerName()));
-        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("sender", senderName),
+                Placeholder.component("prefix", prefix),
+                Placeholder.parsed("message", updatedMessage),
+                Placeholder.parsed("server", Bukkit.getServerName()),
+                Placeholder.component("[i]]", itemComponent(player.getInventory().getItemInMainHand()))
+        );
 
         Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders);
         user.setGcCooldown(System.currentTimeMillis());
@@ -146,13 +146,13 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("sender", Replacement.component(senderName));
-        placeholders.put("message", Replacement.miniMessage(updatedMessage));
-        placeholders.put("server", Replacement.miniMessage(Bukkit.getServerName()));
-        placeholders.put("channel", Replacement.miniMessage(channel.getChannelName()));
-        placeholders.put("[i]", Replacement.component(itemComponent(player.getInventory().getItemInMainHand())));
-
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("sender", senderName),
+                Placeholder.parsed("message", updatedMessage),
+                Placeholder.parsed("server", Bukkit.getServerName()),
+                Placeholder.parsed("channel", channel.getChannelName()),
+                Placeholder.component("[i]]", itemComponent(player.getInventory().getItemInMainHand()))
+        );
         Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
 
         if (channel.isProxy()) {

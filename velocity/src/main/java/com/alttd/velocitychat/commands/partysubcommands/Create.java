@@ -9,7 +9,7 @@ import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Create implements SubCommand {
         }
         if (PartyManager.getParty(args[1]) != null) {
             source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS,
-                    Placeholder.miniMessage("party", args[1])
+                    Placeholder.parsed("party", args[1])
             ));
             return;
         }
@@ -47,8 +47,8 @@ public class Create implements SubCommand {
         party.addUser(ChatUserManager.getChatUser(player.getUniqueId()), player.getUsername());
         PartyManager.addParty(party);
         source.sendMessage(Utility.parseMiniMessage(Config.CREATED_PARTY,
-                Placeholder.miniMessage("party_name", party.getPartyName()),
-                Placeholder.miniMessage("party_password", party.getPartyPassword())));
+                Placeholder.unparsed("party_name", party.getPartyName()),
+                Placeholder.unparsed("party_password", party.getPartyPassword())));
     }
 
     @Override

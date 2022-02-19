@@ -9,7 +9,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class Name implements SubCommand {
         }
         if (PartyManager.getParty(args[1]) != null) {
             source.sendMessage(Utility.parseMiniMessage(Config.PARTY_EXISTS,
-                    Placeholder.miniMessage("party", args[1])
+                    Placeholder.unparsed("party", args[1])
             ));
             return;
         }
@@ -54,8 +54,8 @@ public class Name implements SubCommand {
         party.setPartyName(args[1]);
         VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party, Utility.parseMiniMessage(Config.RENAMED_PARTY,
                 Placeholder.component("owner", ChatUserManager.getChatUser(player.getUniqueId()).getDisplayName()),
-                Placeholder.miniMessage("old_name", oldName),
-                Placeholder.miniMessage("new_name", args[1])
+                Placeholder.unparsed("old_name", oldName),
+                Placeholder.unparsed("new_name", args[1])
         ), null);
     }
 

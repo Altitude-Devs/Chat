@@ -9,7 +9,7 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,9 @@ public class ChatListener {
         }
 
         Component message = Utility.parseMiniMessage(Config.GACFORMAT,
-                Placeholder.miniMessage("sender", senderName),
-                Placeholder.miniMessage("message", event.getMessage()),
-                Placeholder.miniMessage("server", serverName)
+                Placeholder.parsed("sender", senderName),
+                Placeholder.parsed("message", event.getMessage()),
+                Placeholder.parsed("server", serverName)
         );
 
         plugin.getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")).forEach(target -> {

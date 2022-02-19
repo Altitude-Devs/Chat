@@ -8,7 +8,7 @@ import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +50,17 @@ public class Invite implements SubCommand {
 
         if (!target.isActive()) {
             source.sendMessage(Utility.parseMiniMessage(Config.NOT_ONLINE,
-                    Placeholder.miniMessage("player", target.getUsername())
+                    Placeholder.unparsed("player", target.getUsername())
             ));
             return;
         }
 
         target.sendMessage(Utility.parseMiniMessage(Config.JOIN_PARTY_CLICK_MESSAGE,
-                Placeholder.miniMessage("party", party.getPartyName()),
-                Placeholder.miniMessage("party_password", party.getPartyPassword())
+                Placeholder.unparsed("party", party.getPartyName()),
+                Placeholder.unparsed("party_password", party.getPartyPassword())
         ));
         source.sendMessage(Utility.parseMiniMessage(Config.SENT_PARTY_INV,
-                Placeholder.miniMessage("player", target.getUsername())
+                Placeholder.unparsed("player", target.getUsername())
         ));
     }
 

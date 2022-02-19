@@ -3,8 +3,7 @@ package com.alttd.chat.commands;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
-import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,9 +25,9 @@ public class ChatClear implements CommandExecutor {
             if (!player.hasPermission("chat.clear-bypass"))
                 player.sendMessage(component);
         Bukkit.getServer().sendMessage(miniMessage.deserialize(
-                "<gold><player> cleared chat.</gold>", PlaceholderResolver.placeholders(
-                        Placeholder.component("player", miniMessage.deserialize(sender.getName()))
-        )));
+                "<gold><player> cleared chat.</gold>",
+                        Placeholder.component("player",sender.name()))
+        );
         return true;
     }
 }
