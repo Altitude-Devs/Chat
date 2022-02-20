@@ -46,10 +46,9 @@ public class Report {
                             String serverName = serverConnection.getServer().getServerInfo().getName();
 
                             EmbedBuilder embedBuilder = new EmbedBuilder();
-                            embedBuilder.setAuthor(player.getUsername(),
-                                    "https://crafatar.com/avatars/" + player.getUniqueId() + "?overlay");
+                            embedBuilder.setAuthor(player.getUsername(), null, "https://crafatar.com/avatars/" + player.getUniqueId() + "?overlay");
                             embedBuilder.setTitle("Player Report");
-                            embedBuilder.setColor(Color.BLUE);
+                            embedBuilder.setColor(Color.CYAN);
                             embedBuilder.addField("Incident",
                                     context.getArgument("report", String.class),
                                     false);
@@ -61,6 +60,7 @@ public class Report {
                             if (id <= 0)
                                 id = Config.serverChannelId.get("general");
                             DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
+                            player.sendMessage(Utility.parseMiniMessage(Config.REPORT_SENT));
                             return 1;
                         })
                 )
