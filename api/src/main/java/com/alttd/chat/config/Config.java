@@ -410,4 +410,19 @@ public final class Config {
         mailSent = getString("settings.mail.mail-sent", mailSent);
     }
 
+    public static HashMap<String, Long> serverChannelId = new HashMap<>();
+    private static void loadChannelIds() {
+        serverChannelId.clear();
+        serverChannelId.put("general", getLong("discord-channel-id.general", (long) -1));
+        ConfigurationNode node = config.node("discord-channel-id");
+        Map<Object, ? extends ConfigurationNode> objectMap = node.childrenMap();
+        for (Object o : objectMap.keySet()) {
+            String key = (String) o;
+            if (key.equalsIgnoreCase("general"))
+                continue;
+            ConfigurationNode configurationNode = objectMap.get(o);
+            long channelId = configurationNode.getLong();
+            serverChannelId.put(key.toLowerCase(), channelId);
+        }
+    }
 }

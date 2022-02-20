@@ -1,6 +1,9 @@
 package com.alttd.velocitychat.commands;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.util.Utility;
+import com.alttd.proxydiscordlink.DiscordLink;
+import com.alttd.proxydiscordlink.lib.net.dv8tion.jda.api.EmbedBuilder;
 import com.alttd.velocitychat.VelocityChat;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -15,6 +18,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -55,7 +59,23 @@ public class Report {
                                     }
                                     ServerConnection serverConnection = optionalServerConnection.get();
                                     String serverName = serverConnection.getServer().getServerInfo().getName();
-                                    //TODO send message to channel with that server name
+
+                                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                                    embedBuilder.setAuthor(player.getUsername(),
+                                            "https://crafatar.com/avatars/" + player.getUniqueId() + "?overlay");
+                                    embedBuilder.setTitle("Player Report");
+                                    embedBuilder.setColor(Color.BLUE);
+                                    embedBuilder.addField("Incident",
+                                            context.getArgument("report", String.class),
+                                            false);
+                                    embedBuilder.addField("Server",
+                                            serverName.substring(0, 1).toUpperCase() + serverName.substring(1),
+                                            false);
+
+                                    Long id = Config.serverChannelId.get(serverName.toLowerCase());
+                                    if (id <= 0)
+                                        id = Config.serverChannelId.get("general");
+                                    DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
                                     return 1;
                                 })
                         )
