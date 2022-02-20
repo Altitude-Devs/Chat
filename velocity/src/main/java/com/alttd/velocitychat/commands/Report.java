@@ -31,54 +31,38 @@ public class Report {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("report")
                 .requires(ctx -> ctx.hasPermission("command.chat.report"))
-                .then(RequiredArgumentBuilder.<CommandSource, String>argument("username", StringArgumentType.string())
-                        .suggests((context, builder) -> {
-                            Collection<String> possibleValues = new ArrayList<>();
-                            for (Player player : proxyServer.getAllPlayers()) {
-                                possibleValues.add(player.getGameProfile().getName());
+                .then(RequiredArgumentBuilder
+                        .<CommandSource, String>argument("report",  StringArgumentType.greedyString())
+                        .executes(context -> {
+                            if (!(context.getSource() instanceof Player player)) {
+                                context.getSource().sendMessage(miniMessage.deserialize(Config.NO_CONSOLE));
+                                return 1;
                             }
-                            if(possibleValues.isEmpty()) return Suggestions.empty();
-                            String remaining = builder.getRemaining().toLowerCase();
-                            for (String str : possibleValues) {
-                                if (str.toLowerCase().startsWith(remaining)) {
-                                    builder.suggest(StringArgumentType.escapeIfRequired(str));
-                                }
+                            Optional<ServerConnection> optionalServerConnection = player.getCurrentServer();
+                            if (optionalServerConnection.isEmpty()) {
+                                return 1;
                             }
-                            return builder.buildFuture();
+                            ServerConnection serverConnection = optionalServerConnection.get();
+                            String serverName = serverConnection.getServer().getServerInfo().getName();
+
+                            EmbedBuilder embedBuilder = new EmbedBuilder();
+                            embedBuilder.setAuthor(player.getUsername(),
+                                    "https://crafatar.com/avatars/" + player.getUniqueId() + "?overlay");
+                            embedBuilder.setTitle("Player Report");
+                            embedBuilder.setColor(Color.BLUE);
+                            embedBuilder.addField("Incident",
+                                    context.getArgument("report", String.class),
+                                    false);
+                            embedBuilder.addField("Server",
+                                    serverName.substring(0, 1).toUpperCase() + serverName.substring(1),
+                                    false);
+
+                            Long id = Config.serverChannelId.get(serverName.toLowerCase());
+                            if (id <= 0)
+                                id = Config.serverChannelId.get("general");
+                            DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
+                            return 1;
                         })
-                        .then(RequiredArgumentBuilder
-                                .<CommandSource, String>argument("report",  StringArgumentType.greedyString())
-                                .executes(context -> {
-                                    if (!(context.getSource() instanceof Player player)) {
-                                        context.getSource().sendMessage(miniMessage.deserialize(Config.NO_CONSOLE));
-                                        return 1;
-                                    }
-                                    Optional<ServerConnection> optionalServerConnection = player.getCurrentServer();
-                                    if (optionalServerConnection.isEmpty()) {
-                                        return 1;
-                                    }
-                                    ServerConnection serverConnection = optionalServerConnection.get();
-                                    String serverName = serverConnection.getServer().getServerInfo().getName();
-
-                                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                                    embedBuilder.setAuthor(player.getUsername(),
-                                            "https://crafatar.com/avatars/" + player.getUniqueId() + "?overlay");
-                                    embedBuilder.setTitle("Player Report");
-                                    embedBuilder.setColor(Color.BLUE);
-                                    embedBuilder.addField("Incident",
-                                            context.getArgument("report", String.class),
-                                            false);
-                                    embedBuilder.addField("Server",
-                                            serverName.substring(0, 1).toUpperCase() + serverName.substring(1),
-                                            false);
-
-                                    Long id = Config.serverChannelId.get(serverName.toLowerCase());
-                                    if (id <= 0)
-                                        id = Config.serverChannelId.get("general");
-                                    DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
-                                    return 1;
-                                })
-                        )
                 )
                 .executes(context -> 0)
                 .build();
