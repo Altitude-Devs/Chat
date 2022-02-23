@@ -16,8 +16,3 @@ jobs:
         run: git config --global user.email "no-reply@github.com" && git config --global user.name "Github Actions"
       - name: Build
         run: ./gradlew build --stacktrace
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: Chat.jar
-          path: build/libs/Chat*.jar
