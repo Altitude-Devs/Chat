@@ -10,11 +10,10 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.27") // mysql
     implementation("org.spongepowered", "configurate-yaml", "4.1.2")
     compileOnly("com.alttd.proxydiscordlink:ProxyDiscordLink:1.0.0-BETA-SNAPSHOT")
-//    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-SNAPSHOT") {
-//        exclude("net.kyori")
-//        exclude("net.kyori.examination")
-//    }
-    implementation(files("../libs/minimessage-4.10.0-SNAPSHOT.jar")) // Workaround for minimessage
+    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-20220122.015731-43") { // Minimessage
+        exclude("net.kyori")
+        exclude("net.kyori.examination")
+    }
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5")
 }
 

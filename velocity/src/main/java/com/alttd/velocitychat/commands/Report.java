@@ -4,11 +4,9 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.util.Utility;
 import com.alttd.proxydiscordlink.DiscordLink;
 import com.alttd.proxydiscordlink.lib.net.dv8tion.jda.api.EmbedBuilder;
-import com.alttd.velocitychat.VelocityChat;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
@@ -19,13 +17,11 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 public class Report {
 
-    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private static final MiniMessage miniMessage = MiniMessage.get();
 
     public Report(ProxyServer proxyServer) {
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
