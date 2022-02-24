@@ -186,7 +186,6 @@ public class Queries {
                     ALogger.warn("Unable to retrieve party: " + id);
                     continue;
                 }
-                System.out.println("ADDING PARTY USER " + party.getPartyName() + " " + playerName);
                 party.putPartyUser(new PartyUser(uuid, displayName, playerName));
             }
 
