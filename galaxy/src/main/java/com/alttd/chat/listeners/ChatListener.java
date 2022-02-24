@@ -78,7 +78,7 @@ public class ChatListener implements Listener, ChatRenderer {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
         Map<String, Replacement<?>> placeholders = new HashMap<>();
-        placeholders.put("sender", Replacement.component(user.getDisplayName()));
+        placeholders.put("sender", Replacement.component(player.displayName()));
         placeholders.put("sendername", Replacement.component(player.name()));
         placeholders.put("prefix", Replacement.component(user.getPrefix()));
         placeholders.put("prefixall", Replacement.component(user.getPrefixAll()));
