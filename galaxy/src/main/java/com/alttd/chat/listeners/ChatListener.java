@@ -6,6 +6,7 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
@@ -13,7 +14,6 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.placeholder.Replacement;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,14 +44,16 @@ public class ChatListener implements Listener, ChatRenderer {
 
         Component input = event.message();
         String message = PlainTextComponentSerializer.plainText().serialize(input);
-
-        message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
-        if(message == null) {
+        ModifiableString modifiableString = new ModifiableString(message);
+         // todo a better way for this
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "chat")) {
             event.setCancelled(true);
-            GalaxyUtility.sendBlockedNotification("Language", player, input, "");
+            GalaxyUtility.sendBlockedNotification("Language", player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    "");
             return; // the message was blocked
         }
-
+        message = modifiableString.string();
         if(!player.hasPermission("chat.format")) {
             message = Utility.stripTokens(message);
         } else {

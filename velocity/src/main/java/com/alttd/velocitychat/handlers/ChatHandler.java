@@ -7,6 +7,7 @@ import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
+import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
@@ -116,12 +117,17 @@ public class ChatHandler {
         }
         Component senderName = user.getDisplayName();
 
-        String updatedMessage = RegexManager.replaceText(player.getUsername(), uuid, message);
-        if(updatedMessage == null) {
-            sendBlockedNotification("Party Language", player, message, "", serverConnection);
+        ModifiableString modifiableString = new ModifiableString(message);
+        if (!RegexManager.filterText(player.getUsername(), uuid, modifiableString, "partychat")) {
+            sendBlockedNotification("Party Language",
+                    player,
+                    modifiableString.string(),
+                    "",
+                    serverConnection);
             return; // the message was blocked
         }
 
+        String updatedMessage = modifiableString.string();
         if(!player.hasPermission("chat.format")) {
             updatedMessage = Utility.stripTokens(updatedMessage);
         }
