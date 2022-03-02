@@ -271,6 +271,7 @@ public final class Config {
     public static String REMOVED_USER_FROM_PARTY = "<green>You removed <player> from the chat party!</green>";
     public static String NOT_A_PARTY_MEMBER = "<red><player> is not a member of your party!</red>";
     public static String ALREADY_IN_PARTY = "<red>You're already in a party!</red>";
+    public static String ALREADY_IN_THIS_PARTY = "<red>You're already in <party>!</red>";
     public static String SENT_PARTY_INV = "<green>You send a chat party invite to <player>!</green>";
     public static String JOIN_PARTY_CLICK_MESSAGE = "<click:run_command:'/party join <party> <party_password>'>" +
             "<dark_aqua>You received an invite to join <party>, click this message to accept.</dark_aqua></click>";
