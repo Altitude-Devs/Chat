@@ -18,6 +18,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import net.kyori.adventure.text.minimessage.placeholder.Replacement;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -36,7 +37,10 @@ public class ChatHandler {
         Player player = optionalPlayer.get();
 
         Optional<Player> optionalPlayer2 = VelocityChat.getPlugin().getProxy().getPlayer(target);
-        if(optionalPlayer2.isEmpty()) return;
+        if(optionalPlayer2.isEmpty()) {
+            player.sendMessage(MiniMessage.markdown().parse(Config.RECEIVER_DOES_NOT_EXIST, Placeholder.miniMessage("player", target)));
+            return;
+        }
         Player player2 = optionalPlayer2.get();
         ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 

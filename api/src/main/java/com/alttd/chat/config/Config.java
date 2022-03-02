@@ -185,6 +185,7 @@ public final class Config {
     public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receivername> ><light_purple>(Me -> <gray><receiver></gray>)</hover> <message>";
     public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sendername> ><light_purple>(<gray><sender></gray> on <server> -> Me)</hover> <message>";
     public static String MESSAGESPY = "<gray>(<gray><sendername></gray> -> <receivername>) <message>";
+    public static String RECEIVER_DOES_NOT_EXIST = "<red><player> is not a valid player.</red>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
@@ -193,6 +194,7 @@ public final class Config {
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
         MESSAGESPY = getString("commands.message.spy-message", MESSAGESPY);
+        RECEIVER_DOES_NOT_EXIST = getString("commands.message.receiver-does-not-exist", RECEIVER_DOES_NOT_EXIST);
     }
 
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
@@ -318,6 +320,7 @@ public final class Config {
         DISBAND_PARTY_CONFIRM = getString("party.messages.disband-party-confirm", DISBAND_PARTY_CONFIRM);
         DISBANDED_PARTY = getString("party.messages.disbanded-party", DISBANDED_PARTY);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
+        ALREADY_IN_THIS_PARTY = getString("party.messages.already-in-this-party", ALREADY_IN_THIS_PARTY);
     }
 
     public static String PARTY_HELP_WRAPPER = "<gold>ChatParty help:\n<commands></gold>";
