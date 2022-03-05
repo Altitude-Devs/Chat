@@ -431,4 +431,9 @@ public final class Config {
         }
         REPORT_SENT = getString("messages.report-sent", REPORT_SENT);
     }
+
+    public static String HELP_REPORT = "<red>/report <message></red>";
+    private static void loadMessages() {
+        HELP_REPORT = getString("settings.mail.mail-sent", HELP_REPORT);
+    }
 }

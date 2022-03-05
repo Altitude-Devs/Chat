@@ -60,7 +60,10 @@ public class Report {
                             return 1;
                         })
                 )
-                .executes(context -> 0)
+                .executes(context -> {
+                    context.getSource().sendMessage(Utility.parseMiniMessage(Config.HELP_REPORT));
+                    return 0;
+                })
                 .build();
 
         BrigadierCommand brigadierCommand = new BrigadierCommand(command);
