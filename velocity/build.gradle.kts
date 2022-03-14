@@ -5,15 +5,11 @@ plugins {
 
 dependencies {
     implementation(project(":api")) // API
-    compileOnly("com.velocitypowered:velocity-api:3.0.1") // Velocity
-    annotationProcessor("com.velocitypowered:velocity-api:3.0.1")
-//    compileOnly("com.velocitypowered:velocity-brigadier:1.0.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.1.0") // Velocity
+    annotationProcessor("com.velocitypowered:velocity-api:3.1.0")
     implementation("mysql:mysql-connector-java:8.0.27") // mysql
     implementation("org.spongepowered", "configurate-yaml", "4.1.2")
-    implementation("net.kyori", "adventure-text-minimessage", "4.10.0-SNAPSHOT") {
-        exclude("net.kyori")
-        exclude("net.kyori.examination")
-    }
+    implementation("net.kyori:adventure-text-minimessage:4.10.1")
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5")
     compileOnly("com.alttd.proxydiscordlink:ProxyDiscordLink:1.0.0-BETA-SNAPSHOT")
 }

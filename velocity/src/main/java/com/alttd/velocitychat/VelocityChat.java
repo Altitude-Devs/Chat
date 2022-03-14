@@ -5,10 +5,7 @@ import com.alttd.chat.ChatImplementation;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
-import com.alttd.velocitychat.commands.GlobalAdminChat;
-import com.alttd.velocitychat.commands.MailCommand;
-import com.alttd.velocitychat.commands.PartyCommand;
-import com.alttd.velocitychat.commands.Reload;
+import com.alttd.velocitychat.commands.*;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.velocitychat.handlers.ChatHandler;
@@ -37,7 +34,7 @@ import java.nio.file.Path;
 @Plugin(id = "chatplugin", name = "ChatPlugin", version = "1.0.0",
         description = "A chat plugin for Altitude Minecraft Server",
         authors = {"destro174", "teri"},
-        dependencies = {@Dependency(id = "luckperms"), @Dependency(id = "litebans")}
+        dependencies = {@Dependency(id = "luckperms"), @Dependency(id = "litebans"), @Dependency(id = "proxydiscordlink")}
         )
 public class VelocityChat {
 
@@ -114,6 +111,7 @@ public class VelocityChat {
         new GlobalAdminChat(server);
         new Reload(server);
         new MailCommand(server);
+        new Report(server);
         server.getCommandManager().register("party", new PartyCommand());
         // all (proxy)commands go here
     }

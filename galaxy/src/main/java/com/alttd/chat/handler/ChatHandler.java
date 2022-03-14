@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
@@ -37,11 +38,16 @@ public class ChatHandler {
     public void privateMessage(Player player, String target, String message) {
 //        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 //        user.setReplyTarget(target);
-        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
-        if(updatedMessage == null) {
-            GalaxyUtility.sendBlockedNotification("DM Language", player, message, target);
+        ModifiableString modifiableString = new ModifiableString(message);
+        // todo a better way for this
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "privatemessage")) {
+            GalaxyUtility.sendBlockedNotification("DM Language",
+                    player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    target);
             return; // the message was blocked
         }
+        String updatedMessage = modifiableString.string();
 
         if(!player.hasPermission("chat.format")) {
             updatedMessage = Utility.stripTokens(updatedMessage);
@@ -92,12 +98,17 @@ public class ChatHandler {
         Component senderName = user.getDisplayName();
         Component prefix = user.getPrefix();
 
-        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message); // todo a better way for this
-        if(updatedMessage == null) {
-            GalaxyUtility.sendBlockedNotification("GC Language", player, message, "");
+        ModifiableString modifiableString = new ModifiableString(message);
+        // todo a better way for this
+        if (!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "globalchat")) {
+            GalaxyUtility.sendBlockedNotification("GC Language",
+                    player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    "");
             return; // the message was blocked
         }
 
+        String updatedMessage = modifiableString.string();
         if(!player.hasPermission("chat.format")) {
             updatedMessage = Utility.stripTokens(updatedMessage);
         } else {
@@ -132,12 +143,16 @@ public class ChatHandler {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         Component senderName = user.getDisplayName();
 
-        String updatedMessage = RegexManager.replaceText(player.getName(), player.getUniqueId(), message);
-        if(updatedMessage == null) {
-            GalaxyUtility.sendBlockedNotification(channel.getChannelName() + " Language", player, message, "");
+        ModifiableString modifiableString = new ModifiableString(message);
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, channel.getChannelName())) {
+            GalaxyUtility.sendBlockedNotification(channel.getChannelName() + " Language",
+                    player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    "");
             return; // the message was blocked
         }
 
+        String updatedMessage = modifiableString.string();
         if(!player.hasPermission("chat.format")) {
             updatedMessage = Utility.stripTokens(updatedMessage);
         }
@@ -192,7 +207,7 @@ public class ChatHandler {
 //
 //        updatedMessage = Utility.formatText(updatedMessage);
 //
-//        List<Template> templates = new ArrayList<>(List.of(
+//        List<Placeholder> Placeholders = new ArrayList<>(List.of(
 //                Placeholder.miniMessage("sender", senderName),
 //                Placeholder.miniMessage("sendername", senderName),
 //                Placeholder.miniMessage("partyname", party.getPartyName()),
@@ -200,10 +215,10 @@ public class ChatHandler {
 //                Placeholder.miniMessage("server", Bukkit.getServerName()),
 //                Placeholder.miniMessage("[i]", itemComponent(player.getInventory().getItemInMainHand()))));
 //
-//        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, templates);
+//        Component component = Utility.parseMiniMessage(Config.PARTY_FORMAT, Placeholders);
 ////        sendPartyMessage(player, party.getPartyId(), component);
 //
-//        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, templates);
+//        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, Placeholders);
 //        for(Player pl : Bukkit.getOnlinePlayers()) {
 //            if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
 //                pl.sendMessage(spyMessage);
@@ -253,7 +268,7 @@ public class ChatHandler {
         if (user == null) return false;
         if (user.isMuted() || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
 //        if (Database.get().isPlayerMuted(player.getUniqueId(), null) || (ChatPlugin.getInstance().serverMuted() && !player.hasPermission("chat.bypass-server-muted"))) {
-            GalaxyUtility.sendBlockedNotification(prefix, player, message, "");
+            GalaxyUtility.sendBlockedNotification(prefix, player, Utility.parseMiniMessage(Utility.stripTokens(message)), "");
             return true;
         }
         return false;

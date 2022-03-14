@@ -4,10 +4,10 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,12 +48,18 @@ public class PlayerListener implements Listener {
             Component component = event.line(i);
             if (component != null) {
                 String message = PlainTextComponentSerializer.plainText().serialize(component);
-                Player player = event.getPlayer();
-                message = RegexManager.replaceText(player.getName(), player.getUniqueId(), message, false); // todo a better way for this
+                ModifiableString modifiableString = new ModifiableString(message);
 
-                if (message == null) {
-                    GalaxyUtility.sendBlockedNotification("Sign Language" , player, PlainTextComponentSerializer.plainText().serialize(component), "");
+                Player player = event.getPlayer();
+
+                // todo a better way for this
+                if (!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, false, "sign")) {
+                    GalaxyUtility.sendBlockedNotification("Sign Language",
+                            player,
+                            Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                            "");
                 }
+                message = modifiableString.string();
 
                 component = message == null ? Component.empty() : Component.text(message);
 

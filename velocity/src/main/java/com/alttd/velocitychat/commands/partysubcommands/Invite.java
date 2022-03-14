@@ -60,6 +60,11 @@ public class Invite implements SubCommand {
                 Placeholder.unparsed("party_password", party.getPartyPassword())
         ));
         source.sendMessage(Utility.parseMiniMessage(Config.SENT_PARTY_INV,
+                Placeholder.unparsed("player", target.getUsername()),
+                Placeholder.unparsed("party", party.getPartyName()),
+                Placeholder.unparsed("party_password", party.getPartyPassword())
+        ));
+        source.sendMessage(Utility.parseMiniMessage(Config.SENT_PARTY_INV,
                 Placeholder.unparsed("player", target.getUsername())
         ));
     }

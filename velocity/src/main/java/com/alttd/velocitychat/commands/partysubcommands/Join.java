@@ -45,12 +45,17 @@ public class Join implements SubCommand {
 
 //      party.addUser(ChatUserManager.getChatUser(player.getUniqueId())); //Removed until we can get nicknames to translate to colors correctly
         ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
+
+        if (chatUser.getPartyId() == party.getPartyId()) {
+            source.sendMessage(Utility.parseMiniMessage(Config.ALREADY_IN_THIS_PARTY, Placeholder.parsed("party", party.getPartyName())));
+            return;
+        }
         party.addUser(chatUser, player.getUsername());
-        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.unparsed("party_name", party.getPartyName())));
+        source.sendMessage(Utility.parseMiniMessage(Config.JOINED_PARTY, Placeholder.parsed("party_name", party.getPartyName())));
         VelocityChat.getPlugin().getChatHandler().sendPartyMessage(party,
                 Utility.parseMiniMessage(Config.PLAYER_JOINED_PARTY,
                         Placeholder.component("player_name", chatUser.getDisplayName()),
-                        Placeholder.unparsed("party_name", party.getPartyName())
+                        Placeholder.parsed("party_name", party.getPartyName())
                 ), null);
     }
 

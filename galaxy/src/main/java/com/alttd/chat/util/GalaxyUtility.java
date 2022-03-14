@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class GalaxyUtility {
+
     public static void sendBlockedNotification(String prefix, Player player, String input, String target) {
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.parsed("prefix", prefix),
@@ -30,4 +31,5 @@ public class GalaxyUtility {
     public static void sendBlockedNotification(String prefix, Player player, Component input, String target) {
         sendBlockedNotification(prefix, player, PlainTextComponentSerializer.plainText().serialize(input), target);
     }
+
 }

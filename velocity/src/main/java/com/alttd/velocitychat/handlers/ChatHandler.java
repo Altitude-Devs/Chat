@@ -23,7 +23,6 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class ChatHandler {
 
@@ -39,20 +38,19 @@ public class ChatHandler {
         Player player2 = optionalPlayer2.get();
         ChatUser targetUser = ChatUserManager.getChatUser(player2.getUniqueId());
 
-        TagResolver placeholders = TagResolver.resolver(
+        TagResolver Placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderUser.getDisplayName()),
                 Placeholder.unparsed("sendername", player.getUsername()),
                 Placeholder.component("receiver", targetUser.getDisplayName()),
                 Placeholder.unparsed("receivername", player2.getUsername()),
                 Placeholder.component("message", GsonComponentSerializer.gson().deserialize(message)),
-                Placeholder.unparsed("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude")
-        );
+                Placeholder.unparsed("server", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Altitude"));
 
         ServerConnection serverConnection;
         if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
             // redirect to the sender
             serverConnection = player.getCurrentServer().get();
-            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, placeholders);
+            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, Placeholders);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessageout");
             buf.writeUTF(player.getUniqueId().toString());
@@ -63,7 +61,7 @@ public class ChatHandler {
 
             //redirect to the receiver
             serverConnection = player2.getCurrentServer().get();
-            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, placeholders);
+            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, Placeholders);
             buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessagein");
             buf.writeUTF(player2.getUniqueId().toString());
@@ -76,13 +74,13 @@ public class ChatHandler {
     }
 
     public static void sendBlockedNotification(String prefix, Player player, String input, String target, ServerConnection serverConnection) {
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.parsed("prefix", prefix),
+        TagResolver Placeholders = TagResolver.resolver(
+                Placeholder.unparsed("prefix", prefix),
                 Placeholder.parsed("displayname", Utility.getDisplayName(player.getUniqueId(), player.getUsername())),
-                Placeholder.parsed("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
-                Placeholder.parsed("input", input)
+                Placeholder.unparsed("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Placeholder.unparsed("input", input)
         );
-        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
+        Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, Placeholders);
 
         serverConnection.getServer().getPlayersConnected().forEach(pl ->{
             if (pl.hasPermission("chat.alert-blocked")) {
@@ -118,7 +116,8 @@ public class ChatHandler {
         }
         Component senderName = user.getDisplayName();
 
-        String updatedMessage = RegexManager.replaceText(player.getUsername(), uuid, message);
+//        String updatedMessage = RegexManager.replaceText(player.getUsername(), uuid, message);
+        String updatedMessage = message; // NEEDS FIXING
         if(updatedMessage == null) {
             sendBlockedNotification("Party Language", player, message, "", serverConnection);
             return; // the message was blocked
@@ -132,19 +131,19 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
-        TagResolver placeholders = TagResolver.resolver(
+        TagResolver Placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
-                Placeholder.unparsed("username", player.getUsername()),
-                Placeholder.unparsed("party", party.getPartyName()),
-                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("sendername", senderName),
+                Placeholder.unparsed("partyname", party.getPartyName()),
+                Placeholder.unparsed("message", updatedMessage),
                 Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName()),
                 Placeholder.component("[i]", item)
         );
 
-        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, placeholders);
+        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, Placeholders);
         sendPartyMessage(party, partyMessage, user.getIgnoredBy());
 
-        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, placeholders);
+        Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, Placeholders);
         for(Player pl : serverConnection.getServer().getPlayersConnected()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && !party.getPartyUsersUuid().contains(pl.getUniqueId())) {
                 pl.sendMessage(spyMessage);
@@ -171,13 +170,12 @@ public class ChatHandler {
             serverName = sender.getCurrentServer().isPresent() ? sender.getCurrentServer().get().getServerInfo().getName() : "Altitude";
         }
 
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.parsed("message", Utility.formatText(message)),
+        TagResolver Placeholders = TagResolver.resolver(
+                Placeholder.unparsed("message", message),
                 Placeholder.component("sender", senderName),
-                Placeholder.parsed("server", serverName)
-        );
+                Placeholder.unparsed("server", serverName));
 
-        Component component = Utility.parseMiniMessage(Config.GACFORMAT, placeholders);
+        Component component = Utility.parseMiniMessage(Config.GACFORMAT, Placeholders);
 
         VelocityChat.getPlugin().getProxy().getAllPlayers().stream().filter(target -> target.hasPermission("command.chat.globaladminchat")/*TODO permission*/).forEach(target -> {
             target.sendMessage(component);
@@ -192,7 +190,6 @@ public class ChatHandler {
             uuid = player.getUniqueId();
             senderName = player.getUsername();
         }
-
         Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(recipient);
         if (optionalPlayer.isEmpty()) {
             targetUUID = ServerHandler.getPlayerUUID(recipient);
@@ -203,24 +200,12 @@ public class ChatHandler {
         } else {
             targetUUID = optionalPlayer.get().getUniqueId();
         }
-
-        if (!commandSource.hasPermission("chat.format"))
-            message = Utility.stripTokens(message);
-        else
-            message = Utility.parseColors(message);
-
-        Mail mail = new Mail(targetUUID, uuid, message);
+        Mail mail = new Mail(uuid, targetUUID, message);
         ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
         chatUser.addMail(mail);
         // TODO load from config
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.parsed("sender", senderName)
-        );
-        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage(Config.mailReceived, placeholders)));
-        commandSource.sendMessage(Utility.parseMiniMessage(Config.mailSent,
-                Placeholder.component("player_name", chatUser.getDisplayName()),
-                Placeholder.parsed("message", message)
-        ));
+        String finalSenderName = senderName;
+        optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage("<yellow>New mail from " + finalSenderName)));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer) {
@@ -248,15 +233,13 @@ public class ChatHandler {
                 Queries.markMailRead(mail);
             }
             ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
-            Date sentTime = new Date(mail.getSendTime());
-            TagResolver placeholders = TagResolver.resolver(
+            TagResolver Placeholders = TagResolver.resolver(
                     Placeholder.component("staffprefix", chatUser.getStaffPrefix()),
                     Placeholder.component("sender", chatUser.getDisplayName()),
-                    Placeholder.parsed("message", mail.getMessage()),
-                    Placeholder.parsed("date", sentTime.toString()),
-                    Placeholder.parsed("time_ago", String.valueOf(TimeUnit.MILLISECONDS.toDays(new Date().getTime() - sentTime.getTime())))
+                    Placeholder.unparsed("message", mail.getMessage()),
+                    Placeholder.unparsed("date", new Date(mail.getSendTime()).toString())
             );
-            Component mailMessage = Utility.parseMiniMessage(Config.mailBody, placeholders);
+            Component mailMessage = Utility.parseMiniMessage(Config.mailBody, Placeholders);
             component = component.append(Component.newline()).append(mailMessage);
         }
         component = component.append(Component.newline()).append(Utility.parseMiniMessage(Config.mailFooter));

@@ -24,6 +24,7 @@ public class ChatClear implements CommandExecutor {
         for (Player player : Bukkit.getOnlinePlayers())
             if (!player.hasPermission("chat.clear-bypass"))
                 player.sendMessage(component);
+
         Bukkit.getServer().sendMessage(miniMessage.deserialize(
                 "<gold><player> cleared chat.</gold>",
                         Placeholder.component("player",sender.name()))

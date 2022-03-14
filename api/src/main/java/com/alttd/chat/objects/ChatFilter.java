@@ -42,34 +42,57 @@ public class ChatFilter {
         return this.exclusions;
     }
 
-    public boolean matches(String input) {
+    public boolean matches(ModifiableString filterableString) {
+        String input = filterableString.string();
         Matcher matcher = pattern.matcher(input);
-        return (matcher.find() || matcher.matches());
+        while (matcher.find())
+            if (!isException(input, matcher.start())) {
+                filterableString.string(filterableString.string().replaceFirst(matcher.group(), "<gold>" + matcher.group() + "</gold>"));
+                return true;
+            }
+        return matcher.matches();
     }
 
-    public String replaceText(String input) {
+    public boolean isException(String string, int start)
+    {
+        char[] chars = string.toCharArray();
+        if (start != 0) { //go to start of word if not at start of string
+            while (chars[start] != ' ' && start > 0)
+                start--;
+            start += 1; //go past the space
+        }
+
+        String match = string.substring(start);
+        for (String s : getExclusions()) {
+            if (match.toLowerCase().startsWith(s.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
+
+    public void replaceText(ModifiableString modifiableString) {
+        String input = modifiableString.string();
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
             String group = matcher.group(); // todo debug
-            if(getExclusions().stream().noneMatch(s -> s.equalsIgnoreCase(group))) { // idk how heavy this is:/
-                input = input.replace(group, getReplacement());
+            if (getExclusions().stream().noneMatch(s -> s.equalsIgnoreCase(group))) { // idk how heavy this is:/
+                modifiableString.string(input.replace(group, getReplacement()));
             }
         }
-        return input;
     }
 
-    public String replaceMatcher(String input) {
-        int lenght;
+    public void replaceMatcher(ModifiableString modifiableString) {
+        String input = modifiableString.string();
+        int length;
         try {
-            lenght = Integer.parseInt(replacement);
+            length = Integer.parseInt(replacement);
         } catch (NumberFormatException e) {
-            lenght = 3; // could load this from config and make it cleaner
+            length = 3; // could load this from config and make it cleaner
         }
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
             String group = matcher.group();
-            input = input.replace(group, group.substring(0, lenght));
+            modifiableString.string(input.replace(group, group.substring(0, length)));
         }
-        return input;
     }
 }

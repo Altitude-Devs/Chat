@@ -185,6 +185,7 @@ public final class Config {
     public static String MESSAGESENDER = "<hover:show_text:Click to reply><click:suggest_command:/msg <receivername> ><light_purple>(Me -> <gray><receiver></gray>)</hover> <message>";
     public static String MESSAGERECIEVER = "<hover:show_text:Click to reply><click:suggest_command:/msg <sendername> ><light_purple>(<gray><sender></gray> on <server> -> Me)</hover> <message>";
     public static String MESSAGESPY = "<gray>(<gray><sendername></gray> -> <receivername>) <message>";
+    public static String RECEIVER_DOES_NOT_EXIST = "<red><player> is not a valid player.</red>";
     private static void messageCommand() {
         MESSAGECOMMANDALIASES.clear();
         REPLYCOMMANDALIASES.clear();
@@ -193,6 +194,7 @@ public final class Config {
         MESSAGESENDER = getString("commands.message.sender-message", MESSAGESENDER);
         MESSAGERECIEVER = getString("commands.message.reciever-message", MESSAGERECIEVER);
         MESSAGESPY = getString("commands.message.spy-message", MESSAGESPY);
+        RECEIVER_DOES_NOT_EXIST = getString("commands.message.receiver-does-not-exist", RECEIVER_DOES_NOT_EXIST);
     }
 
     public static String GCFORMAT = "<white><light_purple><prefix></light_purple> <gray><sender></gray> <hover:show_text:on <server>><yellow>to Global</yellow></hover><gray>: <message>";
@@ -271,6 +273,7 @@ public final class Config {
     public static String REMOVED_USER_FROM_PARTY = "<green>You removed <player> from the chat party!</green>";
     public static String NOT_A_PARTY_MEMBER = "<red><player> is not a member of your party!</red>";
     public static String ALREADY_IN_PARTY = "<red>You're already in a party!</red>";
+    public static String ALREADY_IN_THIS_PARTY = "<red>You're already in <party>!</red>";
     public static String SENT_PARTY_INV = "<green>You send a chat party invite to <player>!</green>";
     public static String JOIN_PARTY_CLICK_MESSAGE = "<click:run_command:'/party join <party> <party_password>'>" +
             "<dark_aqua>You received an invite to join <party>, click this message to accept.</dark_aqua></click>";
@@ -317,6 +320,7 @@ public final class Config {
         DISBAND_PARTY_CONFIRM = getString("party.messages.disband-party-confirm", DISBAND_PARTY_CONFIRM);
         DISBANDED_PARTY = getString("party.messages.disbanded-party", DISBANDED_PARTY);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
+        ALREADY_IN_THIS_PARTY = getString("party.messages.already-in-this-party", ALREADY_IN_THIS_PARTY);
     }
 
     public static String PARTY_HELP_WRAPPER = "<gold>ChatParty help:\n<commands></gold>";
@@ -410,4 +414,26 @@ public final class Config {
         mailSent = getString("settings.mail.mail-sent", mailSent);
     }
 
+    public static HashMap<String, Long> serverChannelId = new HashMap<>();
+    public static String REPORT_SENT = "<green>Your report was sent, staff will contact you asap to help resolve your issue!</green>";
+    private static void loadChannelIds() {
+        serverChannelId.clear();
+        serverChannelId.put("general", getLong("discord-channel-id.general", (long) -1));
+        ConfigurationNode node = config.node("discord-channel-id");
+        Map<Object, ? extends ConfigurationNode> objectMap = node.childrenMap();
+        for (Object o : objectMap.keySet()) {
+            String key = (String) o;
+            if (key.equalsIgnoreCase("general"))
+                continue;
+            ConfigurationNode configurationNode = objectMap.get(o);
+            long channelId = configurationNode.getLong();
+            serverChannelId.put(key.toLowerCase(), channelId);
+        }
+        REPORT_SENT = getString("messages.report-sent", REPORT_SENT);
+    }
+
+    public static String HELP_REPORT = "<red>/report <message></red>";
+    private static void loadMessages() {
+        HELP_REPORT = getString("settings.mail.mail-sent", HELP_REPORT);
+    }
 }

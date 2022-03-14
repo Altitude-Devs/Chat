@@ -3,10 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.alttd:Galaxy-API:1.18.1-R0.1-SNAPSHOT") {
-        exclude("net.kyori.adventure.text.minimessage")
-    }
-    compileOnly("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT") // Minimessage
+    compileOnly("com.alttd:Galaxy-API:1.18.2-R0.1-SNAPSHOT")
     compileOnly("org.spongepowered:configurate-yaml:4.1.2") // Configurate
     compileOnly("net.luckperms:api:5.3") // Luckperms
 }

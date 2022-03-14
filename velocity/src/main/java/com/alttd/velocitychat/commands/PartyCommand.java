@@ -93,7 +93,7 @@ public class PartyCommand implements SimpleCommand {
         List<String> finalValues = new ArrayList<>();
 
         for (String str : possibleValues) {
-            if (str.toLowerCase().startsWith(remaining)) {
+            if (str.toLowerCase().startsWith(remaining.toLowerCase())) {
                 finalValues.add(StringArgumentType.escapeIfRequired(str));
             }
         }
