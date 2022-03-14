@@ -7,12 +7,14 @@ import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Mail;
+import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.mysql.cj.MessageBuilder;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -115,14 +117,13 @@ public class ChatHandler {
             return;
         }
         Component senderName = user.getDisplayName();
-
-//        String updatedMessage = RegexManager.replaceText(player.getUsername(), uuid, message);
-        String updatedMessage = message; // NEEDS FIXING
-        if(updatedMessage == null) {
+        ModifiableString modifiableString = new ModifiableString(message);
+        if (!RegexManager.filterText(player.getUsername(), uuid, modifiableString, "party")) {
             sendBlockedNotification("Party Language", player, message, "", serverConnection);
             return; // the message was blocked
         }
 
+        String updatedMessage = modifiableString.string();
         if(!player.hasPermission("chat.format")) {
             updatedMessage = Utility.stripTokens(updatedMessage);
         }
