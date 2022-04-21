@@ -21,6 +21,7 @@ public class ChatUser {
 //    private Component prefixAll; // doesn't need saving, we get this from luckperms
     //private boolean toggleGc; // should be saved, this toggles if the player can see and use global chat
     private String replyTarget; // reply target for use in /msg i don't mind setting this to null on login, feedback?
+    private String replyContinueTarget; // reply target for use in /c
     private long gcCooldown; // the time when they last used gc, is used for the cooldown, i wouldn't save this, but setting this to the login time means they can't use gc for 30 seconds after logging in
     private boolean spy;
     private List<Mail> mails; // mails aren't finalized yet, so for now a table sender, reciever, sendtime, readtime(if emtpy mail isn't read yet?, could also do a byte to control this), the actual message
@@ -45,6 +46,7 @@ public class ChatUser {
 //        prefixAll = Utility.getPrefix(uuid, false);
 
         replyTarget = null;
+        replyContinueTarget = null;
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = Queries.getMails(uuid);
         ignoredPlayers = Queries.getIgnoredUsers(uuid);
@@ -101,8 +103,16 @@ public class ChatUser {
         return replyTarget;
     }
 
+    public String getReplyContinueTarget() {
+        return replyTarget;
+    }
+
     public void setReplyTarget(String replyTarget) {
         this.replyTarget = replyTarget;
+    }
+
+    public void setReplyContinueTarget(String replyTarget) {
+        this.replyContinueTarget = replyTarget;
     }
 
     public List<Mail> getMails() {

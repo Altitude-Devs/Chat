@@ -35,6 +35,49 @@ public class ChatHandler {
         GCNOTENABLED = Utility.parseMiniMessage(Config.GCNOTENABLED);
     }
 
+    public void continuePrivateMessage(Player player, String target, String message) {
+//        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+//        user.setReplyTarget(target);
+        ModifiableString modifiableString = new ModifiableString(message);
+        // todo a better way for this
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "privatemessage")) {
+            GalaxyUtility.sendBlockedNotification("DM Language",
+                    player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    target);
+            return; // the message was blocked
+        }
+        String updatedMessage = modifiableString.string();
+
+        if(!player.hasPermission("chat.format")) {
+            updatedMessage = Utility.stripTokens(updatedMessage);
+        } else {
+            updatedMessage = Utility.parseColors(updatedMessage);
+        }
+
+        if(updatedMessage.contains("[i]"))
+            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+
+        updatedMessage = Utility.formatText(updatedMessage);
+
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("sendername", player.name()),
+                Placeholder.parsed("receivername", target),
+                Placeholder.component("[i]", itemComponent(player.getInventory().getItemInMainHand()))
+        );
+
+        Component component = Utility.parseMiniMessage("<message>", placeholders);
+
+        sendPrivateMessage(player, target, "privatemessage", component);
+        Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) {
+                pl.sendMessage(spymessage);
+            }
+        }
+    }
+
     public void privateMessage(Player player, String target, String message) {
 //        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 //        user.setReplyTarget(target);

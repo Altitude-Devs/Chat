@@ -47,7 +47,8 @@ public class PluginMessage implements PluginMessageListener {
                         p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
                         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
                         ChatUser user = ChatUserManager.getChatUser(uuid);
-                        user.setReplyTarget(target);
+                        if (!user.getReplyContinueTarget().equalsIgnoreCase(target))
+                            user.setReplyTarget(target);
                     }
                 }
                 break;
@@ -62,8 +63,8 @@ public class PluginMessage implements PluginMessageListener {
                     ChatUser chatUser = ChatUserManager.getChatUser(uuid);
                     if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
                         p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
-                        ChatUser user = ChatUserManager.getChatUser(uuid);
-                        user.setReplyTarget(target);
+//                        ChatUser user = ChatUserManager.getChatUser(uuid);
+//                        user.setReplyTarget(target);
                     }
                 }
                 break;

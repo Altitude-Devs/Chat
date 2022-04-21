@@ -19,6 +19,9 @@ commands:
   reply:
     permission: command.chat.message
     aliases: r
+  continue:
+    permission: command.chat.message
+    aliases: c
   ignore:
     permission: command.chat.ignore
   unignore:

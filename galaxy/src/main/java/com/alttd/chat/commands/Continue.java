@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Message  implements CommandExecutor {
+public class Continue implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -17,12 +17,11 @@ public class Message  implements CommandExecutor {
             return true;
         }
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
-        user.setReplyContinueTarget(args[0]);
-        if(args.length < 2) return false; // todo error message or command info
+        if (user.getReplyContinueTarget() == null) return false;
+        if(args.length == 0) return false; // todo error message or command info
 
-        String message = StringUtils.join(args, " ", 1, args.length);
-        ChatPlugin.getInstance().getChatHandler().privateMessage(player, args[0], message);
+        String message = StringUtils.join(args, " ", 0, args.length);
+        ChatPlugin.getInstance().getChatHandler().continuePrivateMessage(player, user.getReplyContinueTarget(), message);
         return false;
     }
-
 }
