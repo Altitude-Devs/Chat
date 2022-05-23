@@ -422,6 +422,7 @@ public final class Config {
 
     public static HashMap<String, Long> serverChannelId = new HashMap<>();
     public static String REPORT_SENT = "<green>Your report was sent, staff will contact you asap to help resolve your issue!</green>";
+    public static String REPORT_TOO_SHORT = "<red>Please ensure your report is descriptive. We require at least 3 words per report</red>";
     private static void loadChannelIds() {
         serverChannelId.clear();
         serverChannelId.put("general", getLong("discord-channel-id.general", (long) -1));
@@ -436,6 +437,7 @@ public final class Config {
             serverChannelId.put(key.toLowerCase(), channelId);
         }
         REPORT_SENT = getString("messages.report-sent", REPORT_SENT);
+        REPORT_TOO_SHORT = getString("messages.report-too-short", REPORT_TOO_SHORT);
     }
 
     public static String HELP_REPORT = "<red>/report <message></red>";

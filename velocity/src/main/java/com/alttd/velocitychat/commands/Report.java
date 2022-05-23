@@ -45,6 +45,11 @@ public class Report {
                             if (optionalServerConnection.isEmpty()) {
                                 return 1;
                             }
+                            String report = context.getArgument("report", String.class);
+                            if (report.split(" ").length < 3) {
+                                player.sendMessage(Utility.parseMiniMessage(Config.REPORT_TOO_SHORT));
+                                return 1;
+                            }
                             ServerConnection serverConnection = optionalServerConnection.get();
                             String serverName = serverConnection.getServer().getServerInfo().getName();
 
@@ -53,7 +58,7 @@ public class Report {
                             embedBuilder.setTitle("Player Report");
                             embedBuilder.setColor(Color.CYAN);
                             embedBuilder.addField("Incident",
-                                    context.getArgument("report", String.class),
+                                    report,
                                     false);
                             embedBuilder.addField("Server",
                                     serverName.substring(0, 1).toUpperCase() + serverName.substring(1),
