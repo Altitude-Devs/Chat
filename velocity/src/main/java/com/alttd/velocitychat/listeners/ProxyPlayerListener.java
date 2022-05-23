@@ -18,6 +18,7 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -76,14 +77,22 @@ public class ProxyPlayerListener {
         //VelocityChat.getPlugin().getChatHandler().removePlayer(event.getPlayer().getUniqueId());
     }
 
+
+    private static final HashSet<UUID> silentJoin = new HashSet<>();
+
+    public static void addSilentJoin(UUID uuid)
+    {
+        silentJoin.add(uuid);
+    }
+
     // Server Join and Leave messages
     @Subscribe
     public void serverConnected(ServerConnectedEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         ServerHandler serverHandler = VelocityChat.getPlugin().getServerHandler();
         if (event.getPreviousServer().isPresent()) {
             RegisteredServer previousServer = event.getPreviousServer().get();
-
-            Player player = event.getPlayer();
 
             TagResolver placeholders = TagResolver.resolver(
                     Placeholder.parsed("player", player.getUsername()),
@@ -91,18 +100,36 @@ public class ProxyPlayerListener {
                     Placeholder.parsed("to_server", event.getServer().getServerInfo().getName())
             );
 
+            if (silentJoin.remove(uuid)) {
+                Component message = Utility.parseMiniMessage(Config.SILENT_JOIN_JOINED_FROM,
+                        placeholders);
+                event.getServer().getPlayersConnected().stream()
+                        .filter(player1 -> player.hasPermission("command.chat.silent-join-notify"))
+                        .forEach(player1 -> player1.sendMessage(message));
+                return;
+            }
+
             ServerWrapper wrapper = serverHandler.getWrapper(previousServer.getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGETO, placeholders));
+                wrapper.sendJoinLeaveMessage(uuid, Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGETO, placeholders));
             }
             wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGEFROM, placeholders));
+                wrapper.sendJoinLeaveMessage(uuid, Utility.parseMiniMessage(Config.SERVERSWTICHMESSAGEFROM, placeholders));
             }
         } else {
+            if (silentJoin.remove(uuid)) {
+                Component message = Utility.parseMiniMessage(Config.SILENT_JOIN_JOINED,
+                        Placeholder.unparsed("player", player.getUsername()));
+                event.getServer().getPlayersConnected().stream()
+                        .filter(player1 -> player.hasPermission("command.chat.silent-join-notify"))
+                        .forEach(player1 -> player1.sendMessage(message));
+                return;
+            }
+
             ServerWrapper wrapper = serverHandler.getWrapper(event.getServer().getServerInfo().getName());
             if(wrapper != null) {
-                wrapper.sendJoinLeaveMessage(event.getPlayer().getUniqueId(), Utility.parseMiniMessage(Config.SERVERJOINMESSAGE, Placeholder.unparsed("player", event.getPlayer().getUsername())));
+                wrapper.sendJoinLeaveMessage(uuid, Utility.parseMiniMessage(Config.SERVERJOINMESSAGE, Placeholder.unparsed("player", player.getUsername())));
             }
         }
     }

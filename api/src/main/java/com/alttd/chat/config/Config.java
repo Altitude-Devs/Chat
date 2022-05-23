@@ -440,6 +440,20 @@ public final class Config {
         REPORT_TOO_SHORT = getString("messages.report-too-short", REPORT_TOO_SHORT);
     }
 
+    public static List<String> SILENT_JOIN_COMMAND_ALIASES = new ArrayList<>();
+    public static String SILENT_JOIN_NO_SERVER = "<red>Unable to find destination server</red>";
+    public static String SILENT_JOIN_JOINING = "<green>Sending you to <server> silently.</green>";
+    public static String SILENT_JOIN_JOINED_FROM = "<gold>* <player> silent joined from <from_server>...</gold>";
+    public static String SILENT_JOIN_JOINED = "<gold>* <player> silent joined...</gold>";
+
+    private static void silentJoinCommand() {
+        SILENT_JOIN_COMMAND_ALIASES = getList("commands.silent-join.aliases", Lists.newArrayList("sj"));
+        SILENT_JOIN_NO_SERVER = getString("commands.silent-join.no-server", SILENT_JOIN_NO_SERVER);
+        SILENT_JOIN_JOINING = getString("commands.silent-join.joining", SILENT_JOIN_JOINING);
+        SILENT_JOIN_JOINED_FROM = getString("commands.silent-join.joined-from", SILENT_JOIN_JOINED_FROM);
+        SILENT_JOIN_JOINED = getString("commands.silent-join.joined", SILENT_JOIN_JOINED);
+    }
+
     public static String HELP_REPORT = "<red>/report <message></red>";
     private static void loadMessages() {
         HELP_REPORT = getString("settings.mail.mail-sent", HELP_REPORT);
