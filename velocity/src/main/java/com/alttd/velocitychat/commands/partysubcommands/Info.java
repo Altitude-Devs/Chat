@@ -5,16 +5,20 @@ import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.Party;
 import com.alttd.chat.objects.PartyUser;
 import com.alttd.chat.util.Utility;
+import com.alttd.velocitychat.VelocityChat;
 import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Info implements SubCommand {
+
     @Override
     public String getName() {
         return "info";
@@ -34,7 +38,11 @@ public class Info implements SubCommand {
 
         List<Component> displayNames = new ArrayList<>();
         for (PartyUser partyUser : party.getPartyUsers()) {
-            displayNames.add(partyUser.getDisplayName());
+            Optional<Player> optionalPlayer = VelocityChat.getPlugin().getProxy().getPlayer(partyUser.getUuid());
+            if (optionalPlayer.isPresent() && optionalPlayer.get().isActive())
+                displayNames.add(Config.ONLINE_PREFIX.append(partyUser.getDisplayName()));
+            else
+                displayNames.add(Config.OFFLINE_PREFIX.append(partyUser.getDisplayName()));
         }
 
         source.sendMessage(Utility.parseMiniMessage(Config.PARTY_INFO,
