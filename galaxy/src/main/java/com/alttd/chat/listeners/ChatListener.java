@@ -1,6 +1,7 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.commands.ChatChannel;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
@@ -21,13 +22,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-
 public class ChatListener implements Listener, ChatRenderer {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
-
+        ChatChannel activeChannel = ChatChannel.getActiveChannel(event.getPlayer().getUniqueId());
+        if (activeChannel != null) {
+            event.setCancelled(true);
+            activeChannel.sendChannelMessage(event.message(), event.getPlayer());
+            return;
+        }
         if (ChatPlugin.getInstance().serverMuted() && !event.getPlayer().hasPermission("chat.bypass-server-muted")) {
             event.setCancelled(true);
 
