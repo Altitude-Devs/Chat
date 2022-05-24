@@ -5,6 +5,7 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.ModifiableString;
+import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
@@ -23,6 +24,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     private void onPlayerLogin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
+        Toggleable.disableToggles(uuid);
         ChatUser user = ChatUserManager.getChatUser(uuid);
         if(user != null) return;
 

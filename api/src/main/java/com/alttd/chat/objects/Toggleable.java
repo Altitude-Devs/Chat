@@ -45,10 +45,10 @@ public abstract class Toggleable {
 
     public abstract void setOn(UUID uuid);
 
-    public void disableToggles(UUID uuid) {
+    public static void disableToggles(UUID uuid) {
         for (Toggleable toggleable : togglableClasses) {
             if (toggleable.isToggled(uuid)) {
-                setOff(uuid);
+                toggleable.setOff(uuid);
             }
         }
     }
