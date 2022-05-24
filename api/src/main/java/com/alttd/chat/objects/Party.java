@@ -47,7 +47,9 @@ public class Party {
                 .filter(partyUser -> partyUser.getUuid().equals(uuid))
                 .findFirst();
         if (first.isEmpty()) return;
-        partyUsers.remove(first.get());
+        PartyUser partyUser = first.get();
+        partyUsers.remove(partyUser);
+        chatUser.setPartyId(-1);
         Queries.removePartyUser(uuid);
     }
 

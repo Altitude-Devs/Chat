@@ -64,12 +64,13 @@ public class Remove implements SubCommand {
                 return;
             }
         }
-        party.removeUser(ChatUserManager.getChatUser(partyUser.getUuid()));
-
         if (partyUser.getUuid().equals(party.getOwnerUuid())) {
             source.sendMessage(Utility.parseMiniMessage(Config.CANT_REMOVE_PARTY_OWNER));
             return;
         }
+
+        party.removeUser(ChatUserManager.getChatUser(partyUser.getUuid()));
+
 
         if (onlinePlayer != null && onlinePlayer.isActive()) {
             onlinePlayer.sendMessage(Utility.parseMiniMessage(Config.REMOVED_FROM_PARTY,
