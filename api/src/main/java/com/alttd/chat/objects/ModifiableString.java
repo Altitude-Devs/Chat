@@ -11,6 +11,10 @@ public class ModifiableString {
         this.string = string;
     }
 
+    public void replace(String match, String replace) {
+        this.string = string.replaceAll(match, replace);
+    }
+
     public String string() {
         return string;
     }

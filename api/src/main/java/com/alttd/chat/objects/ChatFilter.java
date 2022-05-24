@@ -76,7 +76,7 @@ public class ChatFilter {
         while (matcher.find()) {
             String group = matcher.group(); // todo debug
             if (getExclusions().stream().noneMatch(s -> s.equalsIgnoreCase(group))) { // idk how heavy this is:/
-                modifiableString.string(input.replace(group, getReplacement()));
+                modifiableString.replace(group, getReplacement());
             }
         }
     }
