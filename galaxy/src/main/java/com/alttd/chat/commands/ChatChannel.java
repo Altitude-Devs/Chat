@@ -2,6 +2,7 @@ package com.alttd.chat.commands;
 
 import com.alttd.chat.config.Config;
 import com.alttd.chat.objects.channels.CustomChannel;
+import com.alttd.chat.util.ToggleableForCustomChannel;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.commons.lang.StringUtils;

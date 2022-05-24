@@ -1,4 +1,4 @@
-package com.alttd.chat.commands;
+package com.alttd.chat.util;
 
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.objects.Toggleable;
