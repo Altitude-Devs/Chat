@@ -1,13 +1,13 @@
 package com.alttd.chat.listeners;
 
 import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.commands.ChatChannel;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.ModifiableString;
+import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
@@ -26,10 +26,10 @@ public class ChatListener implements Listener, ChatRenderer {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
-        ChatChannel activeChannel = ChatChannel.getActiveChannel(event.getPlayer().getUniqueId());
-        if (activeChannel != null) {
+        Toggleable toggleable = Toggleable.getToggleable(event.getPlayer().getUniqueId());
+        if (toggleable != null) {
             event.setCancelled(true);
-            activeChannel.sendChannelMessage(event.message(), event.getPlayer());
+            toggleable.sendMessage(event.getPlayer(), event.message());
             return;
         }
         if (ChatPlugin.getInstance().serverMuted() && !event.getPlayer().hasPermission("chat.bypass-server-muted")) {

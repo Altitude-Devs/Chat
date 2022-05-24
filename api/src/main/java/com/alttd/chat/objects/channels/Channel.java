@@ -3,7 +3,7 @@ package com.alttd.chat.objects.channels;
 import java.util.Collection;
 import java.util.HashMap;
 
-public abstract class Channel {
+public class Channel {
 
     public static HashMap<String, Channel> channels = new HashMap<>();
     protected String permission;

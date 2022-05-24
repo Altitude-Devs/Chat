@@ -1,10 +1,9 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.ChatPlugin;
-import com.alttd.chat.managers.PartyManager;
-import com.alttd.chat.objects.Party;
-import com.alttd.chat.util.Utility;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import com.alttd.chat.config.Config;
+import com.alttd.chat.objects.Toggleable;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-public class PartyChat implements CommandExecutor {
+import java.util.HashSet;
+import java.util.UUID;
+
+public class PartyChat extends Toggleable implements CommandExecutor {
+
+    private final HashSet<UUID> toggledUsers = new HashSet<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -22,7 +26,8 @@ public class PartyChat implements CommandExecutor {
         }
 
         if(args.length == 0) {
-            // TODO: 08/08/2021 lock into party chat
+            player.sendMiniMessage(Config.PARTY_TOGGLED, Placeholder.unparsed("status",
+                    toggle(player.getUniqueId()) ? "<green>on</green>" : "<red>off</red>"));
             return true;
         }
 
@@ -36,5 +41,31 @@ public class PartyChat implements CommandExecutor {
         }.runTaskAsynchronously(ChatPlugin.getInstance());
 
         return true;
+    }
+
+    @Override
+    public boolean isToggled(UUID uuid) {
+        return toggledUsers.contains(uuid);
+    }
+
+    @Override
+    public void setOff(UUID uuid) {
+        disableToggles(uuid);
+    }
+
+    @Override
+    public void setOn(UUID uuid) {
+        disableToggles(uuid);
+        toggledUsers.add(uuid);
+    }
+
+    @Override
+    public void sendMessage(Player player, String message) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ChatPlugin.getInstance().getChatHandler().partyMessage(player, message);
+            }
+        }.runTaskAsynchronously(ChatPlugin.getInstance());
     }
 }

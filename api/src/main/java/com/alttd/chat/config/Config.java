@@ -6,10 +6,11 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +19,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Pattern;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-import org.spongepowered.configurate.ConfigurationOptions;
 
 public final class Config {
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
@@ -294,6 +293,7 @@ public final class Config {
                 Members: <members>""";
     public static Component ONLINE_PREFIX = null;
     public static Component OFFLINE_PREFIX = null;
+    public static String PARTY_TOGGLED = "<dark_aqua>Party chat toggled <status>.</dark_aqua>";
     private static void party() {
         PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
         PARTY_SPY = getString("party.spy", PARTY_SPY);
@@ -327,6 +327,7 @@ public final class Config {
         ALREADY_IN_THIS_PARTY = getString("party.messages.already-in-this-party", ALREADY_IN_THIS_PARTY);
         ONLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>■ </green>"));
         OFFLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>■ </red>"));
+        PARTY_TOGGLED = getString("party.messages.party-toggled", PARTY_TOGGLED);
     }
 
     public static String PARTY_HELP_WRAPPER = "<gold>ChatParty help:\n<commands></gold>";
@@ -358,6 +359,7 @@ public final class Config {
         PARTY_HELP_CHAT = getString("party.help.chat", PARTY_HELP_CHAT);
     }
 
+    public static String CUSTOM_CHANNEL_TOGGLED = "<yellow>Toggled <channel> <status>.</yellow>";
     private static void chatChannels() {
         ConfigurationNode node = getNode("chat-channels");
         if (node.empty()) {
@@ -375,6 +377,8 @@ public final class Config {
                     getList(key + "servers", Collections.EMPTY_LIST),
                     getBoolean(key + "proxy", false));
         }
+
+        CUSTOM_CHANNEL_TOGGLED = getString("chat-channels-messages.channel-toggled", CUSTOM_CHANNEL_TOGGLED);
     }
 
     public static String SERVERMUTEPERMISSION = "chat.command.mute-server";
