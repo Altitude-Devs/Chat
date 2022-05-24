@@ -1,6 +1,7 @@
 package com.alttd.chat.config;
 
 import com.alttd.chat.objects.channels.CustomChannel;
+import com.alttd.chat.util.Utility;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import io.leangen.geantyref.TypeToken;
@@ -294,7 +295,6 @@ public final class Config {
     public static Component ONLINE_PREFIX = null;
     public static Component OFFLINE_PREFIX = null;
     private static void party() {
-        MiniMessage miniMessage = MiniMessage.miniMessage();
         PARTY_FORMAT = getString("party.format", PARTY_FORMAT);
         PARTY_SPY = getString("party.spy", PARTY_SPY);
         NO_PERMISSION = getString("party.messages.no-permission", NO_PERMISSION);
@@ -325,8 +325,8 @@ public final class Config {
         DISBANDED_PARTY = getString("party.messages.disbanded-party", DISBANDED_PARTY);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
         ALREADY_IN_THIS_PARTY = getString("party.messages.already-in-this-party", ALREADY_IN_THIS_PARTY);
-        ONLINE_PREFIX = miniMessage.deserialize(getString("party.messages.online-prefix", "<green>■ </green>"));
-        OFFLINE_PREFIX = miniMessage.deserialize(getString("party.messages.offline-prefix", "<red>■ </red>"));
+        ONLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>■ </green>"));
+        OFFLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>■ </red>"));
     }
 
     public static String PARTY_HELP_WRAPPER = "<gold>ChatParty help:\n<commands></gold>";
