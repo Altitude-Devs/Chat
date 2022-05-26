@@ -14,6 +14,7 @@ import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -64,16 +65,13 @@ public class ChatListener implements Listener, ChatRenderer {
             message = Utility.parseColors(message);
         }
 
-        if(message.contains("[i]"))
-            message = message.replace("[i]", "<[i]>"); // end of todo
-
         message = Utility.formatText(message);
         TagResolver placeholders = TagResolver.resolver(
-                Placeholder.unparsed("message", message), // needs to be unparsed because of the placeholders repeating bug
-                Placeholder.component("[i]]", ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
+                Placeholder.unparsed("message", message)
         );
 
-        Component component = Utility.parseMiniMessage("<message>", placeholders);
+        Component component = Utility.parseMiniMessage("<message>", placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
         event.message(component);
         event.renderer(this);
@@ -88,7 +86,7 @@ public class ChatListener implements Listener, ChatRenderer {
                 Placeholder.component("prefix", user.getPrefix()),
                 Placeholder.component("prefixall", user.getPrefixAll()),
                 Placeholder.component("staffprefix", user.getStaffPrefix()),
-                Placeholder.component("message ", message)
+                Placeholder.component("message", message)
         );
 
         return Utility.parseMiniMessage(Config.CHATFORMAT, placeholders);

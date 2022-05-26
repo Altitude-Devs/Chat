@@ -12,6 +12,7 @@ import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -55,19 +56,16 @@ public class ChatHandler {
             updatedMessage = Utility.parseColors(updatedMessage);
         }
 
-        if(updatedMessage.contains("[i]"))
-            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
         updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.parsed("message", updatedMessage),
                 Placeholder.component("sendername", player.name()),
-                Placeholder.parsed("receivername", target),
-                Placeholder.component("[i]", itemComponent(player.getInventory().getItemInMainHand()))
+                Placeholder.parsed("receivername", target)
         );
 
-        Component component = Utility.parseMiniMessage("<message>", placeholders);
+        Component component = Utility.parseMiniMessage("<message>", placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
@@ -98,19 +96,16 @@ public class ChatHandler {
             updatedMessage = Utility.parseColors(updatedMessage);
         }
 
-        if(updatedMessage.contains("[i]"))
-            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
         updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.parsed("message", updatedMessage),
                 Placeholder.component("sendername", player.name()),
-                Placeholder.parsed("receivername", target),
-                Placeholder.component("[i]", itemComponent(player.getInventory().getItemInMainHand()))
+                Placeholder.parsed("receivername", target)
         );
 
-        Component component = Utility.parseMiniMessage("<message>", placeholders);
+        Component component = Utility.parseMiniMessage("<message>", placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
@@ -158,19 +153,16 @@ public class ChatHandler {
             updatedMessage = Utility.parseColors(updatedMessage);
         }
 
-        if(updatedMessage.contains("[i]"))
-            updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
         updatedMessage = Utility.formatText(updatedMessage);
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("prefix", prefix),
                 Placeholder.parsed("message", updatedMessage),
-                Placeholder.parsed("server", Bukkit.getServerName()),
-                Placeholder.component("[i]]", itemComponent(player.getInventory().getItemInMainHand()))
+                Placeholder.parsed("server", Bukkit.getServerName())
         );
 
-        Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders);
+        Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
         user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
@@ -200,18 +192,16 @@ public class ChatHandler {
             updatedMessage = Utility.stripTokens(updatedMessage);
         }
 
-        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
         updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.parsed("message", updatedMessage),
                 Placeholder.parsed("server", Bukkit.getServerName()),
-                Placeholder.parsed("channel", channel.getChannelName()),
-                Placeholder.component("[i]]", itemComponent(player.getInventory().getItemInMainHand()))
+                Placeholder.parsed("channel", channel.getChannelName())
         );
-        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
+        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
@@ -246,7 +236,7 @@ public class ChatHandler {
 //            updatedMessage = Utility.stripTokens(updatedMessage);
 //        }
 //
-//        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
+//        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replaceFirst("[i]", "<item>");
 //
 //        updatedMessage = Utility.formatText(updatedMessage);
 //

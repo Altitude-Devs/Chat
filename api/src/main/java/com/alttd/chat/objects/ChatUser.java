@@ -45,8 +45,8 @@ public class ChatUser {
 //
 //        prefixAll = Utility.getPrefix(uuid, false);
 
-        replyTarget = null;
-        replyContinueTarget = null;
+        replyTarget = "";
+        replyContinueTarget = "";
         gcCooldown = System.currentTimeMillis(); // players can't use gc for 30 seconds after logging in if we use this?
         mails = Queries.getMails(uuid);
         ignoredPlayers = Queries.getIgnoredUsers(uuid);
@@ -104,7 +104,7 @@ public class ChatUser {
     }
 
     public String getReplyContinueTarget() {
-        return replyTarget;
+        return replyContinueTarget;
     }
 
     public void setReplyTarget(String replyTarget) {

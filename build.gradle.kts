@@ -67,7 +67,7 @@ tasks {
             exclude { it.moduleName == "velocity" }
         }
         listOf(
-            "net.kyori.adventure.text.minimessage",
+//            "net.kyori.adventure.text.minimessage",
             "org.spongepowered.configurate"
 //        ).forEach { relocate(it, "${rootProject.group}.lib.$it") }
         ).forEach { relocate(it, "${rootProject.group}.lib.${it.substringAfterLast(".")}") }

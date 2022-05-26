@@ -19,6 +19,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -128,8 +129,6 @@ public class ChatHandler {
             updatedMessage = Utility.stripTokens(updatedMessage);
         }
 
-        if(updatedMessage.contains("[i]")) updatedMessage = updatedMessage.replace("[i]", "<[i]>");
-
         updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver Placeholders = TagResolver.resolver(
@@ -137,11 +136,11 @@ public class ChatHandler {
                 Placeholder.component("sendername", senderName),
                 Placeholder.unparsed("partyname", party.getPartyName()),
                 Placeholder.unparsed("message", updatedMessage),
-                Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName()),
-                Placeholder.component("[i]", item)
+                Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName())
         );
 
-        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, Placeholders);
+        Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, Placeholders)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(item).build());;
         sendPartyMessage(party, partyMessage, user.getIgnoredBy());
 
         Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, Placeholders);
