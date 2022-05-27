@@ -50,7 +50,8 @@ public class RegexManager {
                     if(!permissionData.checkPermission("chat.bypass-filter-channel." + channel).asBoolean() &&
                             !permissionData.checkPermission("chat.bypass-filter." + chatFilter.getName()).asBoolean() &&
                             chatFilter.matches(modifiableString)) { // todo find a better way to do this?
-                        ALogger.info(playerName + " triggered the chat filter for " + chatFilter.getName() + ".");
+                        ALogger.info(playerName + " triggered the chat filter for " + chatFilter.getName()
+                                + " with: " + modifiableString.string() + ".");
                         return false;
                     }
                     break;
