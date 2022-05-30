@@ -35,7 +35,7 @@ public class ChatListener {
 
         Component message = Utility.parseMiniMessage(Config.GACFORMAT,
                 Placeholder.parsed("sender", senderName),
-                Placeholder.parsed("message", event.getMessage()),
+                Placeholder.component("message", Utility.parseMiniMessage(event.getMessage())),
                 Placeholder.parsed("server", serverName)
         );
 

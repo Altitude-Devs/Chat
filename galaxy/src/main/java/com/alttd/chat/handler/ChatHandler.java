@@ -41,7 +41,7 @@ public class ChatHandler {
 //        user.setReplyTarget(target);
         ModifiableString modifiableString = new ModifiableString(message);
         // todo a better way for this
-        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "privatemessage")) {
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString,  "privatemessage")) {
             GalaxyUtility.sendBlockedNotification("DM Language",
                     player,
                     Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
@@ -59,7 +59,7 @@ public class ChatHandler {
         updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver placeholders = TagResolver.resolver(
-                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
                 Placeholder.component("sendername", player.name()),
                 Placeholder.parsed("receivername", target)
         );
@@ -98,16 +98,19 @@ public class ChatHandler {
 
         updatedMessage = Utility.formatText(updatedMessage);
 
+        Component messageComponent = Utility.parseMiniMessage(updatedMessage)
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]")
+                        .replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
         TagResolver placeholders = TagResolver.resolver(
-                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("message", messageComponent),
                 Placeholder.component("sendername", player.name()),
                 Placeholder.parsed("receivername", target)
         );
 
-        Component component = Utility.parseMiniMessage("<message>", placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+//        Component component = Utility.parseMiniMessage("<message>", placeholders)
+//                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
-        sendPrivateMessage(player, target, "privatemessage", component);
+        sendPrivateMessage(player, target, "privatemessage", messageComponent);
         Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
         for(Player pl : Bukkit.getOnlinePlayers()) {
             if(pl.hasPermission(Config.SPYPERMISSION) && ChatUserManager.getChatUser(pl.getUniqueId()).isSpy() && !pl.equals(player) && !pl.getName().equalsIgnoreCase(target)) {
@@ -157,7 +160,7 @@ public class ChatHandler {
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("prefix", prefix),
-                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
                 Placeholder.parsed("server", Bukkit.getServerName())
         );
 
@@ -196,7 +199,7 @@ public class ChatHandler {
 
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
-                Placeholder.parsed("message", updatedMessage),
+                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
                 Placeholder.parsed("server", Bukkit.getServerName()),
                 Placeholder.parsed("channel", channel.getChannelName())
         );

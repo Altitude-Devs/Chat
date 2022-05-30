@@ -12,6 +12,7 @@ import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import jdk.jshell.execution.Util;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -65,12 +66,13 @@ public class ChatListener implements Listener, ChatRenderer {
             message = Utility.parseColors(message);
         }
 
-        message = Utility.formatText(message);
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.unparsed("message", message)
-        );
-
-        Component component = Utility.parseMiniMessage("<message>", placeholders)
+        Component component = Utility.parseMiniMessage(Utility.formatText(message));
+//        message = Utility.formatText(message);
+//        TagResolver placeholders = TagResolver.resolver(
+//                Placeholder.unparsed("message", message)
+//        );
+        component = component
+//        Component component = Utility.parseMiniMessage("<message>", placeholders)
                 .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
 
         event.message(component);

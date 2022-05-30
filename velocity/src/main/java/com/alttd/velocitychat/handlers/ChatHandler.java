@@ -135,7 +135,7 @@ public class ChatHandler {
                 Placeholder.component("sender", senderName),
                 Placeholder.component("sendername", senderName),
                 Placeholder.unparsed("partyname", party.getPartyName()),
-                Placeholder.unparsed("message", updatedMessage),
+                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
                 Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName())
         );
 
@@ -171,7 +171,7 @@ public class ChatHandler {
         }
 
         TagResolver Placeholders = TagResolver.resolver(
-                Placeholder.unparsed("message", message),
+                Placeholder.component("message", Utility.parseMiniMessage(message)),
                 Placeholder.component("sender", senderName),
                 Placeholder.unparsed("server", serverName));
 
@@ -236,7 +236,7 @@ public class ChatHandler {
             TagResolver Placeholders = TagResolver.resolver(
                     Placeholder.component("staffprefix", chatUser.getStaffPrefix()),
                     Placeholder.component("sender", chatUser.getDisplayName()),
-                    Placeholder.unparsed("message", mail.getMessage()),
+                    Placeholder.component("message", Utility.parseMiniMessage(mail.getMessage())),
                     Placeholder.unparsed("date", new Date(mail.getSendTime()).toString())
             );
             Component mailMessage = Utility.parseMiniMessage(Config.mailBody, Placeholders);
