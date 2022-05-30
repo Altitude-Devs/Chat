@@ -92,10 +92,6 @@ public class SilentJoinCommand {
     }
 
     private void sendHelpMessage(CommandSource commandSource) {
-
-    }
-
-    private void sendAdminHelpMessage(CommandSource commandSource) {
-
+        commandSource.sendMessage(Utility.parseMiniMessage("<red>Use: <gold>/silentjoin <server></gold>.</red>"));
     }
 }

@@ -108,6 +108,7 @@ public class VelocityChat {
     }
 
     public void loadCommands() {
+        new SilentJoinCommand(server);
         new GlobalAdminChat(server);
         new Reload(server);
         new MailCommand(server);
