@@ -381,8 +381,8 @@ public final class Config {
         }
 
         CUSTOM_CHANNEL_TOGGLED = getString("chat-channels-messages.channel-toggled", CUSTOM_CHANNEL_TOGGLED);
-        TOGGLED_ON = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>on</green><gray>"));
-        TOGGLED_OFF = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>off</red><gray>"));
+        TOGGLED_ON = Utility.parseMiniMessage(getString("chat-channels-messages.channel-on", "<green>on</green><gray>"));
+        TOGGLED_OFF = Utility.parseMiniMessage(getString("chat-channels-messages.channel-off", "<red>off</red><gray>"));
     }
 
     public static String SERVERMUTEPERMISSION = "chat.command.mute-server";

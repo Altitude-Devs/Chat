@@ -27,7 +27,7 @@ public class ToggleableForCustomChannel extends Toggleable {
 
     @Override
     public void setOff(UUID uuid) {
-        disableToggles(uuid);
+        toggledUsers.remove(uuid);
     }
 
     @Override

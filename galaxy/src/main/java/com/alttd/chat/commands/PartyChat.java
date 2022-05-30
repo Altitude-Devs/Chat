@@ -50,7 +50,7 @@ public class PartyChat extends Toggleable implements CommandExecutor {
 
     @Override
     public void setOff(UUID uuid) {
-        disableToggles(uuid);
+        toggledUsers.remove(uuid);
     }
 
     @Override

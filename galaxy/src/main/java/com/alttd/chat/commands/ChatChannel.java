@@ -37,8 +37,8 @@ public class ChatChannel extends BukkitCommand {
             return true;
         }
 
-        if(args.length == 0) {
-            player.sendMiniMessage(Config.PARTY_TOGGLED, TagResolver.resolver(
+        if(args.length == 0 && player.hasPermission(channel.getPermission())) {
+            player.sendMiniMessage(Config.CUSTOM_CHANNEL_TOGGLED, TagResolver.resolver(
                     Placeholder.unparsed("channel", channel.getChannelName()),
                     Placeholder.component("status", toggleableForCustomChannel.toggle(player.getUniqueId())
                             ? Config.TOGGLED_ON : Config.TOGGLED_OFF)));
