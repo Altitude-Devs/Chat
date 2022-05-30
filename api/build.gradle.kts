@@ -3,7 +3,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.alttd:Galaxy-API:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("com.alttd:Galaxy-API:1.18.2-R0.1-SNAPSHOT") {
+//        exclude("net.kyori")
+    }
     compileOnly("org.spongepowered:configurate-yaml:4.1.2") // Configurate
     compileOnly("net.luckperms:api:5.3") // Luckperms
 }
