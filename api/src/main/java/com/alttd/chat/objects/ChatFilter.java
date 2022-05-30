@@ -92,7 +92,7 @@ public class ChatFilter {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
             String group = matcher.group();
-            modifiableString.string(input.replace(group, group.substring(0, length)));
+            modifiableString.replace(group, group.substring(0, length));
         }
     }
 }
