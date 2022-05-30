@@ -84,14 +84,14 @@ public class ChatListener implements Listener, ChatRenderer {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", user.getDisplayName()),
-                Placeholder.component("sendername", player.name()),
+//                Placeholder.component("sendername", player.name()),
                 Placeholder.component("prefix", user.getPrefix()),
                 Placeholder.component("prefixall", user.getPrefixAll()),
                 Placeholder.component("staffprefix", user.getStaffPrefix()),
                 Placeholder.component("message", message)
         );
 
-        return Utility.parseMiniMessage(Config.CHATFORMAT, placeholders);
+        return Utility.parseMiniMessage(Config.CHATFORMAT.replaceAll("<sendername>", player.getName()), placeholders);
     }
 
 }

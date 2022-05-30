@@ -53,7 +53,9 @@ public class ChatHandler {
         if(player.getCurrentServer().isPresent() && player2.getCurrentServer().isPresent()) {
             // redirect to the sender
             serverConnection = player.getCurrentServer().get();
-            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER, Placeholders);
+            Component component = Utility.parseMiniMessage(Config.MESSAGESENDER
+                    .replaceAll("<sendername>", player.getUsername())
+                    .replaceAll("<receivername>", player2.getUsername()), Placeholders);
             ByteArrayDataOutput buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessageout");
             buf.writeUTF(player.getUniqueId().toString());
@@ -64,7 +66,9 @@ public class ChatHandler {
 
             //redirect to the receiver
             serverConnection = player2.getCurrentServer().get();
-            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER, Placeholders);
+            component = Utility.parseMiniMessage(Config.MESSAGERECIEVER
+                    .replaceAll("<sendername>", player.getUsername())
+                    .replaceAll("<receivername>", player2.getUsername()), Placeholders);
             buf = ByteStreams.newDataOutput();
             buf.writeUTF("privatemessagein");
             buf.writeUTF(player2.getUniqueId().toString());
