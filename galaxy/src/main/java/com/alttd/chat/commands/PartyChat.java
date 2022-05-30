@@ -26,8 +26,8 @@ public class PartyChat extends Toggleable implements CommandExecutor {
         }
 
         if(args.length == 0) {
-            player.sendMiniMessage(Config.PARTY_TOGGLED, Placeholder.unparsed("status",
-                    toggle(player.getUniqueId()) ? "<green>on</green>" : "<red>off</red>"));
+            player.sendMiniMessage(Config.PARTY_TOGGLED, Placeholder.component("status",
+                    toggle(player.getUniqueId()) ? Config.TOGGLED_ON : Config.TOGGLED_OFF));
             return true;
         }
 

@@ -325,8 +325,8 @@ public final class Config {
         DISBANDED_PARTY = getString("party.messages.disbanded-party", DISBANDED_PARTY);
         PARTY_INFO = getString("party.messages.party-info", PARTY_INFO);
         ALREADY_IN_THIS_PARTY = getString("party.messages.already-in-this-party", ALREADY_IN_THIS_PARTY);
-        ONLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>■ </green>"));
-        OFFLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>■ </red>"));
+        ONLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>■</green>"));
+        OFFLINE_PREFIX = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>■</red>"));
         PARTY_TOGGLED = getString("party.messages.party-toggled", PARTY_TOGGLED);
     }
 
@@ -360,6 +360,8 @@ public final class Config {
     }
 
     public static String CUSTOM_CHANNEL_TOGGLED = "<yellow>Toggled <channel> <status>.</yellow>";
+    public static Component TOGGLED_ON = null;
+    public static Component TOGGLED_OFF = null;
     private static void chatChannels() {
         ConfigurationNode node = getNode("chat-channels");
         if (node.empty()) {
@@ -379,6 +381,8 @@ public final class Config {
         }
 
         CUSTOM_CHANNEL_TOGGLED = getString("chat-channels-messages.channel-toggled", CUSTOM_CHANNEL_TOGGLED);
+        TOGGLED_ON = Utility.parseMiniMessage(getString("party.messages.online-prefix", "<green>on</green><gray>"));
+        TOGGLED_OFF = Utility.parseMiniMessage(getString("party.messages.offline-prefix", "<red>off</red><gray>"));
     }
 
     public static String SERVERMUTEPERMISSION = "chat.command.mute-server";
