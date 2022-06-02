@@ -104,7 +104,7 @@ public class ProxyPlayerListener {
                 Component message = Utility.parseMiniMessage(Config.SILENT_JOIN_JOINED_FROM,
                         placeholders);
                 event.getServer().getPlayersConnected().stream()
-                        .filter(player1 -> player.hasPermission("command.chat.silent-join-notify"))
+                        .filter(player1 -> player1.hasPermission("command.chat.silent-join-notify"))
                         .forEach(player1 -> player1.sendMessage(message));
                 return;
             }
@@ -122,7 +122,7 @@ public class ProxyPlayerListener {
                 Component message = Utility.parseMiniMessage(Config.SILENT_JOIN_JOINED,
                         Placeholder.unparsed("player", player.getUsername()));
                 event.getServer().getPlayersConnected().stream()
-                        .filter(player1 -> player.hasPermission("command.chat.silent-join-notify"))
+                        .filter(player1 -> player1.hasPermission("command.chat.silent-join-notify"))
                         .forEach(player1 -> player1.sendMessage(message));
                 return;
             }
