@@ -14,7 +14,6 @@ import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.mysql.cj.MessageBuilder;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -25,6 +24,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.*;
 
 public class ChatHandler {
@@ -204,7 +204,7 @@ public class ChatHandler {
         } else {
             targetUUID = optionalPlayer.get().getUniqueId();
         }
-        Mail mail = new Mail(uuid, targetUUID, message);
+        Mail mail = new Mail(targetUUID, uuid, message);
         ChatUser chatUser = ChatUserManager.getChatUser(targetUUID);
         chatUser.addMail(mail);
         // TODO load from config
@@ -236,12 +236,14 @@ public class ChatHandler {
                 mail.setReadTime(System.currentTimeMillis());
                 Queries.markMailRead(mail);
             }
+            Date date = new Date(mail.getSendTime());
             ChatUser chatUser = ChatUserManager.getChatUser(mail.getSender());
             TagResolver Placeholders = TagResolver.resolver(
                     Placeholder.component("staffprefix", chatUser.getStaffPrefix()),
                     Placeholder.component("sender", chatUser.getDisplayName()),
                     Placeholder.component("message", Utility.parseMiniMessage(mail.getMessage())),
-                    Placeholder.unparsed("date", new Date(mail.getSendTime()).toString())
+                    Placeholder.unparsed("date", date.toString()),
+                    Placeholder.unparsed("time_ago", getTimeAgo(Duration.between(date.toInstant(), new Date().toInstant())))
             );
             Component mailMessage = Utility.parseMiniMessage(Config.mailBody, Placeholders);
             component = component.append(Component.newline()).append(mailMessage);
@@ -269,5 +271,15 @@ public class ChatHandler {
         buf.writeUTF("chatpunishments");
         buf.writeUTF(uuid);
         buf.writeBoolean(muted);
+    }
+
+    private String getTimeAgo(Duration duration) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (duration.toDays() != 0)
+            stringBuilder.append(duration.toDays()).append("d ");
+        if (duration.toHoursPart() != 0 || !stringBuilder.isEmpty())
+            stringBuilder.append(duration.toHoursPart()).append("h ");
+        stringBuilder.append(duration.toMinutesPart()).append("m ago");
+        return stringBuilder.toString();
     }
 }

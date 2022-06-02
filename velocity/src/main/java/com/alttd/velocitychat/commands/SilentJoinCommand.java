@@ -68,7 +68,7 @@ public class SilentJoinCommand {
                             player.sendMessage(Utility.parseMiniMessage(Config.SILENT_JOIN_JOINING,
                                     Placeholder.unparsed("server", registeredServer.getServerInfo().getName())));
                             ProxyPlayerListener.addSilentJoin(player.getUniqueId());
-                            player.createConnectionRequest(registeredServer);
+                            player.createConnectionRequest(registeredServer).connectWithIndication();
                             return 1;
                         })
                 )

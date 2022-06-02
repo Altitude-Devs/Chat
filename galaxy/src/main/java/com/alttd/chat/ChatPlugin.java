@@ -45,6 +45,7 @@ public class ChatPlugin extends JavaPlugin {
         }
         registerCommand("message", new Message());
         registerCommand("reply", new Reply());
+        registerCommand("continue", new Continue());
         registerCommand("ignore", new Ignore());
         registerCommand("unignore", new Unignore());
         registerCommand("muteserver", new MuteServer());

@@ -62,6 +62,7 @@ public class PluginMessage implements PluginMessageListener {
                 if (p != null) {
                     ChatUser chatUser = ChatUserManager.getChatUser(uuid);
                     if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
+                        chatUser.setReplyTarget(target);
                         p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
 //                        ChatUser user = ChatUserManager.getChatUser(uuid);
 //                        user.setReplyTarget(target);
