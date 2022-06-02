@@ -12,7 +12,8 @@ public class ModifiableString {
     }
 
     public void replace(String match, String replace) {
-        this.string = string.replaceAll(match, replace);
+        while (string.contains(match))
+            string = string.replace(match, replace);
     }
 
     public String string() {
