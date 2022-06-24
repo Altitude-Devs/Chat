@@ -10,10 +10,7 @@ import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
-import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import jdk.jshell.execution.Util;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -24,19 +21,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-public class ChatListener implements Listener, ChatRenderer {
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class ChatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
+        event.setCancelled(true); //Always cancel the event because we do not want to deal with Microsoft's stupid bans
         Toggleable toggleable = Toggleable.getToggleable(event.getPlayer().getUniqueId());
         if (toggleable != null) {
-            event.setCancelled(true);
             toggleable.sendMessage(event.getPlayer(), event.message());
             return;
         }
         if (ChatPlugin.getInstance().serverMuted() && !event.getPlayer().hasPermission("chat.bypass-server-muted")) {
-            event.setCancelled(true);
-
             Player player = event.getPlayer();
             GalaxyUtility.sendBlockedNotification("Chat Muted", player, event.message(), "");
             return;
@@ -45,8 +43,10 @@ public class ChatListener implements Listener, ChatRenderer {
         Player player = event.getPlayer();
 //        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 
-        event.viewers().removeIf(audience -> audience instanceof Player receiver
-                && ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()));
+        Set<Player> receivers = event.viewers().stream().filter(audience -> audience instanceof Player)
+                .map(audience -> (Player) audience)
+                .filter(receiver -> ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                .collect(Collectors.toSet());
 
         Component input = event.message();
         String message = PlainTextComponentSerializer.plainText().serialize(input);
@@ -67,20 +67,21 @@ public class ChatListener implements Listener, ChatRenderer {
         }
 
         Component component = Utility.parseMiniMessage(Utility.formatText(message));
-//        message = Utility.formatText(message);
-//        TagResolver placeholders = TagResolver.resolver(
-//                Placeholder.unparsed("message", message)
-//        );
-        component = component
-//        Component component = Utility.parseMiniMessage("<message>", placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+        component = component.replaceText(
+                TextReplacementConfig.builder()
+                        .once()
+                        .matchLiteral("[i]")
+                        .replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
+                        .build());
 
-        event.message(component);
-        event.renderer(this);
+        component = render(player, component);
+        player.sendMessage(component);
+        for (Player receiver : receivers) {
+            receiver.sendMessage(component);
+        }
     }
 
-    @Override
-    public @NotNull Component render(@NotNull Player player, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
+    public @NotNull Component render(@NotNull Player player, @NotNull Component message) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", user.getDisplayName()),
