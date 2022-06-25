@@ -45,7 +45,7 @@ public class ChatListener implements Listener {
 
         Set<Player> receivers = event.viewers().stream().filter(audience -> audience instanceof Player)
                 .map(audience -> (Player) audience)
-                .filter(receiver -> ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                .filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
                 .collect(Collectors.toSet());
 
         Component input = event.message();
@@ -75,7 +75,6 @@ public class ChatListener implements Listener {
                         .build());
 
         component = render(player, component);
-        player.sendMessage(component);
         for (Player receiver : receivers) {
             receiver.sendMessage(component);
         }
