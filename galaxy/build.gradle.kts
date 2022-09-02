@@ -12,11 +12,12 @@ dependencies {
 tasks {
 
     shadowJar {
-        archiveFileName.set("${project.name}-${project.version}.jar")
+        archiveFileName.set("${rootProject.name}-${project.name}-${project.version}.jar")
 //        minimize()
     }
 
     build {
+        setBuildDir("${rootProject.buildDir}")
         dependsOn(shadowJar)
     }
 

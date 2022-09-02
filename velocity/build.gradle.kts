@@ -17,7 +17,7 @@ dependencies {
 tasks {
 
     shadowJar {
-        archiveFileName.set("${project.name}-${project.version}.jar")
+        archiveFileName.set("${rootProject.name}-${project.name}-${project.version}.jar")
 //        minimize()
         listOf(
 //            "net.kyori.adventure.text.minimessage",
@@ -26,6 +26,7 @@ tasks {
     }
 
     build {
+        setBuildDir("${rootProject.buildDir}")
         dependsOn(shadowJar)
     }
 
