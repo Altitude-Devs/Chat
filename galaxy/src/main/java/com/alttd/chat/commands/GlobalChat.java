@@ -1,7 +1,7 @@
 package com.alttd.chat.commands;
 
 import com.alttd.chat.ChatPlugin;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
