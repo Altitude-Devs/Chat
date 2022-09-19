@@ -20,7 +20,7 @@ tasks {
         archiveFileName.set("${project.name}-${project.version}.jar")
 //        minimize()
         listOf(
-            "net.kyori.adventure.text.minimessage",
+//            "net.kyori.adventure.text.minimessage",
             "org.spongepowered.configurate"
         ).forEach { relocate(it, "${rootProject.group}.lib.${it.substringAfterLast(".")}") }
     }
