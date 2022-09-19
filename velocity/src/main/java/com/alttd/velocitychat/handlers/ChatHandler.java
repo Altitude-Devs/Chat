@@ -210,6 +210,7 @@ public class ChatHandler {
         // TODO load from config
         String finalSenderName = senderName;
         optionalPlayer.ifPresent(player -> player.sendMessage(Utility.parseMiniMessage("<yellow>New mail from " + finalSenderName)));
+        commandSource.sendMessage(Utility.parseMiniMessage("<yellow>Sent mail to " + senderName + "!"));
     }
 
     public void readMail(CommandSource commandSource, String targetPlayer) {
