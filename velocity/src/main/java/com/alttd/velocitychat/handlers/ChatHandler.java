@@ -213,14 +213,28 @@ public class ChatHandler {
         commandSource.sendMessage(Utility.parseMiniMessage("<yellow>Sent mail to " + senderName + "!"));
     }
 
-    public void readMail(CommandSource commandSource, String targetPlayer) {
+    public void readMail(CommandSource commandSource, String targetPlayer, String senderPlayer) {
         UUID uuid = ServerHandler.getPlayerUUID(targetPlayer);
         if (uuid == null) {
             commandSource.sendMessage(Utility.parseMiniMessage(Config.mailNoUser));
             return;
         }
+
         ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-        commandSource.sendMessage(parseMails(chatUser.getMails(), false));
+        if (senderPlayer == null) {
+            commandSource.sendMessage(parseMails(chatUser.getMails(), false));
+        }
+
+        UUID sender = ServerHandler.getPlayerUUID(senderPlayer);
+        if (sender == null) {
+            commandSource.sendMessage(Utility.parseMiniMessage(Config.mailNoUser));
+            return;
+        }
+
+        List<Mail> mails = chatUser.getMails().stream()
+                .filter(mail -> mail.getSender().equals(sender))
+                .toList();
+        commandSource.sendMessage(parseMails(mails, false));
     }
 
     public void readMail(CommandSource commandSource, boolean unread) {

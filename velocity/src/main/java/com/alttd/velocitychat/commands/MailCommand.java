@@ -41,6 +41,27 @@ public class MailCommand {
                     return 1;
                 });
 
+        RequiredArgumentBuilder<CommandSource, String> playerNodeSender = RequiredArgumentBuilder
+                .<CommandSource, String>argument("sender", StringArgumentType.string())
+                .suggests((context, builder) -> {
+                    Collection<String> possibleValues = new ArrayList<>();
+                    for (Player player : proxyServer.getAllPlayers()) {
+                        possibleValues.add(player.getGameProfile().getName());
+                    }
+                    if(possibleValues.isEmpty()) return Suggestions.empty();
+                    String remaining = builder.getRemaining().toLowerCase();
+                    for (String str : possibleValues) {
+                        if (str.toLowerCase().startsWith(remaining)) {
+                            builder.suggest(str = StringArgumentType.escapeIfRequired(str));
+                        }
+                    }
+                    return builder.buildFuture();
+                })
+                .executes(context -> {
+                    sendHelpMessage(context.getSource());
+                    return 1;
+                });
+
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("mail")
                 .requires(ctx -> ctx.hasPermission("command.chat.mail"))
@@ -79,8 +100,13 @@ public class MailCommand {
                         )
                         .then(playerNode
                                 .requires(ctx -> ctx.hasPermission("command.chat.mail.list.other"))// TODO permission
+                                .then(playerNodeSender
+                                        .executes(context -> {
+                                            VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class), context.getArgument("sender", String.class));
+                                            return 1;
+                                        }))
                                 .executes(context -> {
-                                    VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class));
+                                    VelocityChat.getPlugin().getChatHandler().readMail(context.getSource(), context.getArgument("player", String.class), null);
                                     return 1;
                                 })
                         )
