@@ -8,6 +8,7 @@ import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.Toggleable;
+import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,6 +80,7 @@ public class ChatListener implements Listener {
         for (Player receiver : receivers) {
             receiver.sendMessage(component);
         }
+        ALogger.info(PlainTextComponentSerializer.plainText().serialize(component));
     }
 
     public @NotNull Component render(@NotNull Player player, @NotNull Component message) {
