@@ -3,6 +3,7 @@ package com.alttd.chat.managers;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.RegexConfig;
 import com.alttd.chat.objects.ChatFilter;
+import com.alttd.chat.objects.FilterType;
 import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.util.ALogger;
 import net.luckperms.api.cacheddata.CachedPermissionData;
@@ -17,11 +18,24 @@ public class RegexManager {
 
     private static List<ChatFilter> chatFilters;
     private static final Pattern pattern = Pattern.compile("(.)\\1{4,}");
+    private static final List<ChatFilter> emotes = new ArrayList<>();
+    public static final List<String> emotesList = new ArrayList<>();
 
     public static void initialize() {
         chatFilters = new ArrayList<>();
 
         RegexConfig.init();
+        loadEmotes();
+    }
+
+    private static void loadEmotes() {
+        emotes.clear();
+        for(ChatFilter chatFilter : chatFilters) {
+            if (chatFilter.getType() != FilterType.EMOTE) return;
+
+            emotes.add(chatFilter);
+            emotesList.add(chatFilter.getRegex());
+        }
     }
 
     public static void addFilter(ChatFilter filter) {
@@ -65,4 +79,11 @@ public class RegexManager {
         return true;
     }
 
+    public static List<ChatFilter> getChatFilters() {
+        return chatFilters;
+    }
+
+    public static List<ChatFilter> getEmoteFilters() {
+        return emotes;
+    }
 }
