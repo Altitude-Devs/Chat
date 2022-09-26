@@ -1,12 +1,18 @@
 package com.alttd.chat.util;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.managers.RegexManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GalaxyUtility {
 
@@ -30,6 +36,16 @@ public class GalaxyUtility {
 
     public static void sendBlockedNotification(String prefix, Player player, Component input, String target) {
         sendBlockedNotification(prefix, player, PlainTextComponentSerializer.plainText().serialize(input), target);
+    }
+
+    public static void addAdditionalChatCompletions(Player player) {
+        List<String> completions = new ArrayList<>(RegexManager.emotesList);
+        Utility.formattingPerms.forEach((perm, pair) -> {
+            if (player.hasPermission(perm)) {
+                completions.addAll(pair.getY());
+            }
+        });
+        player.addAdditionalChatCompletions(completions);
     }
 
 }
