@@ -169,6 +169,7 @@ public final class Config {
     public static String MINIMIUMSTAFFRANK = "trainee";
     public static String CONSOLENAME = "Console";
     public static UUID CONSOLEUUID = UUID.randomUUID();
+    public static int EMOTELIMIT = 3;
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
@@ -179,6 +180,7 @@ public final class Config {
         CONSOLENAME = getString("settings.console-name", CONSOLENAME);
         CONSOLEUUID = UUID.fromString(getString("settings.console-uuid", CONSOLEUUID.toString()));
         MINIMIUMSTAFFRANK = getString("settings.minimum-staff-rank", MINIMIUMSTAFFRANK);
+        EMOTELIMIT = getInt("settings.emote-limit", EMOTELIMIT);
     }
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
@@ -466,4 +468,14 @@ public final class Config {
     private static void loadMessages() {
         HELP_REPORT = getString("settings.mail.mail-sent", HELP_REPORT);
     }
+
+    public static String EMOTELIST_HEADER = "<bold>Available Chat Emotes</bold><newline>";
+    public static String EMOTELIST_ITEM = "<insert:\"<regex>\"><gold><regex></gold> : <emote></insert><newline>";
+    public static String EMOTELIST_FOOTER = "<green>----<< <gray>Prev</gray> <page> <gray>/</gray> <pages> <gray>Next</gray> >>----";
+    private static void emoteListCommand() {
+        EMOTELIST_HEADER = getString("commands.emotelist.header", EMOTELIST_HEADER);
+        EMOTELIST_ITEM = getString("commands.emotelist.item", EMOTELIST_ITEM);
+        EMOTELIST_FOOTER = getString("commands.emotelist.footer", EMOTELIST_FOOTER);
+    }
+
 }

@@ -23,7 +23,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     private void onPlayerLogin(PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        GalaxyUtility.addAdditionalChatCompletions(player);
+        UUID uuid = player.getUniqueId();
         Toggleable.disableToggles(uuid);
         ChatUser user = ChatUserManager.getChatUser(uuid);
         if(user != null) return;
