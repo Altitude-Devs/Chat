@@ -73,7 +73,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     }
 
                     if (i > 0) {
-                        player.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickRequestsOnLogin")
+                        player.sendMessage(format(Config.NICK_REQUESTS_ON_LOGIN
                                 .replace("%amount%", String.valueOf(i))));
                     }
                 }
@@ -113,7 +113,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
 
         switch (subChannel) {
             case "NickNameRequest":
-                String notification = NickUtilities.applyColor(ChatPlugin.getInstance().getConfig().getString("Messages.NickNewRequest")
+                String notification = NickUtilities.applyColor(Config.NICK_REQUEST_NEW
                         .replace("%player%", name));
                 TextComponent component = new TextComponent(TextComponent.fromLegacyText(NickUtilities.applyColor(notification)));
                 component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/nick review"));
@@ -148,7 +148,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Player target = Bukkit.getPlayer(playerUUID);
                     if (target != null && nick != null && nick.getCurrentNick() != null) {
                         Nicknames.getInstance().setNick(target, nick.getCurrentNick());
-                        target.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickChanged")
+                        target.sendMessage(format(Config.NICK_CHANGED
                                 .replace("%nickname%", nick.getCurrentNick())));
                     }
                 }
@@ -176,7 +176,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Player target = Bukkit.getPlayer(playerUUID);
 
                     if (target == null) break;
-                    target.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickNotChanged")
+                    target.sendMessage(format(Config.NICK_NOT_CHANGED
                             .replace("%nickname%", nick.getCurrentNick())));
                 }
                 break;

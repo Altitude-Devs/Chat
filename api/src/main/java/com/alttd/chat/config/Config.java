@@ -478,58 +478,61 @@ public final class Config {
         EMOTELIST_FOOTER = getString("commands.emotelist.footer", EMOTELIST_FOOTER);
     }
 
+    // nicknames TODO minimessage for colors and placeholders
+    public static String NICK_CHANGED = "&eYour nickname was changed to %nickname%&e.";
+    public static String NICK_NOT_CHANGED = "&eYour nickname request was denied.";
+    public static String NICK_RESET = "&eNickname changed back to normal.";
+    public static String NICK_CHANGED_OTHERS = "&6%targetplayer%&e's nickname was changed to %nickname%&e.";
+    public static String NICK_TARGET_NICK_CHANGE = "&eYour nickname was changed to %nickname% &eby %sendernick%&e";
+    public static String NICK_RESET_OTHERS = "&6%player%&6's &enickname was reset back to normal.";
+    public static String NICK_INVALID_CHARACTERS = "&eYou can only use letters and numbers in nicknames.";
+    public static String NICK_INVALID_LENGTH = "&eNicknames need to be between 3 to 16 characters long.";
+    public static String NICK_PLAYER_NOT_ONLINE = "&cThat player is not online.";
+    public static String NICK_BLOCKED_COLOR_CODES = "&eYou have blocked color codes in that nickname.";
+    public static String NICK_USER_NOT_FOUND = "&cFailed to set nickname from player, try again from a server this player has been on before.";
+    public static String NICK_ACCEPTED = "&aYou accepted %targetPlayer%&a's nickname. They are now called %newNick%&a.";
+    public static String NICK_DENIED = "&aYou denied %targetPlayer%&a's nickname. They are still called %oldNick%&a.";
+    public static String NICK_ALREADY_HANDLED = "&c%targetPlayer%&c's nickname was already accepted or denied.";
+    public static String NICK_NO_LUCKPERMS = "&cDue to an issue with LuckPerms /nick try won't work at the moment.";
+    public static String NICK_TOO_SOON = "&cPlease wait %time%&c until requesting a new nickname";
+    public static String NICK_REQUEST_PLACED = "&aReplaced your previous request %oldRequestedNick%&a with %newRequestedNick%&a.";
+    public static String NICK_REQUEST_NEW = "&aNew nickname request by %player%&a!";
+    public static String NICK_TRYOUT = "&f%prefix&f %nick%&7: &fHi, this is what my new nickname could look like!";
+    public static String NICK_REQUESTED = "&aYour requested to be nicknamed %nick%&a has been received. Staff will accept or deny this request asap!";
+    public static String NICK_REVIEW_WAITING = "&aThere are %amount% nicknames waiting for review!";
+    public static String NICK_TAKEN = "&cSomeone else already has this nickname, or has this name as their username.";
+    public static String NICK_REQUESTS_ON_LOGIN = "&aCurrent nick requests: %amount%";
+    public static long NICK_WAIT_TIME = 86400000;
+    public static List<String> NICK_ITEM_LORE = new ArrayList<>();
+    public static List<String> NICK_BLOCKED_COLOR_CODESLIST = new ArrayList<>();
+    public static List<String> NICK_ALLOWED_COLOR_CODESLIST = new ArrayList<>();
     private static void nicknameSettings() {
-        //        NickChanged("Messages.NickChanged", "&eYour nickname was changed to %nickname%&e."),
-        //        NickNotChanged("Messages.NickNotChanged", "&eYour nickname request was denied."),
-        //        NickReset("Messages.NickReset", "&eNickname changed back to normal."),
-        //        NickChangedOthers("Messages.NickChangedOthers", "&6%targetplayer%&e's nickname was changed to %nickname%&e."),
-        //        NickTargetNickChange("Messages.NickTargetNickChange", "&eYour nickname was changed to %nickname% &eby %sendernick%&e"),
-        //        NickResetOthers("Messages.NickResetOthers", "&6%player%&6's &enickname was reset back to normal."),
-        //        NickInvalidCharacters("Messages.NickInvalidCharacters", "&eYou can only use letters and numbers in nicknames."),
-        //        NickLengthInvalid("Messages.NickLengthInvalid", "&eNicknames need to be between 3 to 16 characters long."),
-        //        NickPlayerNotOnline("Messages.NickPlayerNotOnline", "&cThat player is not online."),
-        //        NickBlockedColorCodes("Messages.NickBlockedColorCodes", "&eYou have blocked color codes in that nickname."),
-        //        NickUserNotFound("Messages.NickUserNotFound", "&cFailed to set nickname from player, try again from a server this player has been on before."),
-        //        NickAccepted("Messages.NickAccepted", "&aYou accepted %targetPlayer%&a's nickname. They are now called %newNick%&a."),
-        //        NickDenied("Messages.NickDenied", "&aYou denied %targetPlayer%&a's nickname. They are still called %oldNick%&a."),
-        //        NickAlreadyHandled("Messages.NickAlreadyHandled", "&c%targetPlayer%&c's nickname was already accepted or denied."),
-        //        NickNoLuckperms("Messages.NickNoLuckPerms", "&cDue to an issue with LuckPerms /nick try won't work at the moment."),
-        //        NickTooSoon("Messages.NickTooSoon", "&cPlease wait %time%&c until requesting a new nickname"),
-        //        NickRequestReplaced("Messages.NickRequestReplaced", "&aReplaced your previous request %oldRequestedNick%&a with %newRequestedNick%&a."),
-        //        NickNewRequest("Messages.NickNewRequest", "&aNew nickname request by %player%&a!"),
-        //        NickTryout("Messages.NickTryout", "&f%prefix&f %nick%&7: &fHi, this is what my new nickname could look like!"),
-        //        NickRequested("Messages.NickRequested", "&aYour requested to be nicknamed %nick%&a has been received. Staff will accept or deny this request asap!"),
-        //        NickReviewWaiting("Messages.NickReviewWaiting", "&aThere are %amount% nicknames waiting for review!"),
-        //        NickTaken("Messages.NickTaken", "&cSomeone else already has this nickname, or has this name as their username."),
-        //        NickRequestsOnLogin("Messages.NickRequestsOnLogin", "&aCurrent nick requests: %amount%"),
-        //        // Nicknames
-        //
-        //        if (!config.contains("Nicknames.Lore")) {
-        //            List<String> lore = new ArrayList<>();
-        //
-        //            lore.add("&bNew nick: %newNick%");
-        //            lore.add("&bOld nick: %oldNick%");
-        //            lore.add("&bLast changed: %lastChanged%");
-        //            lore.add("&aLeft click to Accept &d| &cRight click to Deny");
-        //
-        //            config.set("Nicknames.Lore", lore);
-        //
-        //            notFoundInConfigMessage("Nicknames.Lore");
-        //        }
-        //
-        //        if (!config.contains("Nicknames.WaitTime")) {
-        //            config.set("Nicknames.WaitTime", 86400000);
-        //            notFoundInConfigMessage("Nicknames.WaitTime");
-        //        }
-        //
-        //        if (!config.contains("Nicknames.BlockedColorCodes")) {
-        //            config.set("Nicknames.BlockedColorCodes", new String[]{"&k", "&l", "&n", "&m", "&o"});
-        //            notFoundInConfigMessage("Nicknames.BlockedColorCodes");
-        //        }
-        //
-        //        if (!config.contains("Nicknames.AllowedColorCodes")) {
-        //            config.set("Nicknames.AllowedColorCodes", new String[]{"&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"});
-        //            notFoundInConfigMessage("Nicknames.AllowedColorCodes");
-        //        }
+        NICK_CHANGED = getString("nicknames.messages.nick-changed", NICK_CHANGED);
+        NICK_NOT_CHANGED = getString("nicknames.messages.nick-not-changed", NICK_NOT_CHANGED);
+        NICK_RESET = getString("nicknames.messages.nick-reset", NICK_RESET);
+        NICK_CHANGED_OTHERS = getString("nicknames.messages.nick-changed-others", NICK_CHANGED_OTHERS);
+        NICK_TARGET_NICK_CHANGE = getString("nicknames.messages.nick-target-nick-change", NICK_TARGET_NICK_CHANGE);
+        NICK_RESET_OTHERS = getString("nicknames.messages.nick-reset-others", NICK_RESET_OTHERS);
+        NICK_INVALID_CHARACTERS = getString("nicknames.messages.nick-invalid-characters", NICK_INVALID_CHARACTERS);
+        NICK_INVALID_LENGTH = getString("nicknames.messages.nick-invalid-length", NICK_INVALID_LENGTH);
+        NICK_PLAYER_NOT_ONLINE = getString("nicknames.messages.nick-player-not-online", NICK_PLAYER_NOT_ONLINE);
+        NICK_BLOCKED_COLOR_CODES = getString("nicknames.messages.nick-blocked-color-codes", NICK_BLOCKED_COLOR_CODES);
+        NICK_USER_NOT_FOUND = getString("nicknames.messages.nick-user-not-found", NICK_USER_NOT_FOUND);
+        NICK_ACCEPTED = getString("nicknames.messages.nick-accepted", NICK_ACCEPTED);
+        NICK_DENIED = getString("nicknames.messages.nick-denied", NICK_DENIED);
+        NICK_ALREADY_HANDLED = getString("nicknames.messages.nick-already-handled", NICK_ALREADY_HANDLED);
+        NICK_NO_LUCKPERMS = getString("nicknames.messages.nick-no-luckperms", NICK_NO_LUCKPERMS);
+        NICK_TOO_SOON = getString("nicknames.messages.nick-too-soon", NICK_TOO_SOON);
+        NICK_REQUEST_PLACED = getString("nicknames.messages.nick-request-placed", NICK_REQUEST_PLACED);
+        NICK_REQUEST_NEW = getString("nicknames.messages.nick-request-new", NICK_REQUEST_NEW);
+        NICK_TRYOUT = getString("nicknames.messages.nick-tryout", NICK_TRYOUT);
+        NICK_REQUESTED = getString("nicknames.messages.nick-requested", NICK_REQUESTED);
+        NICK_REVIEW_WAITING = getString("nicknames.messages.nick-review-waiting", NICK_REVIEW_WAITING);
+        NICK_TAKEN = getString("nicknames.messages.nick-taken", NICK_TAKEN);
+        NICK_REQUESTS_ON_LOGIN = getString("nicknames.messages.nick-reauests-on-login", NICK_REQUESTS_ON_LOGIN);
+        NICK_WAIT_TIME = getLong("nicknames.wait-time", NICK_WAIT_TIME);
+        NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("&bNew nick: %newNick%", "&bOld nick: %oldNick%", "&bLast changed: %lastChanged%", "&aLeft click to Accept &d| &cRight click to Deny"));
+        NICK_BLOCKED_COLOR_CODESLIST = getList("nicknames.blocked-color-codes", List.of("&k", "&l", "&n", "&m", "&o"));
+        NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
     }
 }

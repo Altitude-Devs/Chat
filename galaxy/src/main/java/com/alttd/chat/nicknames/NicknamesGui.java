@@ -1,6 +1,7 @@
 package com.alttd.chat.nicknames;
 
 import com.alttd.chat.ChatPlugin;
+import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.events.NickEvent;
 import com.alttd.chat.objects.Nick;
@@ -55,7 +56,7 @@ public class NicknamesGui implements Listener {
                 for (Nick nick : Nicknames.getInstance().NickCache.values()) {
                     if (nick.hasRequest()) {
                         if (limit >= i / 27) {
-                            inv.setItem(i % 27, createPlayerSkull(nick, ChatPlugin.getInstance().getConfig().getStringList("Nicknames.Lore")));
+                            inv.setItem(i % 27, createPlayerSkull(nick, Config.NICK_ITEM_LORE));
                             i++;
                         } else {
                             hasNextPage = true;
@@ -146,7 +147,7 @@ public class NicknamesGui implements Listener {
             OfflinePlayer owningPlayer = meta.getOwningPlayer();
 
             if (owningPlayer == null) {
-                p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickUserNotFound")));
+                p.sendMessage(format(Config.NICK_USER_NOT_FOUND));
                 return;
             }
 
@@ -164,7 +165,7 @@ public class NicknamesGui implements Listener {
                     }
 
                     if (nick == null || !nick.hasRequest()) {
-                        p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickAlreadyHandled")
+                        p.sendMessage(format(Config.NICK_ALREADY_HANDLED
                                 .replace("%targetPlayer%", clickedItem.getItemMeta().getDisplayName())));
                         return;
                     }
@@ -183,14 +184,14 @@ public class NicknamesGui implements Listener {
                                 }
                             }.runTask(ChatPlugin.getInstance());
 
-                            p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickAccepted")
+                            p.sendMessage(format(Config.NICK_ACCEPTED
                                     .replace("%targetPlayer%", clickedItem.getItemMeta().getDisplayName())
                                     .replace("%newNick%", nick.getNewNick())
                                     .replace("%oldNick%", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
 
                             if (owningPlayer.isOnline()) {
                                 Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getNewNick());
-                                owningPlayer.getPlayer().sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickChanged")
+                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED
                                         .replace("%nickname%", nick.getNewNick())));
                             }
 
@@ -211,7 +212,7 @@ public class NicknamesGui implements Listener {
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
                         } else {
-                            p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.CantFindPlayer")
+                            p.sendMessage(format(Config.NICK_PLAYER_NOT_ONLINE
                                     .replace("%playerName%", clickedItem.getItemMeta().getDisplayName())));
                         }
 
@@ -229,7 +230,7 @@ public class NicknamesGui implements Listener {
                                 }
                             }.runTask(ChatPlugin.getInstance());
 
-                            p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickDenied")
+                            p.sendMessage(format(Config.NICK_DENIED
                                     .replace("%targetPlayer%", owningPlayer.getName())
                                     .replace("%newNick%", nick.getNewNick())
                                     .replace("%oldNick%", nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick())));
@@ -245,7 +246,7 @@ public class NicknamesGui implements Listener {
 
                             if (owningPlayer.isOnline()) {
                                 Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
-                                owningPlayer.getPlayer().sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickNotChanged")));
+                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_NOT_CHANGED));
                             }
 
                             NickUtilities.bungeeMessageHandled(uniqueId, e.getWhoClicked().getServer().getPlayer(e.getWhoClicked().getName()), "Denied");
@@ -265,7 +266,7 @@ public class NicknamesGui implements Listener {
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
                         } else {
-                            p.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.CantFindPlayer")
+                            p.sendMessage(format(Config.NICK_PLAYER_NOT_ONLINE
                                     .replace("%playerName%", clickedItem.getItemMeta().getDisplayName())));
                         }
                     }

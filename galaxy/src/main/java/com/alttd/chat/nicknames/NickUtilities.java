@@ -20,8 +20,6 @@ import java.util.UUID;
 public class NickUtilities
 {
     public static String stringRegen;
-    static String[] blockedCodes = ChatPlugin.getInstance().getConfig().getStringList("Nicknames.BlockedColorCodes").toArray(new String[0]);;
-    static String[] allowedColorCodes = ChatPlugin.getInstance().getConfig().getStringList("Nicknames.AllowedColorCodes").toArray(new String[0]);;
     
     public static String applyColor(String message) {
         ChatColor hexColor1 = null;
@@ -97,7 +95,7 @@ public class NickUtilities
     
     public static String removeAllColors(String string) {
 
-        for (final String colorCodes : allowedColorCodes) {
+        for (final String colorCodes : Config.NICK_ALLOWED_COLOR_CODESLIST) {
             string = string.replace(colorCodes, "");
         }
 
@@ -163,7 +161,7 @@ public class NickUtilities
                                 if (uniqueId.equals(uuid)){
                                     ChatPlugin.getInstance().getLogger().info(uuid + " " + uniqueId);
                                 }
-                                sender.sendMessage(applyColor(ChatPlugin.getInstance().getConfig().getString("Messages.NickTaken")));
+                                sender.sendMessage(applyColor(Config.NICK_TAKEN));
                                 return false;
                             }
                         }
@@ -172,19 +170,19 @@ public class NickUtilities
                     return true;
 
                 } else {
-                    sender.sendMessage(applyColor(ChatPlugin.getInstance().getConfig().getString("Messages.NickInvalidCharacters")));
+                    sender.sendMessage(applyColor(Config.NICK_INVALID_CHARACTERS));
                 }
             } else {
-                sender.sendMessage(applyColor(ChatPlugin.getInstance().getConfig().getString("Messages.NickLengthInvalid")));
+                sender.sendMessage(applyColor(Config.NICK_INVALID_LENGTH));
             }
         } else {
-            sender.sendMessage(applyColor(ChatPlugin.getInstance().getConfig().getString("Messages.NickBlockedColorCodes")));
+            sender.sendMessage(applyColor(Config.NICK_BLOCKED_COLOR_CODES));
         }
         return false;
     }
 
     public static boolean noBlockedCodes(final String getNick) {
-        for (final String blockedCodes : blockedCodes) {
+        for (final String blockedCodes : Config.NICK_BLOCKED_COLOR_CODESLIST) {
             if (getNick.contains(blockedCodes)) {
                 return false;
             }

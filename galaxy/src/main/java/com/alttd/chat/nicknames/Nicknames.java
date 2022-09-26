@@ -88,13 +88,13 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         LuckPerms api = ChatAPI.get().getLuckPerms();
                         if (api != null){
                             if (NickUtilities.validNick(player, player, args[1])) {
-                                sender.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickTryout")
+                                sender.sendMessage(format(Config.NICK_TRYOUT
                                         .replace("%prefix", api.getUserManager().getUser(player.getUniqueId())
                                                 .getCachedData().getMetaData().getPrefix())
                                         .replace("%nick%", args[1])));
                             }
                         } else {
-                            sender.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickNoLuckPerms")));
+                            sender.sendMessage(format(Config.NICK_NO_LUCKPERMS));
                         }
                     } else {
                         sender.sendMessage(format(helpMessage(sender, HelpType.TRY)));
@@ -170,17 +170,17 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         if (NickCache.containsKey(uniqueId)){
             Nick nick = NickCache.get(uniqueId);
             long timeSinceLastChange =  new Date().getTime() - nick.getLastChangedDate();
-            long waitTime = ChatPlugin.getInstance().getConfig().getLong("Nicknames.WaitTime");
+            long waitTime = Config.NICK_WAIT_TIME;
             if (timeSinceLastChange > waitTime){
                 if (nick.hasRequest()){
-                    player.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickRequestReplaced")
+                    player.sendMessage(format(Config.NICK_REQUEST_PLACED
                             .replace("%oldRequestedNick%", nick.getNewNick())
                             .replace("%newRequestedNick%", nickName)));
                 }
                 nick.setNewNick(nickName);
                 nick.setRequestedDate(new Date().getTime());
             } else {
-                player.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickTooSoon")
+                player.sendMessage(format(Config.NICK_TOO_SOON
                         .replace("%time%", formatTime((timeSinceLastChange-waitTime)*-1))));
                 return;
             }
@@ -189,7 +189,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         }
         Queries.newNicknameRequest(uniqueId, nickName);
         bungeeMessageRequest(player);
-        player.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickRequested")
+        player.sendMessage(format(Config.NICK_REQUESTED
                 .replace("%nick%", nickName)));
     }
 
@@ -254,12 +254,12 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
 
             if (!sender.equals(target)){
-                sender.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickResetOthers")
+                sender.sendMessage(format(Config.NICK_RESET_OTHERS
                         .replace("%player%", target.getName())));
             }
 
             if (target.isOnline()){
-                target.getPlayer().sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickReset")));
+                target.getPlayer().sendMessage(format(Config.NICK_RESET));
             }
 
             NickEvent nickEvent = new NickEvent(sender.getName(), target.getName(), null, NickEvent.NickEventType.RESET);
@@ -285,17 +285,17 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
 
             if (!sender.equals(target)){
-                sender.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickChangedOthers")
+                sender.sendMessage(format(Config.NICK_CHANGED_OTHERS
                         .replace("%targetplayer%", target.getName())
                         .replace("%nickname%", nickName)));
                 if (target.isOnline()) {
-                    target.getPlayer().sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickTargetNickChange")
+                    target.getPlayer().sendMessage(format(Config.NICK_TARGET_NICK_CHANGE
                             .replace("%nickname%", getNick(target.getPlayer()))
                             .replace("%sendernick%", getNick(sender))
                             .replace("%player%", target.getName())));
                 }
             } else if (target.isOnline()){
-                target.getPlayer().sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NickChanged")
+                target.getPlayer().sendMessage(format(Config.NICK_CHANGED
                         .replace("%nickname%", getNick(target.getPlayer()))));
             }
         }
@@ -353,7 +353,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
     private boolean hasPermission(CommandSender sender, String permission) {
         if (!sender.hasPermission(permission)){
-            sender.sendMessage(format(ChatPlugin.getInstance().getConfig().getString("Messages.NoPermission")));
+            sender.sendMessage(format(Config.NO_PERMISSION));
             return false;
         }
         return true;
