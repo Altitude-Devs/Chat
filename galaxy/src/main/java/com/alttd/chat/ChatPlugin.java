@@ -8,6 +8,8 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
+import com.alttd.chat.nicknames.Nicknames;
+import com.alttd.chat.nicknames.NicknamesEvents;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
@@ -53,6 +55,7 @@ public class ChatPlugin extends JavaPlugin {
         registerCommand("chatclear", new ChatClear());
 //        registerCommand("chatparty", new ChatParty());
         registerCommand("p", new PartyChat());
+        registerCommand("emotes", new Emotes());
         for (Channel channel : Channel.getChannels()) {
             if (!(channel instanceof CustomChannel customChannel)) continue;
            this.getServer().getCommandMap().register(channel.getChannelName().toLowerCase(), new ChatChannel(customChannel));
@@ -61,6 +64,11 @@ public class ChatPlugin extends JavaPlugin {
         messageChannel = Config.MESSAGECHANNEL;
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
         getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, new PluginMessage());
+
+//        NicknamesEvents nicknamesEvents = new NicknamesEvents();
+//        getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, nicknamesEvents);
+//        getServer().getPluginManager().registerEvents(nicknamesEvents, this);
+//        registerCommand("nick", new Nicknames());
     }
 
     @Override

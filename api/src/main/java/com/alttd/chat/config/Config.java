@@ -478,4 +478,58 @@ public final class Config {
         EMOTELIST_FOOTER = getString("commands.emotelist.footer", EMOTELIST_FOOTER);
     }
 
+    private static void nicknameSettings() {
+        //        NickChanged("Messages.NickChanged", "&eYour nickname was changed to %nickname%&e."),
+        //        NickNotChanged("Messages.NickNotChanged", "&eYour nickname request was denied."),
+        //        NickReset("Messages.NickReset", "&eNickname changed back to normal."),
+        //        NickChangedOthers("Messages.NickChangedOthers", "&6%targetplayer%&e's nickname was changed to %nickname%&e."),
+        //        NickTargetNickChange("Messages.NickTargetNickChange", "&eYour nickname was changed to %nickname% &eby %sendernick%&e"),
+        //        NickResetOthers("Messages.NickResetOthers", "&6%player%&6's &enickname was reset back to normal."),
+        //        NickInvalidCharacters("Messages.NickInvalidCharacters", "&eYou can only use letters and numbers in nicknames."),
+        //        NickLengthInvalid("Messages.NickLengthInvalid", "&eNicknames need to be between 3 to 16 characters long."),
+        //        NickPlayerNotOnline("Messages.NickPlayerNotOnline", "&cThat player is not online."),
+        //        NickBlockedColorCodes("Messages.NickBlockedColorCodes", "&eYou have blocked color codes in that nickname."),
+        //        NickUserNotFound("Messages.NickUserNotFound", "&cFailed to set nickname from player, try again from a server this player has been on before."),
+        //        NickAccepted("Messages.NickAccepted", "&aYou accepted %targetPlayer%&a's nickname. They are now called %newNick%&a."),
+        //        NickDenied("Messages.NickDenied", "&aYou denied %targetPlayer%&a's nickname. They are still called %oldNick%&a."),
+        //        NickAlreadyHandled("Messages.NickAlreadyHandled", "&c%targetPlayer%&c's nickname was already accepted or denied."),
+        //        NickNoLuckperms("Messages.NickNoLuckPerms", "&cDue to an issue with LuckPerms /nick try won't work at the moment."),
+        //        NickTooSoon("Messages.NickTooSoon", "&cPlease wait %time%&c until requesting a new nickname"),
+        //        NickRequestReplaced("Messages.NickRequestReplaced", "&aReplaced your previous request %oldRequestedNick%&a with %newRequestedNick%&a."),
+        //        NickNewRequest("Messages.NickNewRequest", "&aNew nickname request by %player%&a!"),
+        //        NickTryout("Messages.NickTryout", "&f%prefix&f %nick%&7: &fHi, this is what my new nickname could look like!"),
+        //        NickRequested("Messages.NickRequested", "&aYour requested to be nicknamed %nick%&a has been received. Staff will accept or deny this request asap!"),
+        //        NickReviewWaiting("Messages.NickReviewWaiting", "&aThere are %amount% nicknames waiting for review!"),
+        //        NickTaken("Messages.NickTaken", "&cSomeone else already has this nickname, or has this name as their username."),
+        //        NickRequestsOnLogin("Messages.NickRequestsOnLogin", "&aCurrent nick requests: %amount%"),
+        //        // Nicknames
+        //
+        //        if (!config.contains("Nicknames.Lore")) {
+        //            List<String> lore = new ArrayList<>();
+        //
+        //            lore.add("&bNew nick: %newNick%");
+        //            lore.add("&bOld nick: %oldNick%");
+        //            lore.add("&bLast changed: %lastChanged%");
+        //            lore.add("&aLeft click to Accept &d| &cRight click to Deny");
+        //
+        //            config.set("Nicknames.Lore", lore);
+        //
+        //            notFoundInConfigMessage("Nicknames.Lore");
+        //        }
+        //
+        //        if (!config.contains("Nicknames.WaitTime")) {
+        //            config.set("Nicknames.WaitTime", 86400000);
+        //            notFoundInConfigMessage("Nicknames.WaitTime");
+        //        }
+        //
+        //        if (!config.contains("Nicknames.BlockedColorCodes")) {
+        //            config.set("Nicknames.BlockedColorCodes", new String[]{"&k", "&l", "&n", "&m", "&o"});
+        //            notFoundInConfigMessage("Nicknames.BlockedColorCodes");
+        //        }
+        //
+        //        if (!config.contains("Nicknames.AllowedColorCodes")) {
+        //            config.set("Nicknames.AllowedColorCodes", new String[]{"&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"});
+        //            notFoundInConfigMessage("Nicknames.AllowedColorCodes");
+        //        }
+    }
 }
