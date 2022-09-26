@@ -298,4 +298,13 @@ public class Utility {
         return miniMessage;
     }
 
+    public static String removeAllColors(String string) {
+
+        for (String colorCodes : colors.keySet()) {
+            string = string.replace(colorCodes, "");
+        }
+
+        return string.replaceAll("\\{#[A-Fa-f0-9]{6}(<)?(>)?}", "");
+    }
+
 }
