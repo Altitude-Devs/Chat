@@ -26,7 +26,7 @@ tasks {
     }
 
     build {
-        setBuildDir("${rootProject.buildDir}")
+//        setBuildDir("${rootProject.buildDir}")
         dependsOn(shadowJar)
     }
 
