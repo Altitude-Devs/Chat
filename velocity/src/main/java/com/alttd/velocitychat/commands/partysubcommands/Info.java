@@ -10,6 +10,7 @@ import com.alttd.velocitychat.commands.SubCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
@@ -49,7 +50,7 @@ public class Info implements SubCommand {
                 Placeholder.unparsed("party", party.getPartyName()),
                 Placeholder.unparsed("password", party.getPartyPassword()),
                 Placeholder.component("owner", party.getPartyUser(party.getOwnerUuid()).getDisplayName()),
-                Placeholder.component("members", Component.join(Component.text(", "), displayNames))
+                Placeholder.component("members", Component.join(JoinConfiguration.separator(Component.text(", ")), displayNames))
         ));
     }
 

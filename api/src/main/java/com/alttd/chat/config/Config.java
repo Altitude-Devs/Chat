@@ -79,7 +79,7 @@ public final class Config {
                         method.setAccessible(true);
                         method.invoke(instance);
                     } catch (InvocationTargetException | IllegalAccessException ex) {
-                        throw Throwables.propagate(ex.getCause());
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -87,7 +87,7 @@ public final class Config {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
-            throw Throwables.propagate(ex.getCause());
+            ex.printStackTrace();
         }
     }
 
@@ -95,7 +95,7 @@ public final class Config {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
-            throw Throwables.propagate(ex.getCause());
+            ex.printStackTrace();
         }
     }
 
@@ -108,6 +108,7 @@ public final class Config {
             try {
                 config.node(splitPath(path)).set(def);
             } catch (SerializationException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -117,6 +118,7 @@ public final class Config {
             if(config.node(splitPath(path)).virtual())
                 config.node(splitPath(path)).set(io.leangen.geantyref.TypeToken.get(String.class), def);
         } catch(SerializationException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -150,6 +152,7 @@ public final class Config {
             set(path, def);
             return config.node(splitPath(path)).getList(TypeToken.get(String.class));
         } catch(SerializationException ex) {
+            ex.printStackTrace();
         }
         return new ArrayList<>();
     }
