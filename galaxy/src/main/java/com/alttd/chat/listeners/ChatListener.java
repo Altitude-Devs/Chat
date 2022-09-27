@@ -12,6 +12,7 @@ import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
+import io.papermc.paper.event.player.AsyncChatCommandDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
@@ -33,9 +34,19 @@ public class ChatListener implements Listener {
 
     private final PlainTextComponentSerializer plainTextComponentSerializer = PlainTextComponentSerializer.plainText();
 
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onChatCommandDecorate(AsyncChatCommandDecorateEvent event) {
+        if (event.player() == null) return;
+
+        Component formatComponent = Component.text("%message%");
+        Component message = parseMessageContent(event.player(), plainTextComponentSerializer.serialize(event.originalMessage()));
+
+        event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onChatDecorate(AsyncChatDecorateEvent event) {
-
         if (event.player() == null) return;
 
         Component formatComponent = Component.text("%message%");
