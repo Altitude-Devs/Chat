@@ -77,6 +77,8 @@ public class Utility {
                 new Pair<>(StandardTags.transition(), EMPTY_LIST));
         formattingPerms.put("chat.format.reset",
                 new Pair<>(StandardTags.reset(), List.of("<reset>", "<r>")));
+        formattingPerms.put("chat.format.newline",
+                new Pair<>(StandardTags.newline(), List.of("<newline>")));
     }
 
     public static String parseColors(String message) {
