@@ -65,10 +65,10 @@ public class ChatPlugin extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, messageChannel);
         getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, new PluginMessage());
 
-//        NicknamesEvents nicknamesEvents = new NicknamesEvents();
-//        getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, nicknamesEvents);
-//        getServer().getPluginManager().registerEvents(nicknamesEvents, this);
-//        registerCommand("nick", new Nicknames());
+        NicknamesEvents nicknamesEvents = new NicknamesEvents();
+        getServer().getMessenger().registerIncomingPluginChannel(this, messageChannel, nicknamesEvents);
+        getServer().getPluginManager().registerEvents(nicknamesEvents, this);
+        registerCommand("nick", new Nicknames());
     }
 
     @Override
