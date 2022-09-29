@@ -10,6 +10,7 @@ import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Nick;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -100,6 +101,12 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         sender.sendMessage(format(helpMessage(sender, HelpType.TRY)));
                     }
                     break;
+                case "current":
+                    if (hasPermission(sender, "utility.nick.current")) {
+                        ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
+                        player.sendMessage(Component.text("Current nick: ").append(chatUser.getDisplayName()).append(Component.text(" (" + chatUser.getNickNameString() + ")")));
+                    }
+                    break;
                 case "help":
                     sender.sendMessage(format(helpMessage(sender, HelpType.ALL)
                             + "For more info on nicknames and how to use rgb colors go to: &bhttps://alttd.com/nicknames&f"));
@@ -131,6 +138,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
             if (sender.hasPermission("utility.nick.try")) {
                 choices.add("try");
+            }
+            if (sender.hasPermission("utility.nick.current")) {
+                choices.add("current");
             }
             choices.add("help");
 
