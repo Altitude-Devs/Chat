@@ -5,6 +5,7 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handler.ChatHandler;
+import com.alttd.chat.listeners.BookListener;
 import com.alttd.chat.listeners.ChatListener;
 import com.alttd.chat.listeners.PlayerListener;
 import com.alttd.chat.listeners.PluginMessage;
@@ -40,7 +41,7 @@ public class ChatPlugin extends JavaPlugin {
         chatHandler = new ChatHandler();
         DatabaseConnection.initialize();
         serverConfig = new ServerConfig(Bukkit.getServerName());
-        registerListener(new PlayerListener(), new ChatListener());
+        registerListener(new PlayerListener(), new ChatListener(), new BookListener());
         if(serverConfig.GLOBALCHAT) {
             registerCommand("globalchat", new GlobalChat());
             registerCommand("toggleglobalchat", new ToggleGlobalChat());
