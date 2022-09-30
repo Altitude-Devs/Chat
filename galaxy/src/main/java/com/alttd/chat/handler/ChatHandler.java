@@ -4,6 +4,7 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
+import com.alttd.chat.objects.ChatFilter;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.channels.CustomChannel;
@@ -14,6 +15,7 @@ import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -48,24 +50,14 @@ public class ChatHandler {
                     target);
             return; // the message was blocked
         }
-        String updatedMessage = modifiableString.string();
-
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        } else {
-            updatedMessage = Utility.parseColors(updatedMessage);
-        }
-
-        updatedMessage = Utility.formatText(updatedMessage);
 
         TagResolver placeholders = TagResolver.resolver(
-                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.component("sendername", player.name()),
                 Placeholder.parsed("receivername", target)
         );
 
-        Component component = Utility.parseMiniMessage("<message>", placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+        Component component = Utility.parseMiniMessage("<message>", placeholders);
 
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
@@ -88,19 +80,8 @@ public class ChatHandler {
                     target);
             return; // the message was blocked
         }
-        String updatedMessage = modifiableString.string();
 
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        } else {
-            updatedMessage = Utility.parseColors(updatedMessage);
-        }
-
-        updatedMessage = Utility.formatText(updatedMessage);
-
-        Component messageComponent = Utility.parseMiniMessage(updatedMessage)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]")
-                        .replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+        Component messageComponent = parseMessageContent(player, message);
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("message", messageComponent),
                 Placeholder.component("sendername", player.name()),
@@ -149,18 +130,10 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        String updatedMessage = modifiableString.string();
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        } else {
-            updatedMessage = Utility.parseColors(updatedMessage);
-        }
-
-        updatedMessage = Utility.formatText(updatedMessage);
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("prefix", prefix),
-                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.parsed("server", Bukkit.getServerName())
         );
 
@@ -190,21 +163,13 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        String updatedMessage = modifiableString.string();
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        }
-
-        updatedMessage = Utility.formatText(updatedMessage);
-
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
-                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.parsed("server", Bukkit.getServerName()),
                 Placeholder.parsed("channel", channel.getChannelName())
         );
-        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
 
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);
@@ -349,4 +314,34 @@ public class ChatHandler {
     }
     // end - move these to util
 
+    private Component parseMessageContent(Player player, String rawMessage) {
+        TagResolver.Builder tagResolver = TagResolver.builder();
+
+        Utility.formattingPerms.forEach((perm, pair) -> {
+            if (player.hasPermission(perm)) {
+                tagResolver.resolver(pair.getX());
+            }
+        });
+
+        MiniMessage miniMessage = MiniMessage.builder().tags(tagResolver.build()).build();
+        Component component = miniMessage.deserialize(rawMessage);
+        for(ChatFilter chatFilter :  RegexManager.getEmoteFilters()) {
+            component = component.replaceText(
+                    TextReplacementConfig.builder()
+                            .times(Config.EMOTELIMIT)
+                            .match(chatFilter.getRegex())
+                            .replacement(chatFilter.getReplacement()).build());
+        }
+
+        component = component
+                .replaceText(
+                        TextReplacementConfig.builder()
+                                .once()
+                                .matchLiteral("[i]")
+                                .replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand()))
+                                .build());
+
+        return component;
+
+    }
 }
