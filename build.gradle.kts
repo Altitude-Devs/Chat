@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "com.alttd.chat"
-    version = "1.0.0-SNAPSHOT"
+    version = "2.0.0-SNAPSHOT"
     description = "All in one minecraft chat plugin"
 
 //    repositories {
@@ -61,7 +61,7 @@ dependencies {
 tasks {
 
     shadowJar {
-        archiveFileName.set("${project.name}-${project.version}.jar")
+        archiveFileName.set("${project.name}.jar")
         minimize() {
             exclude { it.moduleName == "galaxy" }
             exclude { it.moduleName == "velocity" }
@@ -77,4 +77,7 @@ tasks {
         dependsOn(shadowJar)
     }
 
+    jar {
+        enabled = false
+    }
 }

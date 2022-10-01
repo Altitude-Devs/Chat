@@ -2,10 +2,9 @@ package com.alttd.velocitychat.listeners;
 
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
-import com.alttd.velocitychat.VelocityChat;
-import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
+import com.alttd.velocitychat.VelocityChat;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
@@ -23,7 +22,6 @@ import java.util.UUID;
 
 public class PluginMessageListener {
 
-    //todo add an extra listener for nicknames?
     private final ChannelIdentifier identifier;
 
     public PluginMessageListener(ChannelIdentifier identifier){
@@ -45,38 +43,33 @@ public class PluginMessageListener {
         String channel = in.readUTF();
         VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
         switch (channel) {
-            case "globalchat":
-                VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF(), in.readUTF());
-                break;
-            case "globaladminchat":
-                VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
-                break;
-            case "privatemessage":
-                VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
-                break;
-            case "chatchannel": {
+            case "globalchat" -> VelocityChat.getPlugin().getServerHandler().sendGlobalChat(in.readUTF(), in.readUTF());
+            case "globaladminchat" -> VelocityChat.getPlugin().getChatHandler().globalAdminChat(in.readUTF());
+            case "privatemessage" ->
+                    VelocityChat.getPlugin().getChatHandler().privateMessage(in.readUTF(), in.readUTF(), in.readUTF());
+            case "chatchannel" -> {
                 String channelName = in.readUTF();
                 CustomChannel chatChannel = (CustomChannel) CustomChannel.getChatChannel(channelName);
 
                 if (chatChannel == null) {
-                    ALogger.warn("Received non existent channel" + channelName +".");
+                    ALogger.warn("Received non existent channel" + channelName + ".");
                     break;
                 }
 
                 ProxyServer proxy = VelocityChat.getPlugin().getProxy();
                 chatChannel.getServers().forEach(server -> proxy.getServer(server).ifPresent(registeredServer ->
                         registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData())));
-                break;
             }
-            case "party": {
+            case "party" -> {
                 VelocityChat.getPlugin().getChatHandler().sendPartyMessage(
                         UUID.fromString(in.readUTF()),
                         in.readUTF(),
                         GsonComponentSerializer.gson().deserialize(in.readUTF()),
                         serverConnection);
-                break;
             }
-            case "NickNameAccepted": {
+
+            // nicknames WIP
+            case "NickNameAccepted", "NickNameSet" -> {
                 try {
                     short len = in.readShort();
                     byte[] msgbytes = new byte[len];
@@ -91,15 +84,22 @@ public class PluginMessageListener {
                     e.printStackTrace();
                     return;
                 }
+                ProxyServer proxy = VelocityChat.getPlugin().getProxy();
+                proxy.getAllServers().forEach(registeredServer ->
+                        registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
             }
-            default:
+            case "NickNameRequest", "NickNameDenied" -> {
+                ProxyServer proxy = VelocityChat.getPlugin().getProxy();
+                proxy.getAllServers().forEach(registeredServer ->
+                        registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
+            }
+            default -> {
                 VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
                 ProxyServer proxy = VelocityChat.getPlugin().getProxy();
-
                 for (RegisteredServer registeredServer : proxy.getAllServers()) {
                     registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData());
                 }
-                break;
+            }
         }
     }
 

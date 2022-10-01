@@ -180,4 +180,8 @@ public class ChatUser {
         }
         setDisplayName(name);
     }
+
+    public String getNickNameString() {
+        return name;
+    }
 }

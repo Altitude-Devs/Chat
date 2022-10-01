@@ -3,14 +3,12 @@ package com.alttd.chat.config;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatFilter;
 import com.alttd.chat.util.ALogger;
-import com.google.common.base.Throwables;
 import io.leangen.geantyref.TypeToken;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-import org.yaml.snakeyaml.DumperOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +76,7 @@ public final class RegexConfig {
                         method.setAccessible(true);
                         method.invoke(instance);
                     } catch (InvocationTargetException | IllegalAccessException ex) {
-                        throw Throwables.propagate(ex.getCause());
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -86,7 +84,7 @@ public final class RegexConfig {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
-            throw Throwables.propagate(ex.getCause());
+            ex.printStackTrace();
         }
     }
 

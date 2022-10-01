@@ -5,10 +5,7 @@ import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.managers.RegexManager;
-import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.Mail;
-import com.alttd.chat.objects.ModifiableString;
-import com.alttd.chat.objects.Party;
+import com.alttd.chat.objects.*;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
@@ -19,6 +16,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -108,6 +106,8 @@ public class ChatHandler {
                     return party.getPartyUsers().stream().anyMatch(pu -> pu.getUuid().equals(uuid));
                 }).forEach(pl -> {
                     pl.sendMessage(message);
+                    // TODO forward sound to backend server.
+                    // https://canary.discord.com/channels/514920774923059209/1020498592219271189
                 });
     }
 
@@ -128,18 +128,11 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        String updatedMessage = modifiableString.string();
-        if(!player.hasPermission("chat.format")) {
-            updatedMessage = Utility.stripTokens(updatedMessage);
-        }
-
-        updatedMessage = Utility.formatText(updatedMessage);
-
         TagResolver Placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("sendername", senderName),
                 Placeholder.unparsed("partyname", party.getPartyName()),
-                Placeholder.component("message", Utility.parseMiniMessage(updatedMessage)),
+                Placeholder.component("message", parseMessageContent(player, modifiableString.string())),
                 Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName())
         );
 
@@ -175,7 +168,7 @@ public class ChatHandler {
         }
 
         TagResolver Placeholders = TagResolver.resolver(
-                Placeholder.component("message", Utility.parseMiniMessage(message)),
+                Placeholder.component("message", parseMessageContent(commandSource, message)),
                 Placeholder.component("sender", senderName),
                 Placeholder.unparsed("server", serverName));
 
@@ -296,5 +289,28 @@ public class ChatHandler {
             stringBuilder.append(duration.toHoursPart()).append("h ");
         stringBuilder.append(duration.toMinutesPart()).append("m ago");
         return stringBuilder.toString();
+    }
+
+    private Component parseMessageContent(CommandSource source, String rawMessage) {
+        TagResolver.Builder tagResolver = TagResolver.builder();
+
+        Utility.formattingPerms.forEach((perm, pair) -> {
+            if (source.hasPermission(perm)) {
+                tagResolver.resolver(pair.getX());
+            }
+        });
+
+        MiniMessage miniMessage = MiniMessage.builder().tags(tagResolver.build()).build();
+        Component component = miniMessage.deserialize(rawMessage);
+        for(ChatFilter chatFilter :  RegexManager.getEmoteFilters()) {
+            component = component.replaceText(
+                    TextReplacementConfig.builder()
+                            .times(Config.EMOTELIMIT)
+                            .match(chatFilter.getRegex())
+                            .replacement(chatFilter.getReplacement()).build());
+        }
+
+        return component;
+
     }
 }

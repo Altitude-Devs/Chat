@@ -2,6 +2,7 @@ package com.alttd.chat.objects;
 
 public enum FilterType {
     REPLACE("replace"),
+    EMOTE("emote"),
     CHAT("chat"),
     REPLACEMATCHER("replacematcher"),
     BLOCK("block");

@@ -1,18 +1,13 @@
 package com.alttd.chat.database;
 
 import com.alttd.chat.managers.PartyManager;
-import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.Mail;
-import com.alttd.chat.objects.Party;
-import com.alttd.chat.objects.PartyUser;
+import com.alttd.chat.objects.*;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.util.ALogger;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.Date;
 
 public class Queries {
 
@@ -24,7 +19,8 @@ public class Queries {
         tables.add("CREATE TABLE IF NOT EXISTS parties (`id` INT NOT NULL AUTO_INCREMENT, `owner_uuid` VARCHAR(36) NOT NULL, `party_name` VARCHAR(36) NOT NULL, `password` VARCHAR(36), PRIMARY KEY (`id`))");
         tables.add("CREATE TABLE IF NOT EXISTS chat_users (`uuid` VARCHAR(36) NOT NULL, `party_id` INT NOT NULL, `toggled_channel` VARCHAR(36) NULL DEFAULT NULL, PRIMARY KEY (`uuid`))");
         tables.add("CREATE TABLE IF NOT EXISTS mails (`id` INT NOT NULL AUTO_INCREMENT, `uuid` VARCHAR(36) NOT NULL, `sender` VARCHAR(36) NOT NULL, `message` VARCHAR(256) NOT NULL, `sendtime` BIGINT default 0, `readtime` BIGINT default 0, PRIMARY KEY (`id`))");
-
+        createNicknamesTable();
+        createRequestedNicknamesTable();
         try {
             Connection connection = DatabaseConnection.getConnection();
 
@@ -39,6 +35,51 @@ public class Queries {
     //-----------------------------------------
 
     //Nicknames
+    private static void createNicknamesTable() {
+
+        try {
+            String nicknamesTableQuery = "CREATE TABLE IF NOT EXISTS nicknames("
+                    + "uuid VARCHAR(48) NOT NULL,"
+                    + "PRIMARY KEY (uuid))";
+            DatabaseConnection.getConnection().prepareStatement(nicknamesTableQuery).executeUpdate();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        List<String> columns = new ArrayList<>();
+        columns.add("ALTER TABLE nicknames ADD nickname VARCHAR(192)");
+        columns.add("ALTER TABLE nicknames ADD date_changed BIGINT default 0");
+        for (String string : columns) {
+            try {
+                DatabaseConnection.getConnection().prepareStatement(string).executeUpdate();
+            } catch (Throwable ignored) {
+            }
+        }
+
+    }
+
+    private static void createRequestedNicknamesTable() {
+
+        try {
+            String requestedNicknamesTableQuery = "CREATE TABLE IF NOT EXISTS requested_nicknames("
+                    + "uuid VARCHAR(48) NOT NULL,"
+                    + "PRIMARY KEY (uuid))";
+            DatabaseConnection.getConnection().prepareStatement(requestedNicknamesTableQuery).executeUpdate();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        List<String> columns = new ArrayList<>();
+        columns.add("ALTER TABLE requested_nicknames ADD nickname VARCHAR(192)");
+        columns.add("ALTER TABLE requested_nicknames ADD date_requested BIGINT default 0");
+        for (String string : columns) {
+            try {
+                DatabaseConnection.getConnection().prepareStatement(string).executeUpdate();
+            } catch (Throwable ignored) {
+            }
+        }
+
+    }
 
     public static String getNickname(UUID uuid) {
         // View has been created.
@@ -563,5 +604,173 @@ public class Queries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // Nicknames
+    public static void setNicknameInDatabase(final UUID uuid, final String nickName) {
+        final String sql = "INSERT INTO nicknames (uuid, nickname, date_changed) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE nickname = ?";
+        try (final PreparedStatement statement = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            statement.setString(1, uuid.toString());
+            statement.setString(2, nickName);
+            statement.setLong(3, new java.util.Date().getTime());
+            statement.setString(4, nickName);
+            statement.execute();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removePlayerFromDataBase(final UUID uuid) throws SQLException {
+        final PreparedStatement insert = DatabaseConnection.getConnection().prepareStatement("DELETE FROM nicknames WHERE uuid = ?");
+        insert.setString(1, uuid.toString());
+        insert.executeUpdate();
+        insert.close();
+    }
+
+    public static ArrayList<Nick> getNicknamesList() {
+        ArrayList<Nick> nickList = new ArrayList<>();
+        String queryNicknames = "SELECT uuid, nickname, date_changed FROM nicknames ";
+        String queryRequests = "SELECT `requested_nicknames`.`nickname` AS new_nick, `requested_nicknames`.`date_requested`, " +
+                "`nicknames`.`nickname` AS old_nick, `nicknames`.`date_changed`, `requested_nicknames`.`uuid` " +
+                "FROM `requested_nicknames`" +
+                "LEFT JOIN `nicknames` ON `requested_nicknames`.`uuid` = `nicknames`.`uuid` ";
+
+        try {
+            ResultSet resultSetNicknames = getStringResult(queryNicknames);
+            while (resultSetNicknames.next()){
+                nickList.add(new Nick(
+                        UUID.fromString(resultSetNicknames.getString("uuid")),
+                        resultSetNicknames.getString("nickname"),
+                        resultSetNicknames.getLong("date_changed")));
+            }
+
+            ResultSet resultSetRequests = getStringResult(queryRequests);
+            while (resultSetRequests.next()){
+                nickList.add(new Nick(
+                        UUID.fromString(resultSetRequests.getString("uuid")),
+                        resultSetRequests.getString("old_nick"),
+                        resultSetRequests.getLong("date_changed"),
+                        resultSetRequests.getString("new_nick"),
+                        resultSetRequests.getLong("date_requested")));
+            }
+        } catch (SQLException e) {
+            ALogger.warn("Failed to get nicknames list\n" + Arrays.toString(e.getStackTrace())
+                    .replace(",", "\n"));
+        }
+        return nickList;
+    }
+
+    public static Nick getNick(UUID uniqueId) {
+        String getNick = "SELECT nickname, date_changed, uuid FROM nicknames WHERE uuid = ?";
+        String getRequest = "SELECT nickname, date_requested, uuid FROM requested_nicknames WHERE uuid = ?";
+
+        try {
+            ResultSet resultSetNick = getStringResult(getNick, uniqueId.toString());
+            ResultSet resultSetRequest = getStringResult(getRequest, uniqueId.toString());
+            String uuid = null;
+            String currentNick = null;
+            long dateChanged = 0;
+            String requestedNick = null;
+            long dateRequested = 0;
+
+            if (resultSetNick.next()) {
+                uuid = resultSetNick.getString("uuid");
+                currentNick = resultSetNick.getString("nickname");
+                dateChanged = resultSetNick.getLong("date_changed");
+            }
+            if (resultSetRequest.next()) {
+                uuid = resultSetRequest.getString("uuid");
+                requestedNick = resultSetRequest.getString("nickname");
+                dateRequested = resultSetRequest.getLong("date_requested");
+            }
+            if (uuid != null) {
+                return new Nick(UUID.fromString(uuid), currentNick, dateChanged, requestedNick, dateRequested);
+            }
+        } catch (SQLException e){
+            ALogger.warn("Failed to get nicknames for "
+                    + uniqueId.toString() + "\n" + Arrays.toString(e.getStackTrace())
+                    .replace(",", "\n"));
+
+        }
+        return null;
+    }
+
+    public static void denyNewNickname(UUID uniqueId) {
+        String query = "DELETE FROM requested_nicknames WHERE uuid = ?";
+        try {
+            PreparedStatement statement = DatabaseConnection.getConnection().prepareStatement(query);
+            statement.setString(1, uniqueId.toString());
+            statement.execute();
+        } catch (SQLException e) {
+            ALogger.warn("Failed to delete requested nickname for "
+                    + uniqueId.toString() + "\n" + Arrays.toString(e.getStackTrace())
+                    .replace(",", "\n"));
+        }
+    }
+
+    public static void acceptNewNickname(UUID uniqueId, String newNick){
+        String delete = "DELETE FROM requested_nicknames WHERE uuid = ?";
+        String update = "INSERT INTO nicknames (uuid, nickname, date_changed) VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE nickname = ?, date_changed = ?";
+        long time = new java.util.Date().getTime();
+
+        try {
+            PreparedStatement deleteStatement = DatabaseConnection.getConnection().prepareStatement(delete);
+            deleteStatement.setString(1, uniqueId.toString());
+
+            deleteStatement.execute();
+
+            PreparedStatement updateStatement = DatabaseConnection.getConnection().prepareStatement(update);
+            updateStatement.setString(1, uniqueId.toString());
+            updateStatement.setString(2, newNick);
+            updateStatement.setLong(3, time);
+            updateStatement.setString(4, newNick);
+            updateStatement.setLong(5, time);
+
+            updateStatement.execute();
+        } catch (SQLException e) {
+            ALogger.warn("Failed to accept requested nickname for "
+                    + uniqueId.toString() + "\n" + Arrays.toString(e.getStackTrace())
+                    .replace(",", "\n"));
+        }
+    }
+
+    public static void newNicknameRequest(UUID uniqueId, String nickName) {
+        String requestQuery = "INSERT INTO requested_nicknames (uuid, nickname, date_requested) VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE nickname = ?, date_requested = ?";
+        String nickQuery = "INSERT INTO nicknames (uuid, nickname, date_changed) VALUES (?, ?, 0) " +
+                "ON DUPLICATE KEY UPDATE uuid = uuid";
+        long time = new Date().getTime();
+
+        try {
+            PreparedStatement requestPreparedStatement = DatabaseConnection.getConnection().prepareStatement(requestQuery);
+            requestPreparedStatement.setString(1, uniqueId.toString());
+            requestPreparedStatement.setString(2, nickName);
+            requestPreparedStatement.setLong(3, time);
+            requestPreparedStatement.setString(4, nickName);
+            requestPreparedStatement.setLong(5, time);
+
+            requestPreparedStatement.execute();
+
+            PreparedStatement nickPreparedStatement = DatabaseConnection.getConnection().prepareStatement(nickQuery);
+            nickPreparedStatement.setString(1, uniqueId.toString());
+            nickPreparedStatement.setString(2, null);
+
+            nickPreparedStatement.execute();
+
+        } catch (SQLException e) {
+            ALogger.warn("Failed to store requested nickname for "
+                    + uniqueId.toString() + "\n" + Arrays.toString(e.getStackTrace())
+                    .replace(",", "\n"));
+        }
+    }
+
+    private static ResultSet getStringResult(final String query, final String... parameters) throws SQLException {
+        final PreparedStatement statement = DatabaseConnection.getConnection().prepareStatement(query);
+        for (int i = 1; i < parameters.length + 1; ++i) {
+            statement.setString(i, parameters[i - 1]);
+        }
+        return statement.executeQuery();
     }
 }

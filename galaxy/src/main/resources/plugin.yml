@@ -1,5 +1,5 @@
 name: ChatPlugin
-version: ${project.version}
+version: 2.0.0-SNAPSHOT
 main: com.alttd.chat.ChatPlugin
 api-version: 1.18
 authors: [Destro, Teriuihi]
@@ -34,3 +34,8 @@ commands:
     permission: command.chat.p
   chatclear:
     permission: chat.command.clear-chat
+  emoteslist:
+    permission: chat.command.clear-chat
+    aliases: [emotes]
+  nick:
+    permission: chat.command.nick

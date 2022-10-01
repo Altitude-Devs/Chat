@@ -3,13 +3,16 @@ package com.alttd.chat.util;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.config.Config;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
+import org.bukkit.permissions.Permission;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class Utility {
 
+    private static final List<String> EMPTY_LIST = new ArrayList<>();
     static final Pattern DEFAULT_URL_PATTERN = Pattern.compile("(?:(https?)://)?([-\\w_.]+\\.\\w{2,})(/\\S*)?");
 
     private static MiniMessage miniMessage = null;
@@ -43,6 +47,38 @@ public class Utility {
         colors.put("&d", "<light_purple>");
         colors.put("&e", "<yellow>");
         colors.put("&f", "<white>");
+    }
+    
+    public static HashMap<String, Pair<TagResolver, List<String>>> formattingPerms = new HashMap<>();
+    static {
+        formattingPerms.put("chat.format.color",
+                new Pair<>(StandardTags.color(), colors.values().stream().toList()));
+        formattingPerms.put("chat.format.bold",
+                new Pair<>(StandardTags.decorations(TextDecoration.BOLD), List.of("<bold>", "<b>")));
+        formattingPerms.put("chat.format.italic",
+                new Pair<>(StandardTags.decorations(TextDecoration.ITALIC), List.of("<italic>", "<i>")));
+        formattingPerms.put("chat.format.underlined",
+                new Pair<>(StandardTags.decorations(TextDecoration.UNDERLINED), List.of("<underlined>", "<u>")));
+        formattingPerms.put("chat.format.strikethrough",
+                new Pair<>(StandardTags.decorations(TextDecoration.STRIKETHROUGH), List.of("<strikethrough>", "<st>")));
+        formattingPerms.put("chat.format.obfuscated",
+                new Pair<>(StandardTags.decorations(TextDecoration.OBFUSCATED), List.of("<obfuscated>", "<obf>")));
+        formattingPerms.put("chat.format.gradient",
+                new Pair<>(StandardTags.gradient(), EMPTY_LIST));
+        formattingPerms.put("chat.format.font",
+                new Pair<>(StandardTags.font(), EMPTY_LIST));
+        formattingPerms.put("chat.format.rainbow",
+                new Pair<>(StandardTags.rainbow(), List.of("<rainbow>")));
+        formattingPerms.put("chat.format.hover",
+                new Pair<>(StandardTags.hoverEvent(), EMPTY_LIST));
+        formattingPerms.put("chat.format.click",
+                new Pair<>(StandardTags.clickEvent(), EMPTY_LIST));
+        formattingPerms.put("chat.format.transition",
+                new Pair<>(StandardTags.transition(), EMPTY_LIST));
+        formattingPerms.put("chat.format.reset",
+                new Pair<>(StandardTags.reset(), List.of("<reset>", "<r>")));
+        formattingPerms.put("chat.format.newline",
+                new Pair<>(StandardTags.newline(), List.of("<newline>")));
     }
 
     public static String parseColors(String message) {
@@ -262,6 +298,15 @@ public class Utility {
     public static MiniMessage getMiniMessage() {
         if (miniMessage == null) miniMessage = MiniMessage.miniMessage();
         return miniMessage;
+    }
+
+    public static String removeAllColors(String string) {
+
+        for (String colorCodes : colors.keySet()) {
+            string = string.replace(colorCodes, "");
+        }
+
+        return string.replaceAll("\\{#[A-Fa-f0-9]{6}(<)?(>)?}", "");
     }
 
 }

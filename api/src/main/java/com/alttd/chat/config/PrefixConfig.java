@@ -80,7 +80,7 @@ public final class PrefixConfig {
                         method.setAccessible(true);
                         method.invoke(instance);
                     } catch (InvocationTargetException | IllegalAccessException ex) {
-                        throw Throwables.propagate(ex.getCause());
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -88,7 +88,7 @@ public final class PrefixConfig {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
-            throw Throwables.propagate(ex.getCause());
+            ex.printStackTrace();
         }
     }
 
@@ -96,7 +96,7 @@ public final class PrefixConfig {
         try {
             configLoader.save(config);
         } catch (IOException ex) {
-            throw Throwables.propagate(ex.getCause());
+            ex.printStackTrace();
         }
     }
 
@@ -109,6 +109,7 @@ public final class PrefixConfig {
             try {
                 config.node(splitPath(path)).set(def);
             } catch (SerializationException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -118,6 +119,7 @@ public final class PrefixConfig {
             if(config.node(splitPath(path)).virtual())
                 config.node(splitPath(path)).set(io.leangen.geantyref.TypeToken.get(String.class), def);
         } catch(SerializationException ex) {
+            ex.printStackTrace();
         }
     }
 
