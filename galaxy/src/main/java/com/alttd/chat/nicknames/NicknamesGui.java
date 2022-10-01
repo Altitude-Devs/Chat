@@ -5,6 +5,8 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.events.NickEvent;
 import com.alttd.chat.objects.Nick;
+import com.alttd.chat.util.Utility;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,12 +33,12 @@ import static com.alttd.chat.nicknames.Nicknames.format;
 
 public class NicknamesGui implements Listener {
 
-    private Inventory inv;
-    private int currentPage;
+    private final Inventory inv;
+    private final int currentPage;
 
     public NicknamesGui() {
         // Create a new inventory, with no owner (as this isn't a real inventory)
-        inv = Bukkit.createInventory(null, 36, "Nicknames GUI");
+        inv = Bukkit.createInventory(null, 36, Utility.parseMiniMessage("Nicknames GUI"));
 
         // Put the items into the inventory
         currentPage = 1;
@@ -88,12 +90,10 @@ public class NicknamesGui implements Listener {
         meta.setOwningPlayer(offlinePlayer);
         meta.setDisplayName(offlinePlayer.getName());
 
-        for (int ii = 0; ii < lore.size(); ii++) {
-            lore.set(ii, format(lore.get(ii)
-                    .replace("%newNick%", nick.getNewNick())
-                    .replace("%oldNick%", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick())
-                    .replace("%lastChanged%", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted())));
-        }
+        lore.replaceAll(s -> format(s
+                .replace("%newNick%", nick.getNewNick())
+                .replace("%oldNick%", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick())
+                .replace("%lastChanged%", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted())));
 
         meta.setLore(lore);
         playerHead.setItemMeta(meta);
@@ -107,7 +107,7 @@ public class NicknamesGui implements Listener {
         final ItemMeta meta = item.getItemMeta();
 
         // Set the name of the item
-        meta.setDisplayName(name);
+        meta.displayName(Component.text(name));
 
         // Set the lore of the item
         meta.setLore(Arrays.asList(lore));
@@ -189,7 +189,7 @@ public class NicknamesGui implements Listener {
                                     .replace("%newNick%", nick.getNewNick())
                                     .replace("%oldNick%", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
 
-                            if (owningPlayer.isOnline()) {
+                            if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getNewNick());
                                 owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED
                                         .replace("%nickname%", nick.getNewNick())));
@@ -206,8 +206,8 @@ public class NicknamesGui implements Listener {
 
                             ItemStack itemStack = new ItemStack(Material.SKELETON_SKULL);
                             ItemMeta itemMeta = itemStack.getItemMeta();
-                            itemMeta.setDisplayName(clickedItem.getItemMeta().getDisplayName());
-                            itemMeta.setLore(clickedItem.getLore());
+                            itemMeta.displayName(clickedItem.getItemMeta().displayName());
+                            itemMeta.lore(clickedItem.lore());
                             itemStack.setItemMeta(itemMeta);
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
@@ -244,7 +244,7 @@ public class NicknamesGui implements Listener {
                                 Nicknames.getInstance().NickCache.remove(uniqueId);
                             }
 
-                            if (owningPlayer.isOnline()) {
+                            if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
                                 owningPlayer.getPlayer().sendMessage(format(Config.NICK_NOT_CHANGED));
                             }
@@ -260,8 +260,8 @@ public class NicknamesGui implements Listener {
 
                             ItemStack itemStack = new ItemStack(Material.SKELETON_SKULL);
                             ItemMeta itemMeta = itemStack.getItemMeta();
-                            itemMeta.setDisplayName(clickedItem.getItemMeta().getDisplayName());
-                            itemMeta.setLore(clickedItem.getLore());
+                            itemMeta.displayName(clickedItem.getItemMeta().displayName());
+                            itemMeta.lore(clickedItem.lore());
                             itemStack.setItemMeta(itemMeta);
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
