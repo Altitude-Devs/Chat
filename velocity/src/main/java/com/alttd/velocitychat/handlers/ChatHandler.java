@@ -132,7 +132,7 @@ public class ChatHandler {
                 Placeholder.component("sender", senderName),
                 Placeholder.component("sendername", senderName),
                 Placeholder.unparsed("partyname", party.getPartyName()),
-                Placeholder.component("message", parseMessageContent(player, message)),
+                Placeholder.component("message", parseMessageContent(player, modifiableString.string())),
                 Placeholder.unparsed("server", serverConnection.getServer().getServerInfo().getName())
         );
 

@@ -88,7 +88,7 @@ public class ChatListener implements Listener {
             return; // the message was blocked
         }
 
-        input = render(player, input);
+        input = render(player, plainTextComponentSerializer.deserialize(modifiableString.string()));
         for (Player receiver : receivers) {
             receiver.sendMessage(input);
         }
