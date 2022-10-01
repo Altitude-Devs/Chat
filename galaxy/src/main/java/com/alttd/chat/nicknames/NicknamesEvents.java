@@ -4,6 +4,7 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.Nick;
+import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.md_5.bungee.api.ChatColor;
@@ -90,6 +91,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
 
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subChannel = in.readUTF();
+        ALogger.info(channel + ": " + subChannel);
         if (!subChannel.equals("NickNameRequest") && !subChannel.equals("NickNameAccepted")
                 && !subChannel.equals("NickNameDenied") && !subChannel.equals("NickNameSet")) {
             return;

@@ -509,6 +509,7 @@ public final class Config {
     public static List<String> NICK_ITEM_LORE = new ArrayList<>();
     public static List<String> NICK_BLOCKED_COLOR_CODESLIST = new ArrayList<>();
     public static List<String> NICK_ALLOWED_COLOR_CODESLIST = new ArrayList<>();
+    public static String NICK_CURRENT = "<gold>Current nickname: <nickname><white>(<insert:\"<currentnickname>\"><currentnickname></insert>)";
     private static void nicknameSettings() {
         NICK_CHANGED = getString("nicknames.messages.nick-changed", NICK_CHANGED);
         NICK_NOT_CHANGED = getString("nicknames.messages.nick-not-changed", NICK_NOT_CHANGED);
@@ -537,5 +538,6 @@ public final class Config {
         NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("&bNew nick: %newNick%", "&bOld nick: %oldNick%", "&bLast changed: %lastChanged%", "&aLeft click to Accept &d| &cRight click to Deny"));
         NICK_BLOCKED_COLOR_CODESLIST = getList("nicknames.blocked-color-codes", List.of("&k", "&l", "&n", "&m", "&o"));
         NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
+        NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);
     }
 }

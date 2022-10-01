@@ -11,6 +11,8 @@ import com.alttd.chat.objects.Nick;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -104,7 +106,11 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 case "current":
                     if (hasPermission(sender, "utility.nick.current")) {
                         ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
-                        player.sendMessage(Component.text("Current nick: ").append(chatUser.getDisplayName()).append(Component.text(" (" + chatUser.getNickNameString() + ")")));
+                        TagResolver placeholders = TagResolver.resolver(
+                                Placeholder.component("nickname", chatUser.getDisplayName()),
+                                Placeholder.parsed("currentnickname", chatUser.getNickNameString())
+                        );
+                        player.sendMiniMessage(Config.NICK_CURRENT, placeholders);
                     }
                     break;
                 case "help":
@@ -179,9 +185,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
         if (NickCache.containsKey(uniqueId)) {
             Nick nick = NickCache.get(uniqueId);
-            long timeSinceLastChange =  new Date().getTime() - nick.getLastChangedDate();
+            long timeSinceLastChange = new Date().getTime() - nick.getLastChangedDate();
             long waitTime = Config.NICK_WAIT_TIME;
-            if (timeSinceLastChange > waitTime) {
+            if (timeSinceLastChange > waitTime || player.hasPermission("utility.nick.admin")) {
                 if (nick.hasRequest()) {
                     player.sendMessage(format(Config.NICK_REQUEST_PLACED
                             .replace("%oldRequestedNick%", nick.getNewNick())
@@ -208,8 +214,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
         UUID uniqueId = player.getUniqueId();
 
-        out.writeUTF("Forward"); // So BungeeCord knows to forward it
-        out.writeUTF("ALL");
+//        out.writeUTF("Forward"); // So BungeeCord knows to forward it
+//        out.writeUTF("ALL");
         out.writeUTF("NickNameRequest"); // The channel name to check if this your data
 
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
@@ -268,7 +274,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         .replace("%player%", target.getName())));
             }
 
-            if (target.isOnline()) {
+            if (target.isOnline() && target.getPlayer() != null) {
                 target.getPlayer().sendMessage(format(Config.NICK_RESET));
             }
 
@@ -290,7 +296,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 Nick nick = NickCache.get(target.getUniqueId());
                 nick.setCurrentNick(nickName);
                 nick.setLastChangedDate(new Date().getTime());
-
+                setNick(target.getUniqueId(), nickName);
             } else {
                 NickCache.put(target.getUniqueId(), new Nick(target.getUniqueId(), nickName, new Date().getTime()));
             }

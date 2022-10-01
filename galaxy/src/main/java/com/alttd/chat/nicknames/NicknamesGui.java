@@ -191,8 +191,8 @@ public class NicknamesGui implements Listener {
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getNewNick());
-                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED
-                                        .replace("%nickname%", nick.getNewNick())));
+//                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED // This message is also send when the plugin message is received
+//                                        .replace("%nickname%", nick.getNewNick())));
                             }
 
                             NickUtilities.bungeeMessageHandled(uniqueId, e.getWhoClicked().getServer().getPlayer(e.getWhoClicked().getName()), "Accepted");

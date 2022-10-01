@@ -69,7 +69,7 @@ public class PluginMessageListener {
             }
 
             // nicknames WIP
-            case "NickNameAccepted" -> {
+            case "NickNameAccepted", "NickNameSet" -> {
                 try {
                     short len = in.readShort();
                     byte[] msgbytes = new byte[len];
@@ -88,7 +88,7 @@ public class PluginMessageListener {
                 proxy.getAllServers().forEach(registeredServer ->
                         registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
             }
-            case "NickNameRequest", "NickNameSet", "NickNameDenied" -> {
+            case "NickNameRequest", "NickNameDenied" -> {
                 ProxyServer proxy = VelocityChat.getPlugin().getProxy();
                 proxy.getAllServers().forEach(registeredServer ->
                         registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));

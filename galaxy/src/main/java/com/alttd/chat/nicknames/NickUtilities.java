@@ -193,8 +193,8 @@ public class NickUtilities
     public static void bungeeMessageHandled(UUID uniqueId, Player player, String channel) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
-        out.writeUTF("Forward"); // So BungeeCord knows to forward it
-        out.writeUTF("ALL");
+//        out.writeUTF("Forward"); // So BungeeCord knows to forward it
+//        out.writeUTF("ALL");
         out.writeUTF("NickName" + channel); // The channel name to check if this your data
 
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
