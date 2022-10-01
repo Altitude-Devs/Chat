@@ -277,7 +277,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
         } else if (NickUtilities.validNick(sender, target, nickName)) {
             if (target.isOnline()) {
-                setNick(target.getPlayer(), nickName);
+                setNick(target.getUniqueId(), nickName);
             } else {
                 NickUtilities.bungeeMessageHandled(target.getUniqueId(), sender, "Set");
             }
@@ -290,6 +290,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 Nick nick = NickCache.get(target.getUniqueId());
                 nick.setCurrentNick(nickName);
                 nick.setLastChangedDate(new Date().getTime());
+
             } else {
                 NickCache.put(target.getUniqueId(), new Nick(target.getUniqueId(), nickName, new Date().getTime()));
             }
@@ -379,8 +380,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         return user.getNickNameString();
     }
 
-    public void setNick(final Player player, final String nickName) {
-        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
+    public void setNick(final UUID uuid, final String nickName) {
+        ChatUser user = ChatUserManager.getChatUser(uuid);
         user.setDisplayName(nickName);
     }
 

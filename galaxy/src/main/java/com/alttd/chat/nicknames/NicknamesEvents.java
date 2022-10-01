@@ -60,7 +60,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 if (nickName == null) {
                     Nicknames.getInstance().resetNick(player);
                 } else if (!nickName.equals(strippedNick)) {
-                    Nicknames.getInstance().setNick(player, nickName);
+                    Nicknames.getInstance().setNick(player.getUniqueId(), nickName);
                 }
 
                 Nicknames.getInstance().NickCache.put(e.getPlayer().getUniqueId(), nick);
@@ -130,7 +130,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 if (offlinePlayer.isOnline()) {
                     Nick nick = Queries.getNick(playerUUID);
                     if (nick != null && nick.getCurrentNick() != null) {
-                        Nicknames.getInstance().setNick(offlinePlayer.getPlayer(), nick.getCurrentNick());
+                        Nicknames.getInstance().setNick(offlinePlayer.getUniqueId(), nick.getCurrentNick());
                     }
                 }
                 break;
@@ -148,7 +148,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Nick nick = Queries.getNick(playerUUID);
                     Player target = Bukkit.getPlayer(playerUUID);
                     if (target != null && nick != null && nick.getCurrentNick() != null) {
-                        Nicknames.getInstance().setNick(target, nick.getCurrentNick());
+                        Nicknames.getInstance().setNick(target.getUniqueId(), nick.getCurrentNick());
                         target.sendMessage(format(Config.NICK_CHANGED
                                 .replace("%nickname%", nick.getCurrentNick())));
                     }

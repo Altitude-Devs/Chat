@@ -190,7 +190,7 @@ public class NicknamesGui implements Listener {
                                     .replace("%oldNick%", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
-                                Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getNewNick());
+                                Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getNewNick());
                                 owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED
                                         .replace("%nickname%", nick.getNewNick())));
                             }
@@ -245,7 +245,7 @@ public class NicknamesGui implements Listener {
                             }
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
-                                Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
+                                Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
                                 owningPlayer.getPlayer().sendMessage(format(Config.NICK_NOT_CHANGED));
                             }
 
