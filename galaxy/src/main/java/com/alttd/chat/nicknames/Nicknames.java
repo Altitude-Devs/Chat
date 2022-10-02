@@ -389,6 +389,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
     public void setNick(final UUID uuid, final String nickName) {
         ChatUser user = ChatUserManager.getChatUser(uuid);
         user.setDisplayName(nickName);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null)
+            player.displayName(user.getDisplayName());
     }
 
 //    public static String format(final String m) {
