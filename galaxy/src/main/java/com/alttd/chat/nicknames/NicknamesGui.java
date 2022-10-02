@@ -7,7 +7,10 @@ import com.alttd.chat.events.NickEvent;
 import com.alttd.chat.objects.Nick;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -28,8 +31,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import static com.alttd.chat.nicknames.Nicknames.format;
+import java.util.stream.Collectors;
 
 public class NicknamesGui implements Listener {
 
@@ -83,19 +85,23 @@ public class NicknamesGui implements Listener {
     }
 
     private ItemStack createPlayerSkull(Nick nick, List<String> lore) {
+        MiniMessage miniMessage = MiniMessage.miniMessage();
         ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(nick.getUuid());
 
         meta.setOwningPlayer(offlinePlayer);
-        meta.setDisplayName(offlinePlayer.getName());
+        String name = offlinePlayer.getName();
+        if (name == null)
+            meta.displayName(miniMessage.deserialize("UNKNOWN PLAYER NAME"));
+        else
+            meta.displayName(miniMessage.deserialize(offlinePlayer.getName()));
 
-        lore.replaceAll(s -> format(s
-                .replace("%newNick%", nick.getNewNick())
-                .replace("%oldNick%", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick())
-                .replace("%lastChanged%", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted())));
-
-        meta.setLore(lore);
+        TagResolver resolver = TagResolver.resolver(
+                Placeholder.unparsed("newNick", nick.getNewNick()),
+                Placeholder.unparsed("oldNick", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick()),
+                Placeholder.unparsed("lastChanged", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted()));
+        meta.lore(lore.stream().map(a -> miniMessage.deserialize(a, resolver)).collect(Collectors.toList()));
         playerHead.setItemMeta(meta);
 
         return playerHead;
@@ -136,7 +142,8 @@ public class NicknamesGui implements Listener {
         final Player p = (Player) e.getWhoClicked();
 
         if (clickedItem.getType().equals(Material.PAPER)) {
-            if (clickedItem.getItemMeta().getDisplayName().equals("Next Page")) {
+            String serialize = PlainTextComponentSerializer.plainText().serialize(clickedItem.getItemMeta().displayName());
+            if (serialize.equals("Next Page")) {
                 setItems(currentPage + 1);
             }
         } else if (clickedItem.getType().equals(Material.PLAYER_HEAD)) {
@@ -147,7 +154,7 @@ public class NicknamesGui implements Listener {
             OfflinePlayer owningPlayer = meta.getOwningPlayer();
 
             if (owningPlayer == null) {
-                p.sendMessage(format(Config.NICK_USER_NOT_FOUND));
+                p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_USER_NOT_FOUND));
                 return;
             }
 
@@ -165,8 +172,8 @@ public class NicknamesGui implements Listener {
                     }
 
                     if (nick == null || !nick.hasRequest()) {
-                        p.sendMessage(format(Config.NICK_ALREADY_HANDLED
-                                .replace("%targetPlayer%", clickedItem.getItemMeta().getDisplayName())));
+                        p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_ALREADY_HANDLED,
+                                Placeholder.component("targetPlayer", clickedItem.getItemMeta().displayName())));
                         return;
                     }
 
@@ -184,14 +191,14 @@ public class NicknamesGui implements Listener {
                                 }
                             }.runTask(ChatPlugin.getInstance());
 
-                            p.sendMessage(format(Config.NICK_ACCEPTED
-                                    .replace("%targetPlayer%", clickedItem.getItemMeta().getDisplayName())
-                                    .replace("%newNick%", nick.getNewNick())
-                                    .replace("%oldNick%", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
+                            p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_ACCEPTED,
+                                    Placeholder.component("targetPlayer", clickedItem.getItemMeta().displayName()),
+                                    Placeholder.unparsed("newNick", nick.getNewNick()),
+                                    Placeholder.unparsed("oldNick", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getNewNick());
-//                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_CHANGED // This message is also send when the plugin message is received
+//                                owningPlayer.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED // This message is also send when the plugin message is received
 //                                        .replace("%nickname%", nick.getNewNick())));
                             }
 
@@ -212,11 +219,12 @@ public class NicknamesGui implements Listener {
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
                         } else {
-                            p.sendMessage(format(Config.NICK_PLAYER_NOT_ONLINE
-                                    .replace("%playerName%", clickedItem.getItemMeta().getDisplayName())));
+                            p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_PLAYER_NOT_ONLINE,
+                                    Placeholder.component("playerName", clickedItem.getItemMeta().displayName())));
                         }
 
                     } else if (e.isRightClick()) {
+                        Component displayName = clickedItem.getItemMeta().displayName();
                         if (owningPlayer.hasPlayedBefore()) {
                             Queries.denyNewNickname(uniqueId);
 
@@ -230,10 +238,10 @@ public class NicknamesGui implements Listener {
                                 }
                             }.runTask(ChatPlugin.getInstance());
 
-                            p.sendMessage(format(Config.NICK_DENIED
-                                    .replace("%targetPlayer%", owningPlayer.getName())
-                                    .replace("%newNick%", nick.getNewNick())
-                                    .replace("%oldNick%", nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick())));
+                            p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_DENIED,
+                                    Placeholder.unparsed("targetPlayer", owningPlayer.getName()),
+                                    Placeholder.unparsed("newNick", nick.getNewNick()),
+                                    Placeholder.unparsed("oldNick", nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick())));
 
                             if (Nicknames.getInstance().NickCache.containsKey(uniqueId)
                                     && Nicknames.getInstance().NickCache.get(uniqueId).getCurrentNick() != null) {
@@ -246,11 +254,12 @@ public class NicknamesGui implements Listener {
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
-                                owningPlayer.getPlayer().sendMessage(format(Config.NICK_NOT_CHANGED));
+                                owningPlayer.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_NOT_CHANGED));
                             }
 
                             NickUtilities.bungeeMessageHandled(uniqueId, e.getWhoClicked().getServer().getPlayer(e.getWhoClicked().getName()), "Denied");
-                            final String messageDenied = ChatColor.RED + owningPlayer.getName() + "'s nickname was denied!";
+                            final Component messageDenied = MiniMessage.miniMessage().deserialize("<red><name>'s nickname was denied!",
+                                    Placeholder.unparsed("name", owningPlayer.getName()));
                             ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
                                 if (p.hasPermission("utility.nick.review")) {
                                     p.sendMessage(messageDenied);
@@ -260,14 +269,16 @@ public class NicknamesGui implements Listener {
 
                             ItemStack itemStack = new ItemStack(Material.SKELETON_SKULL);
                             ItemMeta itemMeta = itemStack.getItemMeta();
-                            itemMeta.displayName(clickedItem.getItemMeta().displayName());
+                            itemMeta.displayName(displayName);
                             itemMeta.lore(clickedItem.lore());
                             itemStack.setItemMeta(itemMeta);
                             e.getInventory().setItem(e.getSlot(), itemStack);
                             p.updateInventory();
                         } else {
-                            p.sendMessage(format(Config.NICK_PLAYER_NOT_ONLINE
-                                    .replace("%playerName%", clickedItem.getItemMeta().getDisplayName())));
+                            if (displayName == null)
+                                p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_PLAYER_NOT_ONLINE, Placeholder.parsed("playerName", "UNKNOWN PLAYER NAME")));
+                            else
+                                p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_PLAYER_NOT_ONLINE, Placeholder.component("playerName", displayName)));
                         }
                     }
                 }

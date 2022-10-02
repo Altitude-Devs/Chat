@@ -12,7 +12,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -76,8 +75,8 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     }
 
                     if (i > 0) {
-                        player.sendMessage(format(Config.NICK_REQUESTS_ON_LOGIN
-                                .replace("%amount%", String.valueOf(i))));
+                        player.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_REQUESTS_ON_LOGIN,
+                                Placeholder.unparsed("amount", String.valueOf(i))));
                     }
                 }
             }
@@ -119,7 +118,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
         switch (subChannel) {
             case "NickNameRequest":
                 String notification = NickUtilities.applyColor(Config.NICK_REQUEST_NEW
-                        .replace("%player%", name));
+                        .replace("%player%", name)); //TODO fix this needing .replace
                 Component component = miniMessage.deserialize(NickUtilities.applyColor(notification))
                         .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND,
                                 "/nick review"))
@@ -141,10 +140,11 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 }
                 break;
             case "NickNameAccepted":
-                final String messageAccepted = ChatColor.GREEN + name + "'s nickname was accepted!";
+                Component deserialize = miniMessage.deserialize("<green><name>'s nickname was accepted!",
+                        Placeholder.unparsed("name", name));
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
                     if (p.hasPermission("utility.nick.review")) {
-                        p.sendMessage(messageAccepted);
+                        p.sendMessage(deserialize);
                     }
                 });
                 //No break on purpose
@@ -155,13 +155,14 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Player target = Bukkit.getPlayer(playerUUID);
                     if (target != null && nick != null && nick.getCurrentNick() != null) {
                         Nicknames.getInstance().setNick(target.getUniqueId(), nick.getCurrentNick());
-                        target.sendMessage(format(Config.NICK_CHANGED
-                                .replace("%nickname%", nick.getCurrentNick())));
+                        target.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED,
+                                Placeholder.unparsed("nickname", nick.getCurrentNick())));
                     }
                 }
                 break;
             case "NickNameDenied":
-                final Component messageDenied = miniMessage.deserialize("<red><name>'s nickname was denied", Placeholder.unparsed("name", name));
+                final Component messageDenied = miniMessage.deserialize("<red><name>'s nickname was denied",
+                        Placeholder.unparsed("name", name));
                 Nick nick = Nicknames.getInstance().NickCache.get(playerUUID);
 
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
@@ -183,14 +184,10 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Player target = Bukkit.getPlayer(playerUUID);
 
                     if (target == null) break;
-                    target.sendMessage(format(Config.NICK_NOT_CHANGED
-                            .replace("%nickname%", nick.getCurrentNick())));
+                    target.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_NOT_CHANGED,
+                            Placeholder.unparsed("nickname", nick.getCurrentNick())));
                 }
                 break;
         }
-    }
-
-    public static String format(final String m) {
-        return NickUtilities.applyColor(m);
     }
 }

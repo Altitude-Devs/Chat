@@ -10,7 +10,7 @@ import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Nick;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
@@ -46,7 +46,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (sender instanceof Player player) {
             if (args.length == 0) {
-                sender.sendMessage(format(helpMessage(sender, HelpType.ALL)));
+                sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.ALL)));
                 return true;
             }
             switch (args[0].toLowerCase()) {
@@ -59,10 +59,10 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         if (offlinePlayer.isOnline() || offlinePlayer.hasPlayedBefore()) {
                             handleNick(player, offlinePlayer, args[2]);
                         } else {
-                            sender.sendMessage(format(helpMessage(sender, HelpType.SET_OTHERS)));
+                            sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.SET_OTHERS)));
                         }
                     } else if (args.length > 3) {
-                        sender.sendMessage(format(helpMessage(sender, HelpType.SET_SELF, HelpType.SET_OTHERS)));
+                        sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.SET_SELF, HelpType.SET_OTHERS)));
                     }
                     break;
                 case "review":
@@ -71,7 +71,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         ChatPlugin.getInstance().getServer().getPluginManager().registerEvents(nicknamesGui, ChatPlugin.getInstance());
                         nicknamesGui.openInventory(player);
                     } else {
-                        sender.sendMessage(format(helpMessage(sender, HelpType.REVIEW)));
+                        sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.REVIEW)));
                     }
                     break;
                 case "request":
@@ -83,7 +83,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                             }
                         }.runTaskAsynchronously(ChatPlugin.getInstance());
                     } else {
-                        sender.sendMessage(format(helpMessage(sender, HelpType.REQUEST)));
+                        sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.REQUEST)));
                     }
                     break;
                 case "try":
@@ -91,16 +91,16 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         LuckPerms api = ChatAPI.get().getLuckPerms();
                         if (api != null) {
                             if (NickUtilities.validNick(player, player, args[1])) {
-                                sender.sendMessage(format(Config.NICK_TRYOUT
-                                        .replace("%prefix", api.getUserManager().getUser(player.getUniqueId())
-                                                .getCachedData().getMetaData().getPrefix()) // TODO pull this from chatuser?
-                                        .replace("%nick%", args[1])));
+                                sender.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_TRYOUT,
+                                        Placeholder.unparsed("prefix", api.getUserManager().getUser(player.getUniqueId())
+                                                .getCachedData().getMetaData().getPrefix()), // TODO pull this from chatuser?
+                                        Placeholder.unparsed("nick", args[1])));
                             }
                         } else {
-                            sender.sendMessage(format(Config.NICK_NO_LUCKPERMS));
+                            sender.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_NO_LUCKPERMS));
                         }
                     } else {
-                        sender.sendMessage(format(helpMessage(sender, HelpType.TRY)));
+                        sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.TRY)));
                     }
                     break;
                 case "current":
@@ -114,11 +114,11 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "help":
-                    sender.sendMessage(format(helpMessage(sender, HelpType.ALL)
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.ALL)
                             + "For more info on nicknames and how to use rgb colors go to: &bhttps://alttd.com/nicknames&f"));
                     break;
                 default:
-                    sender.sendMessage(format(helpMessage(sender, HelpType.ALL)));
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize(helpMessage(sender, HelpType.ALL)));
             }
         } else {
             sender.sendMessage("Console commands are disabled.");
@@ -189,15 +189,15 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             long waitTime = Config.NICK_WAIT_TIME;
             if (timeSinceLastChange > waitTime || player.hasPermission("utility.nick.admin")) {
                 if (nick.hasRequest()) {
-                    player.sendMessage(format(Config.NICK_REQUEST_PLACED
-                            .replace("%oldRequestedNick%", nick.getNewNick())
-                            .replace("%newRequestedNick%", nickName)));
+                    player.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_REQUEST_PLACED,
+                             Placeholder.unparsed("oldRequestedNick", nick.getNewNick()),
+                             Placeholder.unparsed("newRequestedNick", nickName)));
                 }
                 nick.setNewNick(nickName);
                 nick.setRequestedDate(new Date().getTime());
             } else {
-                player.sendMessage(format(Config.NICK_TOO_SOON
-                        .replace("%time%", formatTime((timeSinceLastChange-waitTime)*-1))));
+                player.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_TOO_SOON,
+                        Placeholder.unparsed("time", formatTime((timeSinceLastChange-waitTime)*-1))));
                 return;
             }
         } else {
@@ -205,8 +205,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         }
         Queries.newNicknameRequest(uniqueId, nickName);
         bungeeMessageRequest(player);
-        player.sendMessage(format(Config.NICK_REQUESTED
-                .replace("%nick%", nickName)));
+        player.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_REQUESTED,
+                Placeholder.unparsed("nick", nickName)));
     }
 
     private void bungeeMessageRequest(Player player) {
@@ -270,12 +270,12 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
 
             if (!sender.equals(target)) {
-                sender.sendMessage(format(Config.NICK_RESET_OTHERS
-                        .replace("%player%", target.getName())));
+                sender.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_RESET_OTHERS,
+                        Placeholder.unparsed("player", target.getName())));
             }
 
             if (target.isOnline() && target.getPlayer() != null) {
-                target.getPlayer().sendMessage(format(Config.NICK_RESET));
+                target.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_RESET));
             }
 
             NickEvent nickEvent = new NickEvent(sender.getName(), target.getName(), null, NickEvent.NickEventType.RESET);
@@ -302,18 +302,18 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
 
             if (!sender.equals(target)) {
-                sender.sendMessage(format(Config.NICK_CHANGED_OTHERS
-                        .replace("%targetplayer%", target.getName())
-                        .replace("%nickname%", nickName)));
+                sender.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED_OTHERS,
+                         Placeholder.unparsed("targetplayer", target.getName()),
+                         Placeholder.unparsed("nickname", nickName)));
                 if (target.isOnline()) {
-                    target.getPlayer().sendMessage(format(Config.NICK_TARGET_NICK_CHANGE
-                            .replace("%nickname%", getNick(target.getPlayer()))
-                            .replace("%sendernick%", getNick(sender))
-                            .replace("%player%", target.getName())));
+                    target.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_TARGET_NICK_CHANGE,
+                             Placeholder.unparsed("nickname", getNick(target.getPlayer())),
+                             Placeholder.unparsed("sendernick", getNick(sender)),
+                             Placeholder.unparsed("player", target.getName())));
                 }
             } else if (target.isOnline()) {
-                target.getPlayer().sendMessage(format(Config.NICK_CHANGED
-                        .replace("%nickname%", getNick(target.getPlayer()))));
+                target.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED,
+                        Placeholder.unparsed("nickname", getNick(target.getPlayer()))));
             }
         }
     }
@@ -370,7 +370,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
     private boolean hasPermission(CommandSender sender, String permission) {
         if (!sender.hasPermission(permission)) {
-            sender.sendMessage(format(Config.NO_PERMISSION));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(Config.NO_PERMISSION));
             return false;
         }
         return true;
@@ -391,9 +391,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         user.setDisplayName(nickName);
     }
 
-    public static String format(final String m) {
-        return NickUtilities.applyColor(m);
-    }
+//    public static String format(final String m) {
+//        return NickUtilities.applyColor(m);
+//    }
 
     public static Nicknames getInstance() {
         return Nicknames.instance;
