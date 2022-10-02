@@ -7,11 +7,12 @@ import com.alttd.chat.objects.Nick;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -114,14 +115,17 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
             return;
         }
 
+        MiniMessage miniMessage = MiniMessage.miniMessage();
         switch (subChannel) {
             case "NickNameRequest":
                 String notification = NickUtilities.applyColor(Config.NICK_REQUEST_NEW
                         .replace("%player%", name));
-                TextComponent component = new TextComponent(TextComponent.fromLegacyText(NickUtilities.applyColor(notification)));
-                component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/nick review"));
-                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(NickUtilities.applyColor("&6Click this text to review the request!")).create()));
+                Component component = miniMessage.deserialize(NickUtilities.applyColor(notification))
+                        .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND,
+                                "/nick review"))
+                        .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                miniMessage.deserialize("<orange>Click this text to review the request!")));
+
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
                     if (p.hasPermission("utility.nick.review")) {
                         p.sendMessage(component);
@@ -157,7 +161,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 }
                 break;
             case "NickNameDenied":
-                final String messageDenied = ChatColor.RED + name + "'s nickname was denied!";
+                final Component messageDenied = miniMessage.deserialize("<red><name>'s nickname was denied", Placeholder.unparsed("name", name));
                 Nick nick = Nicknames.getInstance().NickCache.get(playerUUID);
 
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
