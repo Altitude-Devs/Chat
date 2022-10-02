@@ -117,9 +117,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
         MiniMessage miniMessage = MiniMessage.miniMessage();
         switch (subChannel) {
             case "NickNameRequest":
-                String notification = NickUtilities.applyColor(Config.NICK_REQUEST_NEW
-                        .replace("%player%", name)); //TODO fix this needing .replace
-                Component component = miniMessage.deserialize(NickUtilities.applyColor(notification))
+                Component component = miniMessage.deserialize(Config.NICK_REQUEST_NEW, Placeholder.parsed("player", name))
                         .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND,
                                 "/nick review"))
                         .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT,

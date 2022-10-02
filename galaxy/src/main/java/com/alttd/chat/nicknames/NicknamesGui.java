@@ -116,7 +116,8 @@ public class NicknamesGui implements Listener {
         meta.displayName(Component.text(name));
 
         // Set the lore of the item
-        meta.setLore(Arrays.asList(lore));
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+        meta.lore(Arrays.stream(lore).map(miniMessage::deserialize).collect(Collectors.toList()));
 
         item.setItemMeta(meta);
 
