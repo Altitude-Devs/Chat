@@ -35,7 +35,7 @@ commands:
   chatclear:
     permission: chat.command.clear-chat
   emoteslist:
-    permission: chat.command.clear-chat
+    permission: chat.command.emoteslist
     aliases: [emotes]
   nick:
     permission: chat.command.nick
