@@ -41,7 +41,7 @@ public final class PrefixConfig {
         CONFIG_FILE = new File(Config.CONFIGPATH, "prefix.yml");
         configLoader = YamlConfigurationLoader.builder()
                 .file(CONFIG_FILE)
-                .nodeStyle(NodeStyle.FLOW)
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
         if (!CONFIG_FILE.getParentFile().exists()) {
             if(!CONFIG_FILE.getParentFile().mkdirs()) {

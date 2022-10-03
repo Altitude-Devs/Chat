@@ -36,7 +36,7 @@ public final class RegexConfig {
         CONFIG_FILE = new File(Config.CONFIGPATH, "filters.yml");
         configLoader = YamlConfigurationLoader.builder()
                 .file(CONFIG_FILE)
-                .nodeStyle(NodeStyle.FLOW)
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
 
         if (!CONFIG_FILE.getParentFile().exists()) {
