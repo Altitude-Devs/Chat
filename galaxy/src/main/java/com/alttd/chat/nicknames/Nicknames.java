@@ -93,9 +93,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                         if (api != null) {
                             if (NickUtilities.validNick(player, player, args[1])) {
                                 sender.sendMessage(Utility.parseMiniMessage(Config.NICK_TRYOUT,
-                                        Placeholder.unparsed("prefix", api.getUserManager().getUser(player.getUniqueId())
-                                                .getCachedData().getMetaData().getPrefix()), // TODO pull this from chatuser?
-                                        Placeholder.unparsed("nick", args[1])));
+                                        Placeholder.component("prefix", Utility.applyColor(api.getUserManager().getUser(player.getUniqueId())
+                                                .getCachedData().getMetaData().getPrefix())), // TODO pull this from chatuser?
+                                        Placeholder.component("nick", Utility.applyColor(args[1]))));
                             }
                         } else {
                             sender.sendMessage(Utility.parseMiniMessage(Config.NICK_NO_LUCKPERMS));
