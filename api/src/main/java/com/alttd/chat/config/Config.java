@@ -492,12 +492,12 @@ public final class Config {
     public static String NICK_PLAYER_NOT_ONLINE = "<red>That player is not online.";
     public static String NICK_BLOCKED_COLOR_CODES = "<yellow>You have blocked color codes in that nickname.";
     public static String NICK_USER_NOT_FOUND = "<red>Failed to set nickname from player, try again from a server this player has been on before.";
-    public static String NICK_ACCEPTED = "<green>You accepted <targetPlayer><green>'s nickname. They are now called <newNick><green>.";
-    public static String NICK_DENIED = "<green>You denied <targetPlayer><green>'s nickname. They are still called <oldNick><green>.";
-    public static String NICK_ALREADY_HANDLED = "<red><targetPlayer><red>'s nickname was already accepted or denied.";
+    public static String NICK_ACCEPTED = "<green>You accepted <targetplayer><green>'s nickname. They are now called <newnick><green>.";
+    public static String NICK_DENIED = "<green>You denied <targetplayer><green>'s nickname. They are still called <oldnick><green>.";
+    public static String NICK_ALREADY_HANDLED = "<red><targetplayer><red>'s nickname was already accepted or denied.";
     public static String NICK_NO_LUCKPERMS = "<red>Due to an issue with LuckPerms /nick try won't work at the moment.";
     public static String NICK_TOO_SOON = "<red>Please wait <time><red> until requesting a new nickname";
-    public static String NICK_REQUEST_PLACED = "<green>Replaced your previous request <oldRequestedNick><green> with <newRequestedNick<green>.";
+    public static String NICK_REQUEST_PLACED = "<green>Replaced your previous request <oldrequestednick><green> with <newrequestednick><green>.";
     public static String NICK_REQUEST_NEW = "<green>New nickname request by <player><green>!";
     public static String NICK_TRYOUT = "<white><prefix><white> <nick><gray>: <white>Hi, this is what my new nickname could look like!";
     public static String NICK_REQUESTED = "<green>Your requested to be nicknamed <nick><green> has been received. Staff will accept or deny this request asap!";
@@ -534,7 +534,7 @@ public final class Config {
         NICK_TAKEN = getString("nicknames.messages.nick-taken", NICK_TAKEN);
         NICK_REQUESTS_ON_LOGIN = getString("nicknames.messages.nick-reauests-on-login", NICK_REQUESTS_ON_LOGIN);
         NICK_WAIT_TIME = getLong("nicknames.wait-time", NICK_WAIT_TIME);
-        NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("&bNew nick: %newNick%", "&bOld nick: %oldNick%", "&bLast changed: %lastChanged%", "&aLeft click to Accept &d| &cRight click to Deny"));
+        NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("<aqua>New nick: <newnick>", "<aqua>Old nick: <oldnick>", "<aqua>Last changed: <lastChanged>", "<green>Left click to Accept <light_purple>| <red>Right click to Deny"));
         NICK_BLOCKED_COLOR_CODESLIST = getList("nicknames.blocked-color-codes", List.of("&k", "&l", "&n", "&m", "&o"));
         NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
         NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);

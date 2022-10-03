@@ -190,8 +190,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             if (timeSinceLastChange > waitTime || player.hasPermission("utility.nick.admin")) {
                 if (nick.hasRequest()) {
                     player.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_REQUEST_PLACED,
-                             Placeholder.unparsed("oldRequestedNick", nick.getNewNick()),
-                             Placeholder.unparsed("newRequestedNick", nickName)));
+                             Placeholder.unparsed("oldrequestednick", nick.getNewNick()),
+                             Placeholder.unparsed("newrequestednick", nickName)));
                 }
                 nick.setNewNick(nickName);
                 nick.setRequestedDate(new Date().getTime());

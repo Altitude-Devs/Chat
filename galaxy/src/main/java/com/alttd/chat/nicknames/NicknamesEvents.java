@@ -121,7 +121,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                         .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND,
                                 "/nick review"))
                         .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                miniMessage.deserialize("<orange>Click this text to review the request!")));
+                                miniMessage.deserialize("<gold>Click this text to review the request!")));
 
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
                     if (p.hasPermission("utility.nick.review")) {
