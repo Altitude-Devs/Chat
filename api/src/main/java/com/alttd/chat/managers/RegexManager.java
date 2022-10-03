@@ -31,7 +31,7 @@ public class RegexManager {
     private static void loadEmotes() {
         emotes.clear();
         for(ChatFilter chatFilter : chatFilters) {
-            if (chatFilter.getType() != FilterType.EMOTE) return;
+            if (chatFilter.getType() != FilterType.EMOTE) continue;
 
             emotes.add(chatFilter);
             emotesList.add(chatFilter.getRegex());
