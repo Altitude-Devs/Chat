@@ -52,7 +52,7 @@ public class ChatHandler {
         }
 
         TagResolver placeholders = TagResolver.resolver(
-                Placeholder.component("message", parseMessageContent(player, modifiableString.string())),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.component("sendername", player.name()),
                 Placeholder.parsed("receivername", target)
         );
@@ -81,7 +81,7 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        Component messageComponent = parseMessageContent(player, modifiableString.string());
+        Component messageComponent = parseMessageContent(player, message);
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("message", messageComponent),
                 Placeholder.component("sendername", player.name()),
@@ -133,7 +133,7 @@ public class ChatHandler {
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("prefix", prefix),
-                Placeholder.component("message", parseMessageContent(player, modifiableString.string())),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.parsed("server", Bukkit.getServerName())
         );
 
@@ -165,7 +165,7 @@ public class ChatHandler {
 
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
-                Placeholder.component("message", parseMessageContent(player, modifiableString.string())),
+                Placeholder.component("message", parseMessageContent(player, message)),
                 Placeholder.parsed("server", Bukkit.getServerName()),
                 Placeholder.parsed("channel", channel.getChannelName())
         );
