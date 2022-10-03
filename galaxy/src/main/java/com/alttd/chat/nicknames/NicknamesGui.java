@@ -100,7 +100,7 @@ public class NicknamesGui implements Listener {
         TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("newnick", nick.getNewNick()),
                 Placeholder.unparsed("oldnick", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick()),
-                Placeholder.unparsed("lastChanged", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted()));
+                Placeholder.unparsed("lastchanged", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted()));
         meta.lore(lore.stream().map(a -> miniMessage.deserialize(a, resolver)).collect(Collectors.toList()));
         playerHead.setItemMeta(meta);
 

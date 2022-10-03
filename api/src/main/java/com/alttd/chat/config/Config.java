@@ -534,7 +534,7 @@ public final class Config {
         NICK_TAKEN = getString("nicknames.messages.nick-taken", NICK_TAKEN);
         NICK_REQUESTS_ON_LOGIN = getString("nicknames.messages.nick-reauests-on-login", NICK_REQUESTS_ON_LOGIN);
         NICK_WAIT_TIME = getLong("nicknames.wait-time", NICK_WAIT_TIME);
-        NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("<aqua>New nick: <newnick>", "<aqua>Old nick: <oldnick>", "<aqua>Last changed: <lastChanged>", "<green>Left click to Accept <light_purple>| <red>Right click to Deny"));
+        NICK_ITEM_LORE = getList("nicknames.item-lore", List.of("<aqua>New nick: <newnick>", "<aqua>Old nick: <oldnick>", "<aqua>Last changed: <lastchanged>", "<green>Left click to Accept <light_purple>| <red>Right click to Deny"));
         NICK_BLOCKED_COLOR_CODESLIST = getList("nicknames.blocked-color-codes", List.of("&k", "&l", "&n", "&m", "&o"));
         NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
         NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);
