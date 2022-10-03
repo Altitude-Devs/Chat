@@ -98,8 +98,8 @@ public class NicknamesGui implements Listener {
             meta.displayName(miniMessage.deserialize(offlinePlayer.getName()));
 
         TagResolver resolver = TagResolver.resolver(
-                Placeholder.unparsed("newnick", nick.getNewNick()),
-                Placeholder.unparsed("oldnick", nick.getCurrentNick() == null ? "None" : nick.getCurrentNick()),
+                Placeholder.component("newnick", Utility.applyColor(nick.getNewNick())),
+                Placeholder.component("oldnick", Utility.applyColor(nick.getCurrentNick() == null ? "None" : nick.getCurrentNick())),
                 Placeholder.unparsed("lastchanged", nick.getLastChangedDate() == 0 ? "Not Applicable" : nick.getLastChangedDateFormatted()));
         meta.lore(lore.stream().map(a -> miniMessage.deserialize(a, resolver)).collect(Collectors.toList()));
         playerHead.setItemMeta(meta);
@@ -194,8 +194,8 @@ public class NicknamesGui implements Listener {
 
                             p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_ACCEPTED,
                                     Placeholder.component("targetplayer", clickedItem.getItemMeta().displayName()),
-                                    Placeholder.unparsed("newnick", nick.getNewNick()),
-                                    Placeholder.unparsed("oldnick", nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick())));
+                                    Placeholder.component("newnick", Utility.applyColor(nick.getNewNick())),
+                                    Placeholder.component("oldnick", Utility.applyColor(nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick()))));
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
                                 Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getNewNick());
@@ -241,8 +241,8 @@ public class NicknamesGui implements Listener {
 
                             p.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_DENIED,
                                     Placeholder.unparsed("targetplayer", owningPlayer.getName()),
-                                    Placeholder.unparsed("newnick", nick.getNewNick()),
-                                    Placeholder.unparsed("oldnick", nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick())));
+                                    Placeholder.component("newnick", Utility.applyColor(nick.getNewNick())),
+                                    Placeholder.component("oldnick", Utility.applyColor(nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick()))));
 
                             if (Nicknames.getInstance().NickCache.containsKey(uniqueId)
                                     && Nicknames.getInstance().NickCache.get(uniqueId).getCurrentNick() != null) {

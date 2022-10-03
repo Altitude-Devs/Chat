@@ -191,8 +191,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             if (timeSinceLastChange > waitTime || player.hasPermission("utility.nick.admin")) {
                 if (nick.hasRequest()) {
                     player.sendMessage(Utility.parseMiniMessage(Config.NICK_REQUEST_PLACED,
-                             Placeholder.unparsed("oldrequestednick", nick.getNewNick()),
-                             Placeholder.unparsed("newrequestednick", nickName)));
+                             Placeholder.component("oldrequestednick", Utility.applyColor(nick.getNewNick())),
+                             Placeholder.component("newrequestednick", Utility.applyColor(nickName))));
                 }
                 nick.setNewNick(nickName);
                 nick.setRequestedDate(new Date().getTime());
@@ -207,7 +207,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         Queries.newNicknameRequest(uniqueId, nickName);
         bungeeMessageRequest(player);
         player.sendMessage(Utility.parseMiniMessage(Config.NICK_REQUESTED,
-                Placeholder.unparsed("nick", nickName)));
+                Placeholder.component("nick", Utility.applyColor(nickName))));
     }
 
     private void bungeeMessageRequest(Player player) {
