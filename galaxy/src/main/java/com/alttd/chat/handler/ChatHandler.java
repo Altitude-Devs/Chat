@@ -137,8 +137,7 @@ public class ChatHandler {
                 Placeholder.parsed("server", Bukkit.getServerName())
         );
 
-        Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
+        Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders);
         user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
