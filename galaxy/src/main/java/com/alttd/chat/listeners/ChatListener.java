@@ -21,13 +21,16 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ChatListener implements Listener {
@@ -55,6 +58,7 @@ public class ChatListener implements Listener {
         event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
     }
 
+    private final Component mention = MiniMessage.miniMessage().deserialize("<aqua>@</aqua>"); //TODO move to config
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
         event.setCancelled(true); //Always cancel the event because we do not want to deal with Microsoft's stupid bans
@@ -88,9 +92,26 @@ public class ChatListener implements Listener {
             return; // the message was blocked
         }
 
+        Set<Player> playerToPing = new HashSet<>();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            String name = onlinePlayer.getName();
+            String nickName = PlainTextComponentSerializer.plainText().serialize(onlinePlayer.displayName());
+            if (modifiableString.string().contains(name)) {
+                modifiableString.replace(Pattern.compile(name, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
+                playerToPing.add(onlinePlayer);
+            }
+            if (modifiableString.string().contains(nickName)) {
+                modifiableString.replace(Pattern.compile(nickName, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
+                playerToPing.add(onlinePlayer);
+            }
+        }
+
         input = render(player, modifiableString.component());
         for (Player receiver : receivers) {
             receiver.sendMessage(input);
+        }
+        for (Player receiver : playerToPing) {
+            receiver.playSound(receiver.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
         }
         ALogger.info(PlainTextComponentSerializer.plainText().serialize(input));
     }
