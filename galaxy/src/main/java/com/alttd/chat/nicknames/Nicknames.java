@@ -52,9 +52,9 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             }
             switch (args[0].toLowerCase()) {
                 case "set":
-                    if (args.length == 2 && hasPermission(sender, "utility.nick.set")) {
+                    if (args.length == 2 && hasPermission(sender, "chat.command.nick.set")) {
                         handleNick(player, player, args[1]);
-                    } else if (args.length == 3 && hasPermission(sender, "utility.nick.set.others")) {
+                    } else if (args.length == 3 && hasPermission(sender, "chat.command.nick.set.others")) {
                         OfflinePlayer offlinePlayer = sender.getServer().getOfflinePlayer(args[1]);
 
                         if (offlinePlayer.isOnline() || offlinePlayer.hasPlayedBefore()) {
@@ -67,7 +67,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "review":
-                    if (args.length == 1 && hasPermission(sender, "utility.nick.review")) {
+                    if (args.length == 1 && hasPermission(sender, "chat.command.nick.review")) {
                         NicknamesGui nicknamesGui = new NicknamesGui();
                         ChatPlugin.getInstance().getServer().getPluginManager().registerEvents(nicknamesGui, ChatPlugin.getInstance());
                         nicknamesGui.openInventory(player);
@@ -76,7 +76,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "request":
-                    if (args.length == 2 && hasPermission(sender, "utility.nick.request")) {
+                    if (args.length == 2 && hasPermission(sender, "chat.command.nick.request")) {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
@@ -88,7 +88,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "try":
-                    if (args.length == 2 && hasPermission(sender, "utility.nick.try")) {
+                    if (args.length == 2 && hasPermission(sender, "chat.command.nick.try")) {
                         LuckPerms api = ChatAPI.get().getLuckPerms();
                         if (api != null) {
                             if (NickUtilities.validNick(player, player, args[1])) {
@@ -105,7 +105,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "current":
-                    if (hasPermission(sender, "utility.nick.current")) {
+                    if (hasPermission(sender, "chat.command.nick.current")) {
                         ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
                         TagResolver placeholders = TagResolver.resolver(
                                 Placeholder.component("nickname", chatUser.getDisplayName()),
