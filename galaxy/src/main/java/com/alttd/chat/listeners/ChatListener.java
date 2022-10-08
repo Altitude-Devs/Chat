@@ -87,7 +87,7 @@ public class ChatListener implements Listener {
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "chat")) {
             event.setCancelled(true);
             GalaxyUtility.sendBlockedNotification("Language", player,
-                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    modifiableString.component(),
                     "");
             return; // the message was blocked
         }
