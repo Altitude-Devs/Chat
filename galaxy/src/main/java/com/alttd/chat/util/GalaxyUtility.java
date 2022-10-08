@@ -20,7 +20,7 @@ public class GalaxyUtility {
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.parsed("prefix", prefix),
                 Placeholder.parsed("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
-                Placeholder.parsed("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Placeholder.parsed("target", (target.isEmpty() ? "tried to say:" : "-> " + target + ":")),
                 Placeholder.parsed("input", input)
         );
         Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
@@ -38,7 +38,7 @@ public class GalaxyUtility {
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.parsed("prefix", prefix),
                 Placeholder.parsed("displayname", Utility.getDisplayName(player.getUniqueId(), player.getName())),
-                Placeholder.parsed("target", (target.isEmpty() ? " tried to say: " : " -> " + target + ": ")),
+                Placeholder.parsed("target", (target.isEmpty() ? "tried to say:" : "-> " + target + ":")),
                 Placeholder.component("input", input)
         );
         Component blockedNotification = Utility.parseMiniMessage(Config.NOTIFICATIONFORMAT, placeholders);
