@@ -1,5 +1,10 @@
 package com.alttd.chat.objects;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +52,13 @@ public class ChatFilter {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find())
             if (!isException(input, matcher.start())) {
-                filterableString.string(filterableString.string().replaceFirst(matcher.group(), "<gold>" + matcher.group() + "</gold>"));
+//                filterableString.string(filterableString.string().replaceFirst(matcher.group(), "<gold>" + matcher.group() + "</gold>"));
+                filterableString.string(filterableString.component()
+                        .replaceText(
+                        TextReplacementConfig.builder()
+                                .match(matcher.pattern())
+                                .replacement(Component.text(matcher.group()).style(Style.style(NamedTextColor.GOLD)))
+                                .build()));
                 return true;
             }
         return matcher.matches();

@@ -41,7 +41,16 @@ public class ChatHandler {
     public void continuePrivateMessage(Player player, String target, String message) {
 //        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 //        user.setReplyTarget(target);
-        ModifiableString modifiableString = new ModifiableString(message);
+
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("message", parseMessageContent(player, message)),
+                Placeholder.component("sendername", player.name()),
+                Placeholder.parsed("receivername", target)
+        );
+
+        Component component = Utility.parseMiniMessage("<message>", placeholders);
+
+        ModifiableString modifiableString = new ModifiableString(component);
         // todo a better way for this
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString,  "privatemessage")) {
             GalaxyUtility.sendBlockedNotification("DM Language",
@@ -51,13 +60,7 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.component("message", parseMessageContent(player, message)),
-                Placeholder.component("sendername", player.name()),
-                Placeholder.parsed("receivername", target)
-        );
-
-        Component component = Utility.parseMiniMessage("<message>", placeholders);
+        component = modifiableString.component();
 
         sendPrivateMessage(player, target, "privatemessage", component);
         Component spymessage = Utility.parseMiniMessage(Config.MESSAGESPY, placeholders);
@@ -71,7 +74,15 @@ public class ChatHandler {
     public void privateMessage(Player player, String target, String message) {
 //        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
 //        user.setReplyTarget(target);
-        ModifiableString modifiableString = new ModifiableString(message);
+
+        Component messageComponent = parseMessageContent(player, message);
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("message", messageComponent),
+                Placeholder.component("sendername", player.name()),
+                Placeholder.parsed("receivername", target)
+        );
+
+        ModifiableString modifiableString = new ModifiableString(messageComponent);
         // todo a better way for this
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "privatemessage")) {
             GalaxyUtility.sendBlockedNotification("DM Language",
@@ -81,12 +92,7 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        Component messageComponent = parseMessageContent(player, message);
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.component("message", messageComponent),
-                Placeholder.component("sendername", player.name()),
-                Placeholder.parsed("receivername", target)
-        );
+        messageComponent = modifiableString.component();
 
 //        Component component = Utility.parseMiniMessage("<message>", placeholders)
 //                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(ChatHandler.itemComponent(player.getInventory().getItemInMainHand())).build());
@@ -120,16 +126,6 @@ public class ChatHandler {
         Component senderName = user.getDisplayName();
         Component prefix = user.getPrefix();
 
-        ModifiableString modifiableString = new ModifiableString(message);
-        // todo a better way for this
-        if (!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "globalchat")) {
-            GalaxyUtility.sendBlockedNotification("GC Language",
-                    player,
-                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
-                    "");
-            return; // the message was blocked
-        }
-
         TagResolver placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
                 Placeholder.component("prefix", prefix),
@@ -138,6 +134,18 @@ public class ChatHandler {
         );
 
         Component component = Utility.parseMiniMessage(Config.GCFORMAT, placeholders);
+
+        ModifiableString modifiableString = new ModifiableString(component);
+        // todo a better way for this
+        if (!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "globalchat")) {
+            GalaxyUtility.sendBlockedNotification("GC Language",
+                    player,
+                    Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
+                    "");
+            return; // the message was blocked
+        }
+        component = modifiableString.component();
+
         user.setGcCooldown(System.currentTimeMillis());
         sendPluginMessage(player, "globalchat", component);
     }
@@ -153,7 +161,15 @@ public class ChatHandler {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         Component senderName = user.getDisplayName();
 
-        ModifiableString modifiableString = new ModifiableString(message);
+        TagResolver placeholders = TagResolver.resolver(
+                Placeholder.component("sender", senderName),
+                Placeholder.component("message", parseMessageContent(player, message)),
+                Placeholder.parsed("server", Bukkit.getServerName()),
+                Placeholder.parsed("channel", channel.getChannelName())
+        );
+        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
+
+        ModifiableString modifiableString = new ModifiableString(component);
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, channel.getChannelName())) {
             GalaxyUtility.sendBlockedNotification(channel.getChannelName() + " Language",
                     player,
@@ -162,13 +178,7 @@ public class ChatHandler {
             return; // the message was blocked
         }
 
-        TagResolver placeholders = TagResolver.resolver(
-                Placeholder.component("sender", senderName),
-                Placeholder.component("message", parseMessageContent(player, message)),
-                Placeholder.parsed("server", Bukkit.getServerName()),
-                Placeholder.parsed("channel", channel.getChannelName())
-        );
-        Component component = Utility.parseMiniMessage(channel.getFormat(), placeholders);
+        component = modifiableString.component();
 
         if (channel.isProxy()) {
             sendChatChannelMessage(player, channel.getChannelName(), "chatchannel", component);

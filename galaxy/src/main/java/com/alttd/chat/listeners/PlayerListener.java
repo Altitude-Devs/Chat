@@ -51,8 +51,7 @@ public class PlayerListener implements Listener {
         for (int i = 0; i < 4; i++) {
             Component component = event.line(i);
             if (component != null) {
-                String message = PlainTextComponentSerializer.plainText().serialize(component);
-                ModifiableString modifiableString = new ModifiableString(message);
+                ModifiableString modifiableString = new ModifiableString(component);
 
                 Player player = event.getPlayer();
 
@@ -63,9 +62,8 @@ public class PlayerListener implements Listener {
                             Utility.parseMiniMessage(Utility.parseColors(modifiableString.string())),
                             "");
                 }
-                message = modifiableString.string();
 
-                component = message == null ? Component.empty() : Component.text(message);
+                component = modifiableString.component() == null ? Component.empty() : modifiableString.component();
 
                 event.line(i, component);
             }

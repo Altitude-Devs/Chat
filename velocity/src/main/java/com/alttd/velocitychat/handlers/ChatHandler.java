@@ -122,11 +122,6 @@ public class ChatHandler {
             return;
         }
         Component senderName = user.getDisplayName();
-        ModifiableString modifiableString = new ModifiableString(message);
-        if (!RegexManager.filterText(player.getUsername(), uuid, modifiableString, "party")) {
-            sendBlockedNotification("Party Language", player, message, "", serverConnection);
-            return; // the message was blocked
-        }
 
         TagResolver Placeholders = TagResolver.resolver(
                 Placeholder.component("sender", senderName),
@@ -137,7 +132,16 @@ public class ChatHandler {
         );
 
         Component partyMessage = Utility.parseMiniMessage(Config.PARTY_FORMAT, Placeholders)
-                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(item).build());;
+                .replaceText(TextReplacementConfig.builder().once().matchLiteral("[i]").replacement(item).build());
+
+        ModifiableString modifiableString = new ModifiableString(partyMessage);
+        if (!RegexManager.filterText(player.getUsername(), uuid, modifiableString, "party")) {
+            sendBlockedNotification("Party Language", player, message, "", serverConnection);
+            return; // the message was blocked
+        }
+
+        partyMessage = modifiableString.component();
+
         sendPartyMessage(party, partyMessage, user.getIgnoredBy());
 
         Component spyMessage = Utility.parseMiniMessage(Config.PARTY_SPY, Placeholders);

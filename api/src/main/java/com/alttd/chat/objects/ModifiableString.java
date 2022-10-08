@@ -1,22 +1,34 @@
 package com.alttd.chat.objects;
 
-public class ModifiableString {
-    private String string;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
-    public ModifiableString(String string) {
-        this.string = string;
+public class ModifiableString {
+    private Component text;
+
+    public ModifiableString(Component text) {
+        this.text = text;
     }
 
-    public void string(String string) {
-        this.string = string;
+    public void string(Component text) {
+        this.text = text;
     }
 
     public void replace(String match, String replace) {
-        while (string.contains(match))
-            string = string.replace(match, replace);
+        text = text
+                .replaceText(
+                        TextReplacementConfig.builder()
+                                .matchLiteral(match)
+                                .replacement(replace)
+                                .build());
     }
 
     public String string() {
-        return string;
+        return PlainTextComponentSerializer.plainText().serialize(text);
+    }
+
+    public Component component() {
+        return text;
     }
 }

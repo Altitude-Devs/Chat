@@ -77,8 +77,8 @@ public class ChatListener implements Listener {
                 .collect(Collectors.toSet());
 
         Component input = event.message();
-        String message = PlainTextComponentSerializer.plainText().serialize(input);
-        ModifiableString modifiableString = new ModifiableString(message);
+
+        ModifiableString modifiableString = new ModifiableString(input);
          // todo a better way for this
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "chat")) {
             event.setCancelled(true);
@@ -88,7 +88,7 @@ public class ChatListener implements Listener {
             return; // the message was blocked
         }
 
-        input = render(player, input);
+        input = render(player, modifiableString.component());
         for (Player receiver : receivers) {
             receiver.sendMessage(input);
         }
