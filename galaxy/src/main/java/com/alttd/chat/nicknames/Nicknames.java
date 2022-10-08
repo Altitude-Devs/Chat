@@ -130,23 +130,23 @@ public class Nicknames implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> completions = new ArrayList<>();
-        if (!sender.hasPermission("utility.nick")) return completions;
+        if (!sender.hasPermission("chat.command.nick")) return completions;
 
         if (args.length == 1) {
             List<String> choices = new ArrayList<>();
-            if (sender.hasPermission("utility.nick.set")) {
+            if (sender.hasPermission("chat.command.nick.set")) {
                 choices.add("set");
             }
-            if (sender.hasPermission("utility.nick.review")) {
+            if (sender.hasPermission("chat.command.nick.review")) {
                 choices.add("review");
             }
-            if (sender.hasPermission("utility.nick.request")) {
+            if (sender.hasPermission("chat.command.nick.request")) {
                 choices.add("request");
             }
-            if (sender.hasPermission("utility.nick.try")) {
+            if (sender.hasPermission("chat.command.nick.try")) {
                 choices.add("try");
             }
-            if (sender.hasPermission("utility.nick.current")) {
+            if (sender.hasPermission("chat.command.nick.current")) {
                 choices.add("current");
             }
             choices.add("help");
@@ -162,7 +162,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 List<String> onlinePlayers = new ArrayList<>();
                 Bukkit.getOnlinePlayers().forEach(a -> onlinePlayers.add(a.getName()));
 
-                if (sender.hasPermission("utility.nick.set.others")) {
+                if (sender.hasPermission("chat.command.nick.set.others")) {
                     choices.addAll(onlinePlayers);
                 }
 
@@ -188,7 +188,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
             Nick nick = NickCache.get(uniqueId);
             long timeSinceLastChange = new Date().getTime() - nick.getLastChangedDate();
             long waitTime = Config.NICK_WAIT_TIME;
-            if (timeSinceLastChange > waitTime || player.hasPermission("utility.nick.admin")) {
+            if (timeSinceLastChange > waitTime || player.hasPermission("chat.command.nick.bypasswaittime")) {
                 if (nick.hasRequest()) {
                     player.sendMessage(Utility.parseMiniMessage(Config.NICK_REQUEST_PLACED,
                              Placeholder.component("oldrequestednick", Utility.applyColor(nick.getNewNick())),
@@ -341,28 +341,28 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 message.append(helpMessage(sender, HelpType.TRY));
                 break;
             case SET_SELF:
-                if (sender.hasPermission("utility.nick.set")) {
+                if (sender.hasPermission("chat.command.nick.set")) {
                     message.append("<gold>/nick set <nickname><white> - Sets your nickname to the specified name.\n");
                 }
                 break;
             case SET_OTHERS:
-                if (sender.hasPermission("utility.nick.set.others")) {
+                if (sender.hasPermission("chat.command.nick.set.others")) {
                     message.append("<gold>/nick set <username> <nickname><white> - Sets the specified user's nickname to the specified name.\n");
                 }
                 break;
             case REQUEST:
-                if (sender.hasPermission("utility.nick.request")) {
+                if (sender.hasPermission("chat.command.nick.request")) {
                     message.append("<gold>/nick request <nickname><white> - Requests a username to be reviewed by staff.\n" +
                             "   <gray>Try using <dark_gray>/nick try <nickname><gray> to see if you like the name, you can only change it once per day!\n");
                 }
                 break;
             case REVIEW:
-                if (sender.hasPermission("utility.nick.review")) {
+                if (sender.hasPermission("chat.command.nick.review")) {
                     message.append("<gold>/nick review<white> - Opens the nickname review GUI (left click to accept a nick, right click to deny it)\n");
                 }
                 break;
             case TRY:
-                if (sender.hasPermission("utility.nick.try")) {
+                if (sender.hasPermission("chat.command.nick.try")) {
                     message.append("<gold>/nick try <nickname><white> - Shows you what your nickname will look like in chat.\n");
                 }
         }
