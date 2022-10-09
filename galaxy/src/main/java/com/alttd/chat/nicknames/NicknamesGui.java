@@ -198,7 +198,7 @@ public class NicknamesGui implements Listener {
                                     Placeholder.component("oldnick", Utility.applyColor(nick.getCurrentNick() == null ? clickedItem.getItemMeta().getDisplayName() : nick.getCurrentNick()))));
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
-                                Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getNewNick());
+                                Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getNewNick());
 //                                owningPlayer.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED // This message is also send when the plugin message is received
 //                                        .replace("%nickname%", nick.getNewNick())));
                             }
@@ -254,7 +254,7 @@ public class NicknamesGui implements Listener {
                             }
 
                             if (owningPlayer.isOnline() && owningPlayer.getPlayer() != null) {
-                                Nicknames.getInstance().setNick(owningPlayer.getUniqueId(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
+                                Nicknames.getInstance().setNick(owningPlayer.getPlayer(), nick.getCurrentNick() == null ? owningPlayer.getName() : nick.getCurrentNick());
                                 owningPlayer.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_NOT_CHANGED));
                             }
 

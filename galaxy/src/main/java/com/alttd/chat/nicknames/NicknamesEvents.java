@@ -1,8 +1,12 @@
 package com.alttd.chat.nicknames;
 
+import com.Zrips.CMI.commands.list.colorlimits;
+import com.Zrips.CMI.utils.Util;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
+import com.alttd.chat.managers.ChatUserManager;
+import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Nick;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;
@@ -50,18 +54,18 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
 
                 String nickName = nick.getCurrentNick();
                 String strippedNick = Nicknames.getInstance().getNick(player);
-//                try {
-//                    strippedNick = MiniMessage.miniMessage().stripTokens(Nicknames.getInstance().getNick(player));
-//                } catch (NullPointerException ignored) {
-//                }
+                try {
+                    strippedNick = MiniMessage.miniMessage().stripTags(Nicknames.getInstance().getNick(player));
+                } catch (NullPointerException ignored) {
+                }
 //                final String strippedNick = CMIChatColor.stripColor(Nicknames.getInstance().getNick(player));
 
-                //final String cmiNick = Util.CMIChatColor.deColorize(Nicknames.getInstance().getNick(player));
+//                final String cmiNick = Util.CMIChatColor.deColorize(Nicknames.getInstance().getNick(player));
 
                 if (nickName == null) {
                     Nicknames.getInstance().resetNick(player);
                 } else if (!nickName.equals(strippedNick)) {
-                    Nicknames.getInstance().setNick(player.getUniqueId(), nickName);
+                    Nicknames.getInstance().setNick(player, nickName);
                 }
 
                 Nicknames.getInstance().NickCache.put(e.getPlayer().getUniqueId(), nick);
@@ -133,7 +137,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 if (offlinePlayer.isOnline()) {
                     Nick nick = Queries.getNick(playerUUID);
                     if (nick != null && nick.getCurrentNick() != null) {
-                        Nicknames.getInstance().setNick(offlinePlayer.getUniqueId(), nick.getCurrentNick());
+                        Nicknames.getInstance().setNick(offlinePlayer.getPlayer(), nick.getCurrentNick());
                     }
                 }
                 break;
@@ -152,7 +156,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                     Nick nick = Queries.getNick(playerUUID);
                     Player target = Bukkit.getPlayer(playerUUID);
                     if (target != null && nick != null && nick.getCurrentNick() != null) {
-                        Nicknames.getInstance().setNick(target.getUniqueId(), nick.getCurrentNick());
+                        Nicknames.getInstance().setNick(target, nick.getCurrentNick());
                         target.sendMessage(MiniMessage.miniMessage().deserialize(Config.NICK_CHANGED,
                                 Placeholder.unparsed("nickname", nick.getCurrentNick())));
                     }

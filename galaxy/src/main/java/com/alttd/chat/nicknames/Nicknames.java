@@ -1,5 +1,7 @@
 package com.alttd.chat.nicknames;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
@@ -22,6 +24,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -284,7 +287,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
 
         } else if (NickUtilities.validNick(sender, target, nickName)) {
             if (target.isOnline()) {
-                setNick(target.getUniqueId(), nickName);
+                setNick(target.getPlayer(), nickName);
             } else {
                 NickUtilities.bungeeMessageHandled(target.getUniqueId(), sender, "Set");
             }
@@ -297,7 +300,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
                 Nick nick = NickCache.get(target.getUniqueId());
                 nick.setCurrentNick(nickName);
                 nick.setLastChangedDate(new Date().getTime());
-                setNick(target.getUniqueId(), nickName);
+                setNick(target.getPlayer(), nickName);
             } else {
                 NickCache.put(target.getUniqueId(), new Nick(target.getUniqueId(), nickName, new Date().getTime()));
             }
@@ -380,6 +383,8 @@ public class Nicknames implements CommandExecutor, TabCompleter {
     public void resetNick(final Player player) {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setDisplayName(player.getName());
+        player.displayName(user.getDisplayName());
+        updateCMIUser(player, null);
     }
 
     public String getNick(final Player player) {
@@ -387,17 +392,44 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         return user.getNickNameString();
     }
 
-    public void setNick(final UUID uuid, final String nickName) {
-        ChatUser user = ChatUserManager.getChatUser(uuid);
+    public void setNick(final Player player, final String nickName) {
+        if (player == null)
+            return;
+
+        ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setDisplayName(nickName);
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null)
-            player.displayName(user.getDisplayName());
+        player.displayName(user.getDisplayName());
+        updateCMIUser(player, nickName);
     }
 
 //    public static String format(final String m) {
 //        return NickUtilities.applyColor(m);
 //    }
+
+    public void updateCMIUser(Player player, String nickName) {
+        if (!isCMIEnabled())
+            return;
+
+        CMIUser cmiUser = CMI.getInstance().getPlayerManager().getUser(player);
+        if (nickName == null){
+            cmiUser.setNickName(null, true);
+        } else {
+            cmiUser.setNickName(NickUtilities.applyColor(nickName), true);
+        }
+        cmiUser.updateDisplayName();
+    }
+
+    private Boolean isCMIEnabled = null;
+    private Boolean isCMIEnabled() {
+        if (!(isCMIEnabled == null))
+            return isCMIEnabled;
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("CMI");
+        if (plugin != null && plugin.isEnabled())
+            return isCMIEnabled = true;
+
+        return isCMIEnabled = false;
+    }
 
     public static Nicknames getInstance() {
         return Nicknames.instance;
