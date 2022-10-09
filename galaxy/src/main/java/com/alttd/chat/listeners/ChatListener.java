@@ -96,11 +96,12 @@ public class ChatListener implements Listener {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             String name = onlinePlayer.getName();
             String nickName = PlainTextComponentSerializer.plainText().serialize(onlinePlayer.displayName());
-            if (modifiableString.string().toLowerCase().contains(name.toLowerCase())) {
+            String message = modifiableString.string().toLowerCase();
+            if (message.contains(name.toLowerCase())) {
                 modifiableString.replace(Pattern.compile(name, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
                 playerToPing.add(onlinePlayer);
             }
-            if (modifiableString.string().toLowerCase().contains(nickName.toLowerCase())) {
+            if (!name.equalsIgnoreCase(nickName) && message.contains(nickName.toLowerCase())) {
                 modifiableString.replace(Pattern.compile(nickName, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
                 playerToPing.add(onlinePlayer);
             }
