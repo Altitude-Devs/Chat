@@ -16,6 +16,7 @@ import io.papermc.paper.event.player.AsyncChatCommandDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.PatternReplacementResult;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -97,12 +98,20 @@ public class ChatListener implements Listener {
             String name = onlinePlayer.getName();
             String nickName = PlainTextComponentSerializer.plainText().serialize(onlinePlayer.displayName());
             String message = modifiableString.string().toLowerCase();
+
             if (message.contains(name.toLowerCase())) {
-                modifiableString.replace(Pattern.compile(name, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
+                modifiableString.replace(TextReplacementConfig.builder()
+                        .once()
+                        .match(Pattern.compile(name, Pattern.CASE_INSENSITIVE))
+                        .replacement(mention.append(onlinePlayer.displayName()))
+                        .build());
                 playerToPing.add(onlinePlayer);
-            }
-            if (!name.equalsIgnoreCase(nickName) && message.contains(nickName.toLowerCase())) {
-                modifiableString.replace(Pattern.compile(nickName, Pattern.CASE_INSENSITIVE), mention.append(onlinePlayer.displayName()));
+            } else if (message.contains(nickName.toLowerCase())) {
+                modifiableString.replace(TextReplacementConfig.builder()
+                        .once()
+                        .match(Pattern.compile(nickName, Pattern.CASE_INSENSITIVE))
+                        .replacement(mention.append(onlinePlayer.displayName()))
+                        .build());
                 playerToPing.add(onlinePlayer);
             }
         }
