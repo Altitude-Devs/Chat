@@ -87,7 +87,12 @@ public class ChatFilter {
         while (matcher.find()) {
             String group = matcher.group(); // todo debug
             if (getExclusions().stream().noneMatch(s -> s.equalsIgnoreCase(group))) { // idk how heavy this is:/
-                modifiableString.replace(group, getReplacement());
+                modifiableString.replace(
+                        TextReplacementConfig.builder()
+                                .matchLiteral(group)
+                                .replacement(getReplacement())
+                                .build()
+                );
             }
         }
     }
@@ -103,7 +108,10 @@ public class ChatFilter {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
             String group = matcher.group();
-            modifiableString.replace(group, group.substring(0, length));
+            modifiableString.replace(TextReplacementConfig.builder()
+                    .matchLiteral(group)
+                    .replacement(group.substring(0, length))
+                    .build());
         }
     }
 }

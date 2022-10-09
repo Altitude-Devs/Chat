@@ -19,40 +19,8 @@ public class ModifiableString {
         this.text = text;
     }
 
-    public void replace(String match, String replace) {
-        text = text
-                .replaceText(
-                        TextReplacementConfig.builder()
-                                .matchLiteral(match)
-                                .replacement(replace)
-                                .build());
-    }
-
-    public void replace(Pattern match, String replace) {
-        text = text
-                .replaceText(
-                        TextReplacementConfig.builder()
-                                .match(match)
-                                .replacement(replace)
-                                .build());
-    }
-
-    public void replace(@RegExp String match, Component replace) {
-        text = text
-                .replaceText(
-                        TextReplacementConfig.builder()
-                                .matchLiteral(match)
-                                .replacement(replace)
-                                .build());
-    }
-
-    public void replace(Pattern match, Component replace) {
-        text = text
-                .replaceText(
-                        TextReplacementConfig.builder()
-                                .match(match)
-                                .replacement(replace)
-                                .build());
+    public void replace(TextReplacementConfig textReplacementConfig) {
+        text = text.replaceText(textReplacementConfig);
     }
 
     public String string() {
