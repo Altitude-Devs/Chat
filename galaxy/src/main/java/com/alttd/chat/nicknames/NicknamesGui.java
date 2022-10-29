@@ -262,7 +262,7 @@ public class NicknamesGui implements Listener {
                             final Component messageDenied = MiniMessage.miniMessage().deserialize("<red><name>'s nickname was denied!",
                                     Placeholder.unparsed("name", owningPlayer.getName()));
                             ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
-                                if (p.hasPermission("utility.nick.review")) {
+                                if (p.hasPermission("chat.command.nick.review")) {
                                     p.sendMessage(messageDenied);
                                 }
                             });

@@ -70,7 +70,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
 
                 Nicknames.getInstance().NickCache.put(e.getPlayer().getUniqueId(), nick);
 
-                if (player.hasPermission("utility.nick.review")) {
+                if (player.hasPermission("chat.command.nick.review")) {
                     int i = 0;
                     for (Nick iNick : Nicknames.getInstance().NickCache.values()) {
                         if (iNick.hasRequest()) {
@@ -128,7 +128,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                                 miniMessage.deserialize("<gold>Click this text to review the request!")));
 
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
-                    if (p.hasPermission("utility.nick.review")) {
+                    if (p.hasPermission("chat.command.nick.review")) {
                         p.sendMessage(component);
                     }
                 });
@@ -145,7 +145,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 Component deserialize = miniMessage.deserialize("<green><name>'s nickname was accepted!",
                         Placeholder.unparsed("name", name));
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
-                    if (p.hasPermission("utility.nick.review")) {
+                    if (p.hasPermission("chat.command.nick.review")) {
                         p.sendMessage(deserialize);
                     }
                 });
@@ -168,7 +168,7 @@ public class NicknamesEvents implements Listener, PluginMessageListener {
                 Nick nick = Nicknames.getInstance().NickCache.get(playerUUID);
 
                 ChatPlugin.getInstance().getServer().getOnlinePlayers().forEach(p -> {
-                    if (p.hasPermission("utility.nick.review")) {
+                    if (p.hasPermission("chat.command.nick.review")) {
                         p.sendMessage(messageDenied);
                     }
                 });
