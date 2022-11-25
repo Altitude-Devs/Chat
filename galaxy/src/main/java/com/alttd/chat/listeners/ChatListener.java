@@ -105,14 +105,16 @@ public class ChatListener implements Listener {
                         .match(Pattern.compile(name, Pattern.CASE_INSENSITIVE))
                         .replacement(mention.append(onlinePlayer.displayName()))
                         .build());
-                playerToPing.add(onlinePlayer);
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                    playerToPing.add(onlinePlayer);
             } else if (message.contains(nickName.toLowerCase())) {
                 modifiableString.replace(TextReplacementConfig.builder()
                         .once()
                         .match(Pattern.compile(nickName, Pattern.CASE_INSENSITIVE))
                         .replacement(mention.append(onlinePlayer.displayName()))
                         .build());
-                playerToPing.add(onlinePlayer);
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                    playerToPing.add(onlinePlayer);
             }
         }
 
