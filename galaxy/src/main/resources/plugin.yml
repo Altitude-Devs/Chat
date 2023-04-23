@@ -1,9 +1,12 @@
 name: ChatPlugin
 version: 2.0.0-SNAPSHOT
 main: com.alttd.chat.ChatPlugin
-api-version: 1.18
+api-version: 1.19
 authors: [Destro, Teriuihi]
 depend: [LuckPerms]
+loadbefore:
+  - mcMMO
+  - GriefPrevention
 commands:
   globalchat:
     permission: command.chat.globalchat
