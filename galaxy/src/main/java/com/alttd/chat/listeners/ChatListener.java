@@ -102,7 +102,7 @@ public class ChatListener implements Listener {
             if (message.contains(name.toLowerCase())) {
                 modifiableString.replace(TextReplacementConfig.builder()
                         .once()
-                        .match(Pattern.compile("\b" + name + "\b", Pattern.CASE_INSENSITIVE))
+                        .match(Pattern.compile("\\b" + name + "\\b", Pattern.CASE_INSENSITIVE))
                         .replacement(mention.append(onlinePlayer.displayName()))
                         .build());
                 if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
@@ -110,7 +110,7 @@ public class ChatListener implements Listener {
             } else if (message.contains(nickName.toLowerCase())) {
                 modifiableString.replace(TextReplacementConfig.builder()
                         .once()
-                        .match(Pattern.compile("\b" + nickName + "\b", Pattern.CASE_INSENSITIVE))
+                        .match(Pattern.compile("\\b" + nickName + "\\b", Pattern.CASE_INSENSITIVE))
                         .replacement(mention.append(onlinePlayer.displayName()))
                         .build());
                 if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
