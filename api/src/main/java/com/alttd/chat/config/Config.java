@@ -393,7 +393,7 @@ public final class Config {
     public static String SPYPERMISSION = "chat.socialspy";
     private static void permissions() {
         SERVERMUTEPERMISSION = getString("permissions.server-mute", SERVERMUTEPERMISSION);
-        SPYPERMISSION = getString("permissions.server-mute", SPYPERMISSION);
+        SPYPERMISSION = getString("permissions.spy-permission", SPYPERMISSION);
     }
 
     public static String IP = "0.0.0.0";
