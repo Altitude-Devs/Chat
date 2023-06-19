@@ -467,8 +467,10 @@ public final class Config {
     }
 
     public static String HELP_REPORT = "<red>/report <message></red>";
+    public static String FIRST_JOIN = "<green>* Welcome <light_purple><player></light_purple> to Altitude! They've joined for the first time.</green>";
     private static void loadMessages() {
         HELP_REPORT = getString("settings.mail.mail-sent", HELP_REPORT);
+        FIRST_JOIN = getString("settings.first-join.message", FIRST_JOIN);
     }
 
     public static String EMOTELIST_HEADER = "<bold>Available Chat Emotes</bold><newline>";

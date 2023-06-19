@@ -1,5 +1,7 @@
 package com.alttd.chat.listeners;
 
+import com.alttd.chat.config.Config;
+import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
@@ -9,17 +11,26 @@ import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
+
+    private final ServerConfig serverConfig;
+
+    public PlayerListener(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
 
     @EventHandler
     private void onPlayerLogin(PlayerJoinEvent event) {
@@ -29,6 +40,10 @@ public class PlayerListener implements Listener {
         Toggleable.disableToggles(uuid);
         ChatUser user = ChatUserManager.getChatUser(uuid);
         if(user != null) return;
+
+        if (serverConfig.FIRST_JOIN_MESSAGES && !player.hasPlayedBefore()) {
+            player.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
+        }
 
         // user failed to load - create a new one
         ChatUser chatUser = new ChatUser(uuid, -1, null);

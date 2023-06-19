@@ -74,9 +74,11 @@ public final class ServerConfig {
     public boolean GLOBALCHAT = false;
     public boolean JOINLEAVEMSSAGES = true;
     public boolean MUTED = false;
+    public boolean FIRST_JOIN_MESSAGES = false;
     private void ServerSettings() {
         GLOBALCHAT = getBoolean("global-chat-enabled", GLOBALCHAT);
         JOINLEAVEMSSAGES = getBoolean("joinleave-messages-enabled", JOINLEAVEMSSAGES);
         MUTED = getBoolean("server-muted", MUTED);
+        FIRST_JOIN_MESSAGES = getBoolean("first-join-messages", FIRST_JOIN_MESSAGES);
     }
 }
