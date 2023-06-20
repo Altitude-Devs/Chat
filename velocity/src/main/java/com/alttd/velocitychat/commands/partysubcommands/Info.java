@@ -46,10 +46,11 @@ public class Info implements SubCommand {
                 displayNames.add(Config.OFFLINE_PREFIX.append(partyUser.getDisplayName()));
         }
 
+        PartyUser owner = party.getPartyUser(party.getOwnerUuid());
         source.sendMessage(Utility.parseMiniMessage(Config.PARTY_INFO,
                 Placeholder.unparsed("party", party.getPartyName()),
                 Placeholder.unparsed("password", party.getPartyPassword()),
-                Placeholder.component("owner", party.getPartyUser(party.getOwnerUuid()).getDisplayName()),
+                Placeholder.component("owner", owner == null ? MiniMessage.miniMessage().deserialize("Unknown Owner") : owner.getDisplayName()),
                 Placeholder.component("members", Component.join(JoinConfiguration.separator(Component.text(", ")), displayNames))
         ));
     }
