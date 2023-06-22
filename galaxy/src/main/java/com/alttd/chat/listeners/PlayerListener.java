@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerListener implements Listener {
 
@@ -41,7 +42,7 @@ public class PlayerListener implements Listener {
         ChatUser user = ChatUserManager.getChatUser(uuid);
         if(user != null) return;
 
-        if (serverConfig.FIRST_JOIN_MESSAGES && !player.hasPlayedBefore()) {
+        if (serverConfig.FIRST_JOIN_MESSAGES && System.currentTimeMillis() - player.getFirstPlayed() < TimeUnit.SECONDS.toMillis(10)) {
             player.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
         }
 
