@@ -8,24 +8,20 @@ import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.objects.Toggleable;
-import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class PlayerListener implements Listener {
 
@@ -41,7 +37,7 @@ public class PlayerListener implements Listener {
         GalaxyUtility.addAdditionalChatCompletions(player);
         UUID uuid = player.getUniqueId();
         Toggleable.disableToggles(uuid);
-        
+
         if (serverConfig.FIRST_JOIN_MESSAGES && System.currentTimeMillis() - player.getFirstPlayed() < TimeUnit.SECONDS.toMillis(10)) {
             player.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
         }
