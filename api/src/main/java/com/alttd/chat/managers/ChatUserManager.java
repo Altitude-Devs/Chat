@@ -2,10 +2,10 @@ package com.alttd.chat.managers;
 
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.Mail;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
 public final class ChatUserManager {
 
@@ -15,15 +15,15 @@ public final class ChatUserManager {
         chatUsers = new TreeMap<>();
     }
 
-    public static void addUser(ChatUser user) {
+    public static synchronized void addUser(ChatUser user) {
         chatUsers.put(user.getUuid(), user);
     }
 
-    public static void removeUser(ChatUser user) {
+    public static synchronized void removeUser(ChatUser user) {
         chatUsers.remove(user.getUuid());
     }
 
-    public static ChatUser getChatUser(UUID uuid) {
+    public static synchronized ChatUser getChatUser(UUID uuid) {
         return chatUsers.computeIfAbsent(uuid, k -> Queries.loadChatUser(uuid));
     }
 
