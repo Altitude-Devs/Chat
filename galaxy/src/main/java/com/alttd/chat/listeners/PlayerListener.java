@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class PlayerListener implements Listener {
 
@@ -40,12 +41,14 @@ public class PlayerListener implements Listener {
         GalaxyUtility.addAdditionalChatCompletions(player);
         UUID uuid = player.getUniqueId();
         Toggleable.disableToggles(uuid);
-        ChatUser user = ChatUserManager.getChatUser(uuid);
-        if(user != null) return;
-
+        
         if (serverConfig.FIRST_JOIN_MESSAGES && System.currentTimeMillis() - player.getFirstPlayed() < TimeUnit.SECONDS.toMillis(10)) {
             player.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
         }
+
+        ChatUser user = ChatUserManager.getChatUser(uuid);
+        if(user != null) return;
+
 
         // user failed to load - create a new one
         ChatUser chatUser = new ChatUser(uuid, -1, null);
