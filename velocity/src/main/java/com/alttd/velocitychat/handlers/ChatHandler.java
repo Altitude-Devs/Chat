@@ -20,6 +20,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -150,6 +151,7 @@ public class ChatHandler {
                 pl.sendMessage(spyMessage);
             }
         }
+        ALogger.info(PlainTextComponentSerializer.plainText().serialize(partyMessage));
     }
 
     public void globalAdminChat(String message) {
