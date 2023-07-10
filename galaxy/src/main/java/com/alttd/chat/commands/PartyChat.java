@@ -3,6 +3,7 @@ package com.alttd.chat.commands;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.objects.Toggleable;
+import com.alttd.chat.util.ALogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
@@ -61,6 +62,7 @@ public class PartyChat extends Toggleable implements CommandExecutor {
 
     @Override
     public void sendMessage(Player player, String message) {
+        ALogger.info(player.getName() + " sent party message: " + message);
         new BukkitRunnable() {
             @Override
             public void run() {
