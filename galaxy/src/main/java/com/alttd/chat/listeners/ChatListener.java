@@ -60,7 +60,7 @@ public class ChatListener implements Listener {
         event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
     }
 
-    private final Component mention = MiniMessage.miniMessage().deserialize("<aqua>@</aqua>"); //TODO move to config
+    private final Component mention = MiniMessage.miniMessage().deserialize(Config.MENTIONPLAYERTAG);
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
         event.setCancelled(true); //Always cancel the event because we do not want to deal with Microsoft's stupid bans

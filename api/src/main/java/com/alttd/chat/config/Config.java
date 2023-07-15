@@ -172,6 +172,7 @@ public final class Config {
     public static String CONSOLENAME = "Console";
     public static UUID CONSOLEUUID = UUID.randomUUID();
     public static int EMOTELIMIT = 3;
+    public static String MENTIONPLAYERTAG = "<aqua>@</aqua>";
     private static void settings() {
         PREFIXGROUPS = getList("settings.prefix-groups",
                 Lists.newArrayList("discord", "socialmedia", "eventteam", "eventleader", "youtube", "twitch", "developer"));
@@ -183,6 +184,7 @@ public final class Config {
         CONSOLEUUID = UUID.fromString(getString("settings.console-uuid", CONSOLEUUID.toString()));
         MINIMIUMSTAFFRANK = getString("settings.minimum-staff-rank", MINIMIUMSTAFFRANK);
         EMOTELIMIT = getInt("settings.emote-limit", EMOTELIMIT);
+        MENTIONPLAYERTAG = getString("settings.mention-player-tag", MENTIONPLAYERTAG);
     }
 
     public static List<String> MESSAGECOMMANDALIASES = new ArrayList<>();
