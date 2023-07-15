@@ -18,6 +18,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.PatternReplacementResult;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -81,7 +82,7 @@ public class ChatListener implements Listener {
                 .filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
                 .collect(Collectors.toSet());
 
-        Component input = event.message();
+        Component input = event.message().colorIfAbsent(NamedTextColor.WHITE);
 
         ModifiableString modifiableString = new ModifiableString(input);
          // todo a better way for this
