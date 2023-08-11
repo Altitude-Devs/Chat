@@ -249,6 +249,47 @@ public class Utility {
                 : Utility.parseMiniMessage(stringBuilder.toString());
     }
 
+    public static boolean checkNickBrightEnough(String nickname) {
+        if (!nickname.matches(".*" + stringRegen + ".*")) {
+            return true;
+        }
+
+        Pattern pattern = Pattern.compile(stringRegen);
+        Matcher matcher = pattern.matcher(nickname);
+
+        while (matcher.find()) {
+            String hexColor = matcher.group();
+            if (!checkHexHighEnough(hexColor)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean checkHexHighEnough(String hexColor) {
+        // Remove the leading "#" if present
+        if (hexColor.startsWith("{")) {
+            hexColor = hexColor.substring(1);
+        }
+        if (hexColor.startsWith("#")) {
+            hexColor = hexColor.substring(1);
+        }
+
+        // Extract the color parts
+        String redPart = hexColor.substring(0, 2);
+        String greenPart = hexColor.substring(2, 4);
+        String bluePart = hexColor.substring(4, 6);
+
+        // Convert the color parts to integers
+        int red = Integer.parseInt(redPart, 16);
+        int green = Integer.parseInt(greenPart, 16);
+        int blue = Integer.parseInt(bluePart, 16);
+
+        // Check if any part is over 30 in hexadecimal
+        return red > 0x30 || green > 0x30 || blue > 0x30;
+    }
+
     public static String formatText(String message) {
             /*
                 .match(pattern)

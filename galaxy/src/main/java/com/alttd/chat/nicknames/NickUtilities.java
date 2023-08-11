@@ -4,6 +4,7 @@ import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
 import com.alttd.chat.objects.Nick;
+import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.TextComponent;
@@ -147,42 +148,48 @@ public class NickUtilities
     }
 
     public static boolean validNick(Player sender, OfflinePlayer target, String nickName) {
-        if (noBlockedCodes(nickName)) {
-
-            String cleanNick = NickUtilities.removeAllColors(nickName);
-
-            if (cleanNick.length() >= 3 && cleanNick.length() <= 16) {
-
-                if (cleanNick.matches("[a-zA-Z0-9_]*") && nickName.length()<=192) {//192 is if someone puts {#xxxxxx<>} in front of every letter
-
-                    if (!cleanNick.equalsIgnoreCase(target.getName())){
-                        for (Nick nick : Nicknames.getInstance().NickCache.values()){
-                            if (!nick.getUuid().equals(target.getUniqueId())
-                                    && ((nick.getCurrentNickNoColor() != null && nick.getCurrentNickNoColor().equalsIgnoreCase(cleanNick))
-                                    || (nick.getNewNickNoColor() != null && nick.getNewNickNoColor().equalsIgnoreCase(cleanNick)))){
-                                UUID uuid = nick.getUuid();
-                                UUID uniqueId = target.getUniqueId();
-                                if (uniqueId.equals(uuid)){
-                                    ChatPlugin.getInstance().getLogger().info(uuid + " " + uniqueId);
-                                }
-                                sender.sendMiniMessage(Config.NICK_TAKEN, null);
-                                return false;
-                            }
-                        }
-                    }
-
-                    return true;
-
-                } else {
-                    sender.sendMiniMessage(Config.NICK_INVALID_CHARACTERS, null);
-                }
-            } else {
-                sender.sendMiniMessage(Config.NICK_INVALID_LENGTH, null);
-            }
-        } else {
+        if (!noBlockedCodes(nickName)) {
             sender.sendMiniMessage(Config.NICK_BLOCKED_COLOR_CODES, null);
+            return false;
         }
-        return false;
+
+        if (!Utility.checkNickBrightEnough(nickName)) {
+            sender.sendMiniMessage("<red>At least one color must be brighter than 30 for each color</red>", null);
+            return false;
+        }
+
+        String cleanNick = NickUtilities.removeAllColors(nickName);
+
+        if (cleanNick.length() < 3 || cleanNick.length() > 16) {
+            sender.sendMiniMessage(Config.NICK_INVALID_LENGTH, null);
+            return false;
+        }
+
+        if (!cleanNick.matches("[a-zA-Z0-9_]*") || nickName.length() > 192) { //192 is if someone puts {#xxxxxx<>} in front of every letter
+            sender.sendMiniMessage(Config.NICK_INVALID_CHARACTERS, null);
+            return false;
+        }
+
+        if (cleanNick.equalsIgnoreCase(target.getName())) {
+            return true;
+        }
+
+        for (Nick nick : Nicknames.getInstance().NickCache.values()){
+            if (!nick.getUuid().equals(target.getUniqueId())
+                    && ((nick.getCurrentNickNoColor() != null && nick.getCurrentNickNoColor().equalsIgnoreCase(cleanNick))
+                    || (nick.getNewNickNoColor() != null && nick.getNewNickNoColor().equalsIgnoreCase(cleanNick)))){
+                UUID uuid = nick.getUuid();
+                UUID uniqueId = target.getUniqueId();
+                if (uniqueId.equals(uuid)){
+                    ChatPlugin.getInstance().getLogger().info(uuid + " " + uniqueId);
+                }
+                sender.sendMiniMessage(Config.NICK_TAKEN, null);
+                return false;
+            }
+        }
+
+        return true;
+
     }
 
     public static boolean noBlockedCodes(final String getNick) {
