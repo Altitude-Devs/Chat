@@ -110,7 +110,7 @@ public class ChatFilter {
             String group = matcher.group();
             modifiableString.replace(TextReplacementConfig.builder()
                     .matchLiteral(group)
-                    .replacement(group.substring(0, length))
+                    .replacement(Component.text(group.substring(0, length), modifiableString.component().color()))
                     .build());
         }
     }
