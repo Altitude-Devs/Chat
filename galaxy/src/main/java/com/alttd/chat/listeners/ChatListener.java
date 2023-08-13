@@ -16,7 +16,6 @@ import io.papermc.paper.event.player.AsyncChatCommandDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.PatternReplacementResult;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -31,7 +30,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -85,6 +85,7 @@ public class ChatListener implements Listener {
         Component input = event.message().colorIfAbsent(NamedTextColor.WHITE);
 
         ModifiableString modifiableString = new ModifiableString(input);
+
          // todo a better way for this
         if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "chat")) {
             event.setCancelled(true);
@@ -94,39 +95,55 @@ public class ChatListener implements Listener {
             return; // the message was blocked
         }
 
-        Set<Player> playerToPing = new HashSet<>();
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            String name = onlinePlayer.getName();
-            String nickName = PlainTextComponentSerializer.plainText().serialize(onlinePlayer.displayName());
-            String message = modifiableString.string().toLowerCase();
-
-            if (message.contains(name.toLowerCase())) {
-                modifiableString.replace(TextReplacementConfig.builder()
-                        .once()
-                        .match(Pattern.compile("\\b" + name + "\\b", Pattern.CASE_INSENSITIVE))
-                        .replacement(mention.append(onlinePlayer.displayName()))
-                        .build());
-                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
-                    playerToPing.add(onlinePlayer);
-            } else if (message.contains(nickName.toLowerCase())) {
-                modifiableString.replace(TextReplacementConfig.builder()
-                        .once()
-                        .match(Pattern.compile("\\b" + nickName + "\\b", Pattern.CASE_INSENSITIVE))
-                        .replacement(mention.append(onlinePlayer.displayName()))
-                        .build());
-                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
-                    playerToPing.add(onlinePlayer);
-            }
-        }
+        Set<Player> playersToPing = new HashSet<>();
+        pingPlayers(playersToPing, modifiableString, player);
 
         input = render(player, modifiableString.component());
         for (Player receiver : receivers) {
             receiver.sendMessage(input);
         }
-        for (Player receiver : playerToPing) {
-            receiver.playSound(receiver.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+        for (Player pingPlayer : playersToPing) {
+            pingPlayer.playSound(pingPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
         }
         ALogger.info(PlainTextComponentSerializer.plainText().serialize(input));
+    }
+
+    private void pingPlayers(Set<Player> playersToPing, ModifiableString modifiableString, Player player) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            String name = onlinePlayer.getName();
+            String nickName = PlainTextComponentSerializer.plainText().serialize(onlinePlayer.displayName());
+
+            Pattern namePattern = Pattern.compile("\\b(?<!\\\\)" + name + "\\b", Pattern.CASE_INSENSITIVE);
+//            Pattern escapedNamePattern = Pattern.compile("\\b\\\\" + name + "\\b", Pattern.CASE_INSENSITIVE);
+            Pattern nickPattern = Pattern.compile("\\b(?<!\\\\)" + nickName + "\\b", Pattern.CASE_INSENSITIVE);
+//            Pattern escapedNickPattern = Pattern.compile("\\b\\\\" + nickName + "\\b", Pattern.CASE_INSENSITIVE);
+
+            if (namePattern.matcher(modifiableString.string()).find()) {
+                modifiableString.replace(TextReplacementConfig.builder()
+                        .once()
+                        .match(namePattern)
+                        .replacement(mention.append(onlinePlayer.displayName()))
+                        .build());
+                //TODO replace all instances of \name with just name but using the match result so the capitalization doesn't change
+//                modifiableString.replace(TextReplacementConfig.builder()
+//                        .once()
+//                        .match(escapedNamePattern)
+//                        .replacement((a, b) -> {
+//                            String substring = a.group().substring(1);
+//                            return ;
+//                        });
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                    playersToPing.add(onlinePlayer);
+            } else if (nickPattern.matcher(modifiableString.string()).find()) {
+                modifiableString.replace(TextReplacementConfig.builder()
+                        .once()
+                        .match(nickPattern)
+                        .replacement(mention.append(onlinePlayer.displayName()))
+                        .build());
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                    playersToPing.add(onlinePlayer);
+            }
+        }
     }
 
     public @NotNull Component render(@NotNull Player player, @NotNull Component message) {
