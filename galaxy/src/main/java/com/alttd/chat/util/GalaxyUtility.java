@@ -59,7 +59,7 @@ public class GalaxyUtility {
                 completions.addAll(pair.getY());
             }
         });
-        player.addAdditionalChatCompletions(completions);
+        player.addCustomChatCompletions(completions);
     }
 
 }
