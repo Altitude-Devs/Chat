@@ -13,6 +13,7 @@ import com.alttd.chat.nicknames.Nicknames;
 import com.alttd.chat.nicknames.NicknamesEvents;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
+import com.alttd.chat.requests.RequestHandler;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ public class ChatPlugin extends JavaPlugin {
 
     private ChatAPI chatAPI;
     private ChatHandler chatHandler;
+    private RequestHandler requestHandler;
 
     private String messageChannel;
     private ServerConfig serverConfig;
@@ -40,6 +42,8 @@ public class ChatPlugin extends JavaPlugin {
         chatAPI = new ChatImplementation();
         chatHandler = new ChatHandler();
         DatabaseConnection.initialize();
+        requestHandler = new RequestHandler();
+        requestHandler.loadRequests();
         serverConfig = new ServerConfig(Bukkit.getServerName());
         registerListener(new PlayerListener(serverConfig), new ChatListener(), new BookListener());
         if(serverConfig.GLOBALCHAT) {
@@ -103,6 +107,10 @@ public class ChatPlugin extends JavaPlugin {
 
     public ChatHandler getChatHandler() {
         return chatHandler;
+    }
+
+    public RequestHandler getRequestHandler() {
+        return requestHandler;
     }
 
     public boolean serverGlobalChatEnabled() {
