@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,8 +49,8 @@ public class PlayerListener implements Listener {
         UUID uuid = player.getUniqueId();
         Toggleable.disableToggles(uuid);
 
-        if (serverConfig.FIRST_JOIN_MESSAGES && System.currentTimeMillis() - player.getFirstPlayed() < TimeUnit.SECONDS.toMillis(10)) {
-            player.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
+        if (serverConfig.FIRST_JOIN_MESSAGES && (!player.hasPlayedBefore() || System.currentTimeMillis() - player.getFirstPlayed() < TimeUnit.SECONDS.toMillis(10))) {
+            Bukkit.broadcast(MiniMessage.miniMessage().deserialize(Config.FIRST_JOIN, Placeholder.parsed("player", player.getName())));
         }
 
         ChatUser user = ChatUserManager.getChatUser(uuid);
