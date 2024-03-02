@@ -94,6 +94,8 @@ public class ChatListener implements Listener {
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             out.writeUTF("punish");
             out.writeUTF(player.getName());
+            out.writeUTF(player.getUniqueId().toString());
+            out.writeUTF(modifiableString.string());
             player.sendPluginMessage(ChatPlugin.getInstance(), Config.MESSAGECHANNEL, out.toByteArray());
         })) {
             event.setCancelled(true);

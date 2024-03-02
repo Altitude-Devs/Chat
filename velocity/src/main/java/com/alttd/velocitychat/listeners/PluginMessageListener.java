@@ -4,6 +4,8 @@ import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.channels.CustomChannel;
 import com.alttd.chat.util.ALogger;
+import com.alttd.proxydiscordlink.DiscordLink;
+import com.alttd.proxydiscordlink.lib.net.dv8tion.jda.api.EmbedBuilder;
 import com.alttd.velocitychat.VelocityChat;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -17,6 +19,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.util.Optional;
@@ -101,6 +104,13 @@ public class PluginMessageListener {
                 ConsoleCommandSource consoleCommandSource = proxy.getConsoleCommandSource();
                 proxy.getCommandManager().executeAsync(consoleCommandSource, String.format("ban %s Automatic ban, please appeal if you feel review is needed.", playerName));
                 ALogger.info(String.format("Auto banned %s due to violating the `punish` filter.", playerName));
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setTitle("Automatic ban through the chat filter");
+                embedBuilder.setAuthor(playerName, null, "https://crafatar.com/avatars/" + in.readUTF() + "?overlay");
+                embedBuilder.setDescription(String.format("`%s`\n\n Auto permanent ban\n\n Auto banned for violating the `punish` chat filter. This could be a false positive! Their message was\n||%s||", playerName, in.readUTF()));
+                embedBuilder.setColor(Color.RED);
+                DiscordLink.getPlugin().getBot().sendEmbedToDiscord(514922317923614728L, embedBuilder, -1);
             }
             default -> {
                 VelocityChat.getPlugin().getLogger().info("server " + event.getSource());
