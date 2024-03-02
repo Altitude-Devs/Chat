@@ -5,7 +5,8 @@ public enum FilterType {
     EMOTE("emote"),
     CHAT("chat"),
     REPLACEMATCHER("replacematcher"),
-    BLOCK("block");
+    BLOCK("block"),
+    PUNISH("punish");
 
     private final String name;
 

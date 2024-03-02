@@ -5,13 +5,12 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
-import com.alttd.chat.objects.ChatFilter;
-import com.alttd.chat.objects.ChatUser;
-import com.alttd.chat.objects.ModifiableString;
-import com.alttd.chat.objects.Toggleable;
+import com.alttd.chat.objects.*;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import io.papermc.paper.event.player.AsyncChatCommandDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -87,7 +86,16 @@ public class ChatListener implements Listener {
         ModifiableString modifiableString = new ModifiableString(input);
 
          // todo a better way for this
-        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, "chat")) {
+        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, true, "chat", filterType -> {
+            if (!filterType.equals(FilterType.PUNISH)) {
+                ALogger.warn("Received another FilterType than punish when filtering chat and executing a filter action");
+                return;
+            }
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("punish");
+            out.writeUTF(player.getName());
+            player.sendPluginMessage(ChatPlugin.getInstance(), Config.MESSAGECHANNEL, out.toByteArray());
+        })) {
             event.setCancelled(true);
             GalaxyUtility.sendBlockedNotification("Language", player,
                     modifiableString.component(),

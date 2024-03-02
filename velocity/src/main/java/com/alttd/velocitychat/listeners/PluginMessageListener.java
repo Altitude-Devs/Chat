@@ -9,6 +9,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -18,6 +19,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PluginMessageListener {
@@ -92,6 +94,13 @@ public class PluginMessageListener {
                 ProxyServer proxy = VelocityChat.getPlugin().getProxy();
                 proxy.getAllServers().forEach(registeredServer ->
                         registeredServer.sendPluginMessage(VelocityChat.getPlugin().getChannelIdentifier(), event.getData()));
+            }
+            case "punish" -> {
+                String playerName = in.readUTF();
+                ProxyServer proxy = VelocityChat.getPlugin().getProxy();
+                ConsoleCommandSource consoleCommandSource = proxy.getConsoleCommandSource();
+                proxy.getCommandManager().executeAsync(consoleCommandSource, String.format("ban %s Automatic ban, please appeal if you feel review is needed.", playerName));
+                ALogger.info(String.format("Auto banned %s due to violating the `punish` filter.", playerName));
             }
             default -> {
                 VelocityChat.getPlugin().getLogger().info("server " + event.getSource());

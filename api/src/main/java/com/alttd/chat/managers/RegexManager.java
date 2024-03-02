@@ -8,10 +8,13 @@ import com.alttd.chat.objects.ModifiableString;
 import com.alttd.chat.util.ALogger;
 import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.model.user.User;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class RegexManager {
@@ -43,10 +46,14 @@ public class RegexManager {
     }
 
     public static boolean filterText(String playerName, UUID uuid, ModifiableString modifiableString, String channel) { // TODO loop all objects in the list and check if they violate based on the MATCHER
-        return filterText(playerName, uuid, modifiableString, true, channel);
+        return filterText(playerName, uuid, modifiableString, true, channel, null);
     }
 
     public static boolean filterText(String playerName, UUID uuid, ModifiableString modifiableString, boolean matcher, String channel) {
+        return filterText(playerName, uuid, modifiableString, matcher, channel, null);
+    }
+
+    public static boolean filterText(String playerName, UUID uuid, ModifiableString modifiableString, boolean matcher, String channel, Consumer<FilterType> filterAction) {
         User user = ChatAPI.get().getLuckPerms().getUserManager().getUser(uuid);
         if (user == null) {
             ALogger.warn("Tried to check chat filters for a user who doesn't exist in LuckPerms");
@@ -74,6 +81,25 @@ public class RegexManager {
                         chatFilter.replaceMatcher(modifiableString);
                     }
                     break;
+                case PUNISH:
+                    if (permissionData.checkPermission("chat.bypass-punish").asBoolean())
+                        break;
+                    if (chatFilter.matches(modifiableString)) {
+                        ALogger.info(playerName + " triggered the punish filter for " + chatFilter.getName()
+                                + " with: " + modifiableString.string() + ".");
+
+                        if (filterAction == null){
+                            ALogger.info("No filterAction was provided, not doing anything");
+                            return false;
+                        }
+                        Player player = Bukkit.getPlayer(uuid);
+                        if (player == null) {
+                            ALogger.warn("Tried to punish a player who triggered the filter, but the player is offline.");
+                            return false;
+                        }
+                        filterAction.accept(FilterType.PUNISH);
+                        return false;
+                    }
             }
         }
         return true;
