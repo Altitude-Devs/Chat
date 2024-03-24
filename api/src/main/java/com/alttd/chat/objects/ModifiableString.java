@@ -61,4 +61,8 @@ public class ModifiableString {
                     return list;
                 }));
     }
+
+    public void removeStringAtStart(String s) {
+        text = text.replaceText(TextReplacementConfig.builder().match("^" + s).replacement("").build());
+    }
 }

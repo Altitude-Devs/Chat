@@ -1,3 +1,4 @@
+import com.alttd.chat.config.Config;
 import com.alttd.chat.objects.ModifiableString;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -19,6 +20,31 @@ public class ReverseTest {
         modifiableString.reverse();
         assertEquals(expectedOutput, modifiableString.string());
     }
+
+    @Test
+    public void testRemoveKeyword() {
+        String input = "Hello how are you doing today?";
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+
+        ModifiableString modifiableString = new ModifiableString(miniMessage.deserialize(Config.APRIL_FOOLS_RESET + " " + input));
+        modifiableString.removeStringAtStart(Config.APRIL_FOOLS_RESET + " ");
+
+        assertEquals(input, modifiableString.string());
+    }
+
+    @Test
+    public void testRemoveKeywordWithTags() {
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+        String input = "<blue>" + Config.APRIL_FOOLS_RESET + " <red>Hello how are</red> you <blue>doing today</blue>?</blue>";
+        String expectedOutput = "Hello how are you doing today?";
+        Component deserialize = miniMessage.deserialize(input);
+
+        ModifiableString modifiableString = new ModifiableString(deserialize);
+        modifiableString.removeStringAtStart(Config.APRIL_FOOLS_RESET + " ");
+
+        assertEquals(expectedOutput, modifiableString.string());
+    }
+
 
     @Test
     public void testReverseStringWithTags() {

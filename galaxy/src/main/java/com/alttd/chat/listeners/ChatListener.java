@@ -110,8 +110,12 @@ public class ChatListener implements Listener {
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
         LocalDate now = LocalDate.now();
-        if (now.getMonth().equals(Month.APRIL) && now.getDayOfMonth() == 1 && !modifiableString.string().startsWith(Config.APRIL_FOOLS_RESET)) {
-            modifiableString.reverse();
+        if (now.getMonth().equals(Month.APRIL) && now.getDayOfMonth() == 1) {
+            if (modifiableString.string().startsWith(Config.APRIL_FOOLS_RESET + " ")) {
+                modifiableString.removeStringAtStart(Config.APRIL_FOOLS_RESET + " ");
+            } else {
+                modifiableString.reverse();
+            }
         }
         input = render(player, modifiableString.component());
         for (Player receiver : receivers) {
