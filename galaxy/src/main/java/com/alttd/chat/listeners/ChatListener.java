@@ -29,6 +29,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -107,7 +109,10 @@ public class ChatListener implements Listener {
 
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
-
+        LocalDate now = LocalDate.now();
+        if (now.getMonth().equals(Month.APRIL) && now.getDayOfMonth() == 1 && !modifiableString.string().startsWith(Config.APRIL_FOOLS_RESET)) {
+            modifiableString.reverse();
+        }
         input = render(player, modifiableString.component());
         for (Player receiver : receivers) {
             receiver.sendMessage(input);

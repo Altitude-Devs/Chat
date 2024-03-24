@@ -543,4 +543,9 @@ public final class Config {
         NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
         NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);
     }
+
+    public static String APRIL_FOOLS_RESET = "reverse";
+    private static void aprilFools() {
+        APRIL_FOOLS_RESET = getString("april-fools.reset", APRIL_FOOLS_RESET);
+    }
 }

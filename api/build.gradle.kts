@@ -8,6 +8,9 @@ dependencies {
     }
     compileOnly("org.spongepowered:configurate-yaml:4.1.2") // Configurate
     compileOnly("net.luckperms:api:5.3") // Luckperms
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("com.alttd:Galaxy-API:1.19.2-R0.1-SNAPSHOT")
 }
 
 publishing {
@@ -24,4 +27,8 @@ publishing {
             credentials(PasswordCredentials::class)
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
