@@ -29,8 +29,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
-import java.time.Month;
+import java.time.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -59,6 +58,14 @@ public class ChatListener implements Listener {
         Component message = parseMessageContent(event.player(), plainTextComponentSerializer.serialize(event.originalMessage()));
 
         event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
+    }
+
+    ZonedDateTime aprilFirstUTCMidnight = ZonedDateTime.of(LocalDate.now().getYear(), 4, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
+    ZonedDateTime aprilFirstStart = aprilFirstUTCMidnight.minusHours(24);
+    ZonedDateTime aprilFirstEnd = aprilFirstUTCMidnight.plusHours(24);
+    private boolean isWithinApril1st() {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        return now.isAfter(aprilFirstStart) && now.isBefore(aprilFirstEnd);
     }
 
     private final Component mention = MiniMessage.miniMessage().deserialize(Config.MENTIONPLAYERTAG);
@@ -109,8 +116,7 @@ public class ChatListener implements Listener {
 
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
-        LocalDate now = LocalDate.now();
-        if (now.getMonth().equals(Month.APRIL) && now.getDayOfMonth() == 1) {
+        if (isWithinApril1st()) {
             if (modifiableString.string().startsWith(Config.APRIL_FOOLS_RESET + " ")) {
                 modifiableString.removeStringAtStart(Config.APRIL_FOOLS_RESET + " ");
             } else {
