@@ -60,14 +60,6 @@ public class ChatListener implements Listener {
         event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
     }
 
-    ZonedDateTime aprilFirstUTCMidnight = ZonedDateTime.of(LocalDate.now().getYear(), 4, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
-    ZonedDateTime aprilFirstStart = aprilFirstUTCMidnight.minusHours(24);
-    ZonedDateTime aprilFirstEnd = aprilFirstUTCMidnight.plusHours(24);
-    private boolean isWithinApril1st() {
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-        return now.isAfter(aprilFirstStart) && now.isBefore(aprilFirstEnd);
-    }
-
     private final Component mention = MiniMessage.miniMessage().deserialize(Config.MENTIONPLAYERTAG);
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
@@ -116,7 +108,8 @@ public class ChatListener implements Listener {
 
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
-        if (isWithinApril1st()) {
+        LocalDate now = LocalDate.now();
+        if (now.getMonth().equals(Month.APRIL) && now.getDayOfMonth() == 1) {
             if (modifiableString.string().startsWith(Config.APRIL_FOOLS_RESET + " ")) {
                 modifiableString.removeStringAtStart(Config.APRIL_FOOLS_RESET + " ");
             } else {
