@@ -17,14 +17,16 @@ public class ChatFilter {
     private final Pattern pattern;
     private final String replacement;
     private final List<String> exclusions;
+    private final boolean disableInPrivate;
 
-    public ChatFilter(String name, String type, String regex, String replacement, List<String> exclusions) {
+    public ChatFilter(String name, String type, String regex, String replacement, List<String> exclusions, boolean disableInPrivate) {
         this.name = name;
         this.filterType = FilterType.getType(type);
         this.regex = regex;
         this.pattern = Pattern.compile(getRegex(), Pattern.CASE_INSENSITIVE);
         this.replacement = replacement;
         this.exclusions = exclusions;
+        this.disableInPrivate = disableInPrivate;
     }
 
     public String getName() {
@@ -45,6 +47,10 @@ public class ChatFilter {
 
     public List<String> getExclusions() {
         return this.exclusions;
+    }
+
+    public boolean isDisabledInPrivate() {
+        return disableInPrivate;
     }
 
     public boolean matches(ModifiableString filterableString) {
