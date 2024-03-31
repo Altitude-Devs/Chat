@@ -60,7 +60,10 @@ public class RegexManager {
             return false;
         }
         CachedPermissionData permissionData = user.getCachedData().getPermissionData();
+        boolean isPrivate = channel.equals("party");
         for(ChatFilter chatFilter : chatFilters) {
+            if (isPrivate && chatFilter.isDisabledInPrivate())
+                continue;
             switch (chatFilter.getType()) {
                 case CHAT:
                     break;

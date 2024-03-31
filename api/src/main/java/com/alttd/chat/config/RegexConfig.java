@@ -178,13 +178,18 @@ public final class RegexConfig {
                 String regex = entry.getValue().node("regex").getString();
                 String replacement = entry.getValue().node("replacement").getString();
                 List<String> exclusions = entry.getValue().node("exclusions").getList(io.leangen.geantyref.TypeToken.get(String.class), new ArrayList<>());
+                boolean disableInPrivate = false;
+                ConfigurationNode node = entry.getValue().node("disable-in-private");
+                if (node != null) {
+                    disableInPrivate = node.getBoolean();
+                }
                 if (type == null || type.isEmpty() || regex == null || regex.isEmpty()) {
                     ALogger.warn("Filter: " + name + " was set up incorrectly");
                 } else {
                     if (replacement == null || replacement.isEmpty()) {
                         replacement = name;
                     }
-                    ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions);
+                    ChatFilter chatFilter = new ChatFilter(name, type, regex, replacement, exclusions, disableInPrivate);
                     RegexManager.addFilter(chatFilter);
                 }
             } catch(SerializationException ex) {
