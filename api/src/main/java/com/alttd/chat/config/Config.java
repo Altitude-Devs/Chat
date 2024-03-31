@@ -544,7 +544,7 @@ public final class Config {
         NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);
     }
 
-    public static String APRIL_FOOLS_RESET = "reverse";
+    public static String APRIL_FOOLS_RESET = "esrever";
     private static void aprilFools() {
         APRIL_FOOLS_RESET = getString("april-fools.reset", APRIL_FOOLS_RESET);
     }
