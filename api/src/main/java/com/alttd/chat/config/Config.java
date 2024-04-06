@@ -551,4 +551,12 @@ public final class Config {
         DEATH_MESSAGES_MAX_PER_PERIOD = getInt("death-messages.max-per-period", DEATH_MESSAGES_MAX_PER_PERIOD);
         DEATH_MESSAGES_LIMIT_PERIOD_MINUTES = getInt("death-messages.limit-period-minutes", DEATH_MESSAGES_LIMIT_PERIOD_MINUTES);
     }
+
+    public static long CHAT_LOG_DELETE_OLDER_THAN_DAYS = 31;
+    public static long CHAT_LOG_SAVE_DELAY_MINUTES = 5;
+
+    private static void chatLogSettings() {
+        CHAT_LOG_DELETE_OLDER_THAN_DAYS = getLong("chat-log.delete-older-than-days", CHAT_LOG_DELETE_OLDER_THAN_DAYS);
+        CHAT_LOG_SAVE_DELAY_MINUTES = getLong("chat-log.save-delay-minutes", CHAT_LOG_SAVE_DELAY_MINUTES);
+    }
 }
