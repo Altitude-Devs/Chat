@@ -113,6 +113,7 @@ public class VelocityChat {
         new Reload(server);
         new MailCommand(server);
         new Report(server);
+        new VoteToMute(server);
         server.getCommandManager().register("party", new PartyCommand());
         // all (proxy)commands go here
     }
