@@ -17,9 +17,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -84,6 +89,24 @@ public class PlayerListener implements Listener {
                 event.line(i, component);
             }
         }
+    }
+
+    private final HashMap<UUID, Stack<Instant>> sendPlayerDeaths = new HashMap<>();
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        Stack<Instant> playerDeathsStack = sendPlayerDeaths.computeIfAbsent(uuid, key -> new Stack<>());
+        Instant cutOff = Instant.now().minus(Config.DEATH_MESSAGES_LIMIT_PERIOD_MINUTES, ChronoUnit.MINUTES);
+
+        while (playerDeathsStack.peek().isBefore(cutOff)) {
+            playerDeathsStack.pop();
+        }
+
+        if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD) {
+            event.deathMessage(Component.empty());
+            return;
+        }
+        playerDeathsStack.push(Instant.now());
     }
 
 }

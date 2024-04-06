@@ -543,4 +543,12 @@ public final class Config {
         NICK_ALLOWED_COLOR_CODESLIST = getList("nicknames.allowed-color-codes", List.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f", "&r"));
         NICK_CURRENT = getString("nicknames.messages.nick-current", NICK_CURRENT);
     }
+
+    public static int DEATH_MESSAGES_MAX_PER_PERIOD = 5;
+    public static int DEATH_MESSAGES_LIMIT_PERIOD_MINUTES = 15;
+
+    private static void deathMessagesSettings() {
+        DEATH_MESSAGES_MAX_PER_PERIOD = getInt("death-messages.max-per-period", DEATH_MESSAGES_MAX_PER_PERIOD);
+        DEATH_MESSAGES_LIMIT_PERIOD_MINUTES = getInt("death-messages.limit-period-minutes", DEATH_MESSAGES_LIMIT_PERIOD_MINUTES);
+    }
 }
