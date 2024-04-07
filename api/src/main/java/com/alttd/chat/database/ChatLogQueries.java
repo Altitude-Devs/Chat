@@ -3,16 +3,12 @@ package com.alttd.chat.database;
 import com.alttd.chat.objects.chat_log.ChatLog;
 import com.alttd.chat.objects.chat_log.ChatLogHandler;
 import com.alttd.chat.util.ALogger;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -34,7 +30,7 @@ public class ChatLogQueries {
         }
     }
 
-    public static @NotNull CompletableFuture<Boolean> storeMessages(Object2ObjectOpenHashMap<UUID, List<ChatLog>> chatMessages) {
+    public static @NotNull CompletableFuture<Boolean> storeMessages(HashMap<UUID, List<ChatLog>> chatMessages) {
         String insertQuery = "INSERT INTO chat_log (uuid, time_stamp, server, chat_message, blocked) VALUES (?, ?, ?, ?, ?)";
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = DatabaseConnection.createTransactionConnection()) {

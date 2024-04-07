@@ -3,17 +3,13 @@ package com.alttd.chat.objects.chat_log;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.ChatLogQueries;
 import com.alttd.chat.util.ALogger;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class ChatLogHandler {
@@ -29,7 +25,7 @@ public class ChatLogHandler {
 
     private boolean isSaving;
     private final Queue<ChatLog> chatLogQueue = new ConcurrentLinkedQueue<>();
-    private final Object2ObjectOpenHashMap<UUID, List<ChatLog>> chatLogs = new Object2ObjectOpenHashMap<>();
+    private final HashMap<UUID, List<ChatLog>> chatLogs = new HashMap<>();
 
     public ChatLogHandler() {
         Duration deleteThreshold = Duration.ofDays(Config.CHAT_LOG_DELETE_OLDER_THAN_DAYS);
