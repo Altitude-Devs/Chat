@@ -24,6 +24,7 @@ public class VoteToMuteStarter {
     private final Player commandSource;
     private final String serverName;
     private List<Component> parsedChatLogs;
+    private final boolean countLowerRanks;
 
     public static Optional<VoteToMuteStarter> getInstance(UUID uuid) {
         if (!instanceMap.containsKey(uuid))
@@ -31,11 +32,12 @@ public class VoteToMuteStarter {
         return Optional.of(instanceMap.get(uuid));
     }
 
-    public VoteToMuteStarter(ChatLogHandler chatLogHandler, Player votedPlayer, Player commandSource, String serverName) {
+    public VoteToMuteStarter(ChatLogHandler chatLogHandler, Player votedPlayer, Player commandSource, String serverName, boolean countLowerRanks) {
         this.chatLogHandler = chatLogHandler;
         this.votedPlayer = votedPlayer;
         this.commandSource = commandSource;
         this.serverName = serverName;
+        this.countLowerRanks = countLowerRanks;
         instanceMap.put(commandSource.getUniqueId(), this);
     }
 
@@ -50,7 +52,7 @@ public class VoteToMuteStarter {
             parseChatLogs(chatLogs);
             commandSource.sendMessage(Utility.parseMiniMessage(
                     "<prefix> <green>Please select up to 10 messages other players should see to decide their vote, seperated by comma's. " +
-                            "Example: <gold>/votetomute messages 1, 2, 5, 8</gold></green>"));
+                            "Example: <gold>/votetomutehelper messages 1, 2, 5, 8</gold></green>"));
             showPage(0);
         });
     }
@@ -106,5 +108,21 @@ public class VoteToMuteStarter {
 
         instanceMap.remove(commandSource.getUniqueId());
         return Component.join(JoinConfiguration.newlines(), selectedChatLogs);
+    }
+
+    public int getTotalPages() {
+        return (int) Math.ceil((double) parsedChatLogs.size() / 10);
+    }
+
+    public Player getVotedPlayer() {
+        return votedPlayer;
+    }
+
+    public int getTotalLogEntries() {
+        return parsedChatLogs.size();
+    }
+
+    public boolean countLowerRanks() {
+        return countLowerRanks;
     }
 }

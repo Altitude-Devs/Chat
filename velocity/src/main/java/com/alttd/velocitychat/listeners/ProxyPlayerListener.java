@@ -6,6 +6,7 @@ import com.alttd.chat.objects.Mail;
 import com.alttd.chat.util.Utility;
 import com.alttd.velocitychat.VelocityChat;
 import com.alttd.chat.config.Config;
+import com.alttd.velocitychat.commands.vote_to_mute.ActiveVoteToMute;
 import com.alttd.velocitychat.data.ServerWrapper;
 import com.alttd.velocitychat.handlers.ServerHandler;
 import com.alttd.chat.managers.PartyManager;
@@ -17,6 +18,7 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -48,9 +50,20 @@ public class ProxyPlayerListener {
 
     @Subscribe(order = PostOrder.LAST)
     public void afterPlayerLogin(ServerPostConnectEvent event) {
-        if (event.getPreviousServer() != null)
-            return;
         Player player = event.getPlayer();
+        RegisteredServer previousServer = event.getPreviousServer();
+        if (previousServer != null) {
+            ActiveVoteToMute.removePotentialVoter(player, previousServer);
+            Optional<ServerConnection> currentServer = player.getCurrentServer();
+            if (currentServer.isEmpty())
+                return;
+            ActiveVoteToMute.addPotentialVoter(player, currentServer.get());
+            return;
+        }
+        Optional<ServerConnection> currentServer = player.getCurrentServer();
+        if (currentServer.isEmpty())
+            return;
+        ActiveVoteToMute.addPotentialVoter(player, currentServer.get());
         ChatUser chatUser = ChatUserManager.getChatUser(player.getUniqueId());
         List<Mail> unReadMail = chatUser.getUnReadMail();
         if (unReadMail.isEmpty())
@@ -62,6 +75,7 @@ public class ProxyPlayerListener {
 
     @Subscribe
     public void quitEvent(DisconnectEvent event) {
+        ActiveVoteToMute.removePotentialVoter(event.getPlayer(), null);
         UUID uuid = event.getPlayer().getUniqueId();
         Party party = PartyManager.getParty(event.getPlayer().getUniqueId());
         if (party == null) return;

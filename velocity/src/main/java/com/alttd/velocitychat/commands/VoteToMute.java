@@ -1,8 +1,8 @@
 package com.alttd.velocitychat.commands;
 
-import com.alttd.chat.config.Config;
+import com.alttd.chat.objects.chat_log.ChatLogHandler;
 import com.alttd.chat.util.Utility;
-import com.alttd.velocitychat.commands.vote_to_mute.ActiveVoteToMute;
+import com.alttd.velocitychat.commands.vote_to_mute.VoteToMuteStarter;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -17,7 +17,6 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class VoteToMute {
 
-    public VoteToMute(ProxyServer proxyServer) {
+    public VoteToMute(ProxyServer proxyServer, ChatLogHandler chatLogHandler) {
         RequiredArgumentBuilder<CommandSource, String> playerNode = RequiredArgumentBuilder
                 .<CommandSource, String>argument("player", StringArgumentType.string())
                 .suggests((context, builder) -> {
@@ -59,77 +58,71 @@ public class VoteToMute {
                     return 1;
                 });
 
-        RequiredArgumentBuilder<CommandSource, String> yesNoNode = RequiredArgumentBuilder.
-                <CommandSource, String>argument("vote", StringArgumentType.string())
-                .suggests(((commandContext, suggestionsBuilder) -> {
-                    List<String> yesNoValues = Arrays.asList("yes", "no");
-                    String remaining = suggestionsBuilder.getRemaining().toLowerCase();
-                    yesNoValues.stream()
-                            .filter((String str) -> str.toLowerCase().startsWith(remaining))
-                            .map(StringArgumentType::escapeIfRequired)
-                            .forEach(suggestionsBuilder::suggest);
-                    return suggestionsBuilder.buildFuture();
-                }));
-
-        LiteralArgumentBuilder<CommandSource> voteNode = LiteralArgumentBuilder
-                .<CommandSource>literal("vote")
-                .then(playerNode
-                        .then(yesNoNode
-                                .executes(commandContext -> {
-                                    if (!(commandContext.getSource() instanceof Player)) {
-                                        commandContext.getSource().sendMessage(Utility.parseMiniMessage(
-                                                "<red>Only players are allowed to vote</red>"));
-                                    }
-                                    Player source = (Player) commandContext.getSource();
-                                    String playerName = commandContext.getArgument("player", String.class);
-                                    Optional<ActiveVoteToMute> optionalActiveVoteToMute = ActiveVoteToMute.getInstance(playerName);
-                                    if (optionalActiveVoteToMute.isEmpty()) {
-                                        commandContext.getSource().sendMessage(Utility.parseMiniMessage(
-                                                "<red>This player does not have an active vote to mute them</red>"));
-                                        return 1;
-                                    }
-                                    ActiveVoteToMute activeVoteToMute = optionalActiveVoteToMute.get();
-                                    String vote = commandContext.getArgument("vote", String.class);
-                                    switch (vote.toLowerCase()) {
-                                        case "yes" -> activeVoteToMute.vote(source.getUniqueId(), true);
-                                        case "no" -> activeVoteToMute.vote(source.getUniqueId(), false);
-                                        default -> commandContext.getSource().sendMessage(Utility.parseMiniMessage(
-                                                "<red><vote> is not a valid vote option</red>", Placeholder.parsed("vote", vote)));
-                                    }
-                                    return 1;
-                                })).executes(context -> {
-                            sendHelpMessage(context.getSource());
-                            return 1;
-                        })).executes(context -> {
-                    sendHelpMessage(context.getSource());
-                    return 1;
-                });
-
         LiteralCommandNode<CommandSource> command = LiteralArgumentBuilder
                 .<CommandSource>literal("votetomute")
                 .requires(commandSource -> commandSource.hasPermission("chat.vote-to-mute"))
                 .requires(commandSource -> commandSource instanceof Player)
                 .then(playerNode
+                        .suggests(((commandContext, suggestionsBuilder) -> {
+                            if (!(commandContext.getSource() instanceof Player player)) {
+                                return suggestionsBuilder.buildFuture();
+                            }
+                            Optional<ServerConnection> currentServer = player.getCurrentServer();
+                            if (currentServer.isEmpty()) {
+                                sendHelpMessage(commandContext.getSource());
+                                return suggestionsBuilder.buildFuture();
+                            }
+                            String remaining = suggestionsBuilder.getRemaining().toLowerCase();
+                            currentServer.get().getServer().getPlayersConnected().stream()
+                                    .filter(connectedPlayer -> connectedPlayer.hasPermission("chat.affected-by-vote-to-mute"))
+                                    .map(Player::getUsername)
+                                    .filter((String str) -> str.toLowerCase().startsWith(remaining))
+                                    .map(StringArgumentType::escapeIfRequired)
+                                    .forEach(suggestionsBuilder::suggest);
+                            return suggestionsBuilder.buildFuture();
+                        }))
                         .executes(commandContext -> {
                             String playerName = commandContext.getArgument("player", String.class);
                             Optional<Player> optionalPlayer = proxyServer.getPlayer(playerName);
                             if (optionalPlayer.isEmpty()) {
                                 commandContext.getSource().sendMessage(Utility.parseMiniMessage(
-                                        "<red>Player <player> is not online</red>",
+                                        "<red>Player <player> is not online.</red>",
                                         Placeholder.parsed("player", playerName)));
                                 return 1;
                             }
+                            Player voteTarget = optionalPlayer.get();
+                            if (!voteTarget.hasPermission("chat.affected-by-vote-to-mute")) {
+                                commandContext.getSource().sendMessage(Utility.parseMiniMessage(
+                                        "<red>Player <player> can not be muted by a vote.</red>",
+                                        Placeholder.parsed("player", playerName)));
+                                return 1;
+                            }
+                            Player player = (Player) commandContext.getSource();
+                            Optional<ServerConnection> currentServer = player.getCurrentServer();
+                            if (currentServer.isEmpty()) {
+                                sendHelpMessage(commandContext.getSource());
+                                return 1;
+                            }
+                            RegisteredServer server = currentServer.get().getServer();
+                            boolean countLowerRanks = false;
+                            long count = getTotalEligiblePlayers(server, false);
+                            if (count < 10) {
+                                countLowerRanks = true;
+                                count = getTotalEligiblePlayers(server, true);
+                                if (count < 10) {
+                                    commandContext.getSource().sendMessage(Utility.parseMiniMessage("<red>Not enough eligible players online to vote.</red>"));
+                                    return 1;
+                                }
+                            }
+                            new VoteToMuteStarter(chatLogHandler, voteTarget, player, server.getServerInfo().getName(), countLowerRanks)
+                                    .start();
                             return 1;
                         }))
-                .then(voteNode)
                 .executes(context -> {
                     sendHelpMessage(context.getSource());
                     return 1;
                 })
                 .build();
-        //TODO test command
-        //TODO add command to pick out the messages
-        //TODO add command to go to the next page
 
         BrigadierCommand brigadierCommand = new BrigadierCommand(command);
 
@@ -138,6 +131,12 @@ public class VoteToMute {
         CommandMeta meta = metaBuilder.build();
 
         proxyServer.getCommandManager().register(meta, brigadierCommand);
+    }
+
+    private int getTotalEligiblePlayers(RegisteredServer server, boolean countLowerRanks) {
+        return (int) server.getPlayersConnected().stream()
+                .filter(player -> countLowerRanks ? player.hasPermission("chat.backup-vote-to-mute") : player.hasPermission("chat.vote-to-mute"))
+                .count();
     }
 
     private void sendHelpMessage(CommandSource commandSource) {
