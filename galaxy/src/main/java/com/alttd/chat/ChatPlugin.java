@@ -39,7 +39,7 @@ public class ChatPlugin extends JavaPlugin {
         chatHandler = new ChatHandler();
         DatabaseConnection.initialize();
         serverConfig = new ServerConfig(Bukkit.getServerName());
-        ChatLogHandler chatLogHandler = ChatLogHandler.getInstance();
+        ChatLogHandler chatLogHandler = ChatLogHandler.getInstance(true);
         registerListener(new PlayerListener(serverConfig), new ChatListener(chatLogHandler), new BookListener(), new ShutdownListener(chatLogHandler));
         if(serverConfig.GLOBALCHAT) {
             registerCommand("globalchat", new GlobalChat());

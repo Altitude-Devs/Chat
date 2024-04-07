@@ -110,7 +110,7 @@ public class VelocityChat {
     }
 
     public void loadCommands() {
-        ChatLogHandler instance = ChatLogHandler.getInstance(); //TODO disable logging part
+        ChatLogHandler instance = ChatLogHandler.getInstance(false);
         new SilentJoinCommand(server);
         new GlobalAdminChat(server);
         new Reload(server);

@@ -15,11 +15,11 @@ import java.util.concurrent.*;
 public class ChatLogHandler {
 
     private static ChatLogHandler instance = null;
-    private final ScheduledExecutorService executorService;
+    private ScheduledExecutorService executorService = null;
 
-    public static ChatLogHandler getInstance() {
+    public static ChatLogHandler getInstance(boolean enableLogging) {
         if (instance == null)
-            instance = new ChatLogHandler();
+            instance = new ChatLogHandler(enableLogging);
         return instance;
     }
 
@@ -27,7 +27,9 @@ public class ChatLogHandler {
     private final Queue<ChatLog> chatLogQueue = new ConcurrentLinkedQueue<>();
     private final HashMap<UUID, List<ChatLog>> chatLogs = new HashMap<>();
 
-    public ChatLogHandler() {
+    public ChatLogHandler(boolean enableLogging) {
+        if (!enableLogging)
+            return;
         Duration deleteThreshold = Duration.ofDays(Config.CHAT_LOG_DELETE_OLDER_THAN_DAYS);
         ChatLogQueries.deleteOldMessages(deleteThreshold).thenAccept(success -> {
             if (success) {
@@ -41,6 +43,10 @@ public class ChatLogHandler {
                 Config.CHAT_LOG_SAVE_DELAY_MINUTES, Config.CHAT_LOG_SAVE_DELAY_MINUTES, TimeUnit.MINUTES);
     }
 
+    /**
+     * Shuts down the executor service and saves the chat logs to the database.
+     * Will throw an error if called on a ChatLogHandler that was started without logging
+     */
     public void shutDown() {
         executorService.shutdown();
         saveToDatabase(true);
