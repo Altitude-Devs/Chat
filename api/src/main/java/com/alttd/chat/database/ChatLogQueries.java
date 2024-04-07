@@ -82,7 +82,7 @@ public class ChatLogQueries {
     }
 
     public static CompletableFuture<Boolean> deleteOldMessages(Duration duration) {
-        String query = "DELETE FROM chat_log WHERE time_stamp > ?";
+        String query = "DELETE FROM chat_log WHERE time_stamp < ?";
 
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = DatabaseConnection.getConnection()) {
