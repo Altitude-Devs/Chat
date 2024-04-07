@@ -1,14 +1,19 @@
 package com.alttd.velocitychat.commands.vote_to_mute;
 
+import com.alttd.chat.config.Config;
 import com.alttd.chat.util.Utility;
+import com.alttd.proxydiscordlink.DiscordLink;
+import com.alttd.proxydiscordlink.lib.net.dv8tion.jda.api.EmbedBuilder;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,6 +146,22 @@ public class ActiveVoteToMute {
                 .forEach(player -> player.sendMessage(message));
         proxyServer.getCommandManager().executeAsync(proxyServer.getConsoleCommandSource(),
                 String.format("tempmute %s 1h Muted by the community - under review.", votedPlayer.getUsername()));
+
+
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setAuthor(votedPlayer.getUsername(), null, "https://crafatar.com/avatars/" + votedPlayer.getUniqueId() + "?overlay");
+        embedBuilder.setTitle("Player muted by vote");
+        embedBuilder.setColor(Color.CYAN);
+        String chatLogsString = PlainTextComponentSerializer.plainText().serialize(chatLogs);
+        embedBuilder.addField("Logs",
+                chatLogsString.substring(0, Math.min(chatLogsString.length(), 1024)),
+                false);
+        embedBuilder.addField("Server",
+                server.getServerInfo().getName().substring(0, 1).toUpperCase() + server.getServerInfo().getName().substring(1),
+                false);
+
+        long id = Config.serverChannelId.get("general");
+        DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
     }
 
     public void addEligibleVoter(Player player) {

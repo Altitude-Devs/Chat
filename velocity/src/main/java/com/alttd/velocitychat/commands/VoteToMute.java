@@ -104,6 +104,10 @@ public class VoteToMute {
                                 return 1;
                             }
                             RegisteredServer server = currentServer.get().getServer();
+                            if (currentServer.get().getServer().getPlayersConnected().stream().anyMatch(onlinePlayer -> onlinePlayer.hasPermission("chat.staff"))) {
+                                commandContext.getSource().sendMessage(Utility.parseMiniMessage("<red>There is a staff member online, so vote to mute can not be used. Please contact a staff member for help instead.</red>"));
+                                return 1;
+                            }
                             boolean countLowerRanks = false;
                             long count = getTotalEligiblePlayers(server, false);
                             if (count < 10) {
