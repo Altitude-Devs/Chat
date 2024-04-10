@@ -11,6 +11,10 @@ import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
@@ -102,9 +106,16 @@ public class PlayerListener implements Listener {
             playerDeathsStack.pop();
         }
 
-        if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD) {
+        if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD || serverConfig.MUTED) {
             event.deathMessage(Component.empty());
             return;
+        } else {
+            Component component = event.deathMessage();
+            if (component != null) {
+                component = Component.text("* ").append(component);
+                component = component.style(Style.style(TextColor.color(82, 80, 77), TextDecoration.ITALIC));
+                event.deathMessage(component);
+            }
         }
         playerDeathsStack.push(Instant.now());
     }
