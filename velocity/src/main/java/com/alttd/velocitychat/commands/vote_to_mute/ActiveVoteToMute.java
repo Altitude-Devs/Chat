@@ -1,6 +1,7 @@
 package com.alttd.velocitychat.commands.vote_to_mute;
 
 import com.alttd.chat.config.Config;
+import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import com.alttd.proxydiscordlink.DiscordLink;
 import com.alttd.proxydiscordlink.lib.net.dv8tion.jda.api.EmbedBuilder;
@@ -15,13 +16,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ActiveVoteToMute {
 
@@ -148,20 +148,43 @@ public class ActiveVoteToMute {
                 String.format("tempmute %s 1h Muted by the community - under review.", votedPlayer.getUsername()));
 
 
+        String chatLogsString = PlainTextComponentSerializer.plainText().serialize(chatLogs);
+        EmbedBuilder embedBuilder = buildMutedEmbed(chatLogsString);
+
+        ALogger.info(String.format("Player %s muted by vote\nLogs:\n%s\n\nVotes for:\n%s\nVotes against:\n%s\n",
+                votedPlayer.getUsername(),
+                chatLogsString,
+                parseUUIDsToPlayerOrString(votedFor),
+                parseUUIDsToPlayerOrString(votedAgainst)
+                ));
+
+        long id = Config.serverChannelId.get("general");
+        DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
+    }
+
+    @NotNull
+    private EmbedBuilder buildMutedEmbed(String chatLogsString) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(votedPlayer.getUsername(), null, "https://crafatar.com/avatars/" + votedPlayer.getUniqueId() + "?overlay");
         embedBuilder.setTitle("Player muted by vote");
         embedBuilder.setColor(Color.CYAN);
-        String chatLogsString = PlainTextComponentSerializer.plainText().serialize(chatLogs);
         embedBuilder.addField("Logs",
                 chatLogsString.substring(0, Math.min(chatLogsString.length(), 1024)),
                 false);
         embedBuilder.addField("Server",
                 server.getServerInfo().getName().substring(0, 1).toUpperCase() + server.getServerInfo().getName().substring(1),
                 false);
+        return embedBuilder;
+    }
 
-        long id = Config.serverChannelId.get("general");
-        DiscordLink.getPlugin().getBot().sendEmbedToDiscord(id, embedBuilder, -1);
+    private String parseUUIDsToPlayerOrString(Collection<UUID> uuids) {
+        return uuids.stream().map(uuid -> {
+            Optional<Player> player = proxyServer.getPlayer(uuid);
+            if (player.isPresent()) {
+                return player.get().getUsername();
+            }
+            return uuid.toString();
+        }).collect(Collectors.joining("\n"));
     }
 
     public void addEligibleVoter(Player player) {
