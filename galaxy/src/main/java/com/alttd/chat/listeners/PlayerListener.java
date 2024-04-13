@@ -11,15 +11,20 @@ import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -92,8 +97,8 @@ public class PlayerListener implements Listener {
     }
 
     private final HashMap<UUID, Stack<Instant>> sendPlayerDeaths = new HashMap<>();
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerDeath(PlayerDeathEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerDeath(@NotNull PlayerDeathEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         Stack<Instant> playerDeathsStack = sendPlayerDeaths.computeIfAbsent(uuid, key -> new Stack<>());
         Instant cutOff = Instant.now().minus(Config.DEATH_MESSAGES_LIMIT_PERIOD_MINUTES, ChronoUnit.MINUTES);
@@ -102,9 +107,16 @@ public class PlayerListener implements Listener {
             playerDeathsStack.pop();
         }
 
-        if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD) {
+        if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD || serverConfig.MUTED) {
             event.deathMessage(Component.empty());
             return;
+        } else {
+            Component component = event.deathMessage();
+            if (component != null) {
+                component = Component.text("* ").append(component);
+                component = component.style(Style.style(TextColor.color(82, 80, 77), TextDecoration.ITALIC));
+                event.deathMessage(component);
+            }
         }
         playerDeathsStack.push(Instant.now());
     }
