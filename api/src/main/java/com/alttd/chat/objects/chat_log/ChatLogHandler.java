@@ -28,8 +28,10 @@ public class ChatLogHandler {
     private final HashMap<UUID, List<ChatLog>> chatLogs = new HashMap<>();
 
     public ChatLogHandler(boolean enableLogging) {
-        if (!enableLogging)
+        if (!enableLogging) {
+            ALogger.info("Logging is not enabled on this server.");
             return;
+        }
         Duration deleteThreshold = Duration.ofDays(Config.CHAT_LOG_DELETE_OLDER_THAN_DAYS);
         ChatLogQueries.deleteOldMessages(deleteThreshold).thenAccept(success -> {
             if (success) {
@@ -41,6 +43,7 @@ public class ChatLogHandler {
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(() -> saveToDatabase(false),
                 Config.CHAT_LOG_SAVE_DELAY_MINUTES, Config.CHAT_LOG_SAVE_DELAY_MINUTES, TimeUnit.MINUTES);
+        ALogger.info("Logging started!");
     }
 
     /**
@@ -78,6 +81,8 @@ public class ChatLogHandler {
         booleanCompletableFuture.whenComplete((result, throwable) -> {
             if (throwable == null && result) {
                 chatLogs.clear();
+            } else {
+                ALogger.error("Failed to save chat messages.");
             }
             savingToDatabase(false);
             while (!chatLogQueue.isEmpty()) {
