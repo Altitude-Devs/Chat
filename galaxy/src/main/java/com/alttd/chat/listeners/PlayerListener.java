@@ -103,7 +103,7 @@ public class PlayerListener implements Listener {
         Stack<Instant> playerDeathsStack = sendPlayerDeaths.computeIfAbsent(uuid, key -> new Stack<>());
         Instant cutOff = Instant.now().minus(Config.DEATH_MESSAGES_LIMIT_PERIOD_MINUTES, ChronoUnit.MINUTES);
 
-        while (playerDeathsStack.peek().isBefore(cutOff)) {
+        while (!playerDeathsStack.isEmpty() && playerDeathsStack.peek().isBefore(cutOff)) {
             playerDeathsStack.pop();
         }
 
