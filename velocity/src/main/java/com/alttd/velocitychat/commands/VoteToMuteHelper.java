@@ -197,7 +197,7 @@ public class VoteToMuteHelper {
                                         }
                                     }
 
-                                    String vote = commandContext.getArgument("yesno", String.class);
+                                    String vote = commandContext.getArgument("yesNo", String.class);
                                     switch (vote.toLowerCase()) {
                                         case "yes" -> activeVoteToMute.vote(source.getUniqueId(), true);
                                         case "no" -> activeVoteToMute.vote(source.getUniqueId(), false);

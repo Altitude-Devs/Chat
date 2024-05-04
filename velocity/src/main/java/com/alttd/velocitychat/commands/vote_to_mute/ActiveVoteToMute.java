@@ -127,7 +127,7 @@ public class ActiveVoteToMute {
 
     public boolean votePassed() {
         double totalVotes = (votedFor.size() + votedAgainst.size());
-        if (totalVotes == 0) {
+        if (totalVotes == 0 || votedFor.isEmpty()) {
             return false;
         }
         if (totalVotes / totalEligibleVoters < 0.6) {
