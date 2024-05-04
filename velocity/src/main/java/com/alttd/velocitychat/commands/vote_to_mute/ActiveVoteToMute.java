@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.time.Duration;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -97,7 +96,7 @@ public class ActiveVoteToMute {
             mutePlayer();
             return;
         }
-        Component message = Utility.parseMiniMessage("<prefix> <red>The vote to mute <player> has failed, they will not be muted.</green>",
+        Component message = Utility.parseMiniMessage("<prefix> <red>The vote to mute <player> has failed, they will not be muted.</red>",
                 Placeholder.component("prefix", prefix), Placeholder.parsed("player", votedPlayer.getUsername()));
         server.getPlayersConnected().stream()
                 .filter(player -> countLowerRanks ? player.hasPermission("chat.backup-vote-to-mute") : player.hasPermission("chat.vote-to-mute"))
@@ -128,7 +127,10 @@ public class ActiveVoteToMute {
 
     public boolean votePassed() {
         double totalVotes = (votedFor.size() + votedAgainst.size());
-        if (totalVotes / totalEligibleVoters  < 0.6) {
+        if (totalVotes == 0) {
+            return false;
+        }
+        if (totalVotes / totalEligibleVoters < 0.6) {
             return false;
         }
         return votedFor.size() / totalVotes > 0.6;

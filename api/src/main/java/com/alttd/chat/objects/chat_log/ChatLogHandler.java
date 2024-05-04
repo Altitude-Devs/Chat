@@ -41,9 +41,12 @@ public class ChatLogHandler {
             }
         });
         executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> saveToDatabase(false),
+        executorService.scheduleAtFixedRate(() -> {
+                    saveToDatabase(false);
+                    ALogger.info(String.format("Running scheduler to save messages with a %d delay", Config.CHAT_LOG_SAVE_DELAY_MINUTES));
+                },
                 Config.CHAT_LOG_SAVE_DELAY_MINUTES, Config.CHAT_LOG_SAVE_DELAY_MINUTES, TimeUnit.MINUTES);
-        ALogger.info("Logging started!");
+        ALogger.info("Logging has started!");
     }
 
     /**
@@ -73,9 +76,11 @@ public class ChatLogHandler {
 
     private void saveToDatabase(boolean onMainThread) {
         savingToDatabase(true);
+        ALogger.info(String.format("Saving %d messages to database", chatLogs.size()));
         CompletableFuture<Boolean> booleanCompletableFuture = ChatLogQueries.storeMessages(chatLogs);
         if (onMainThread) {
             booleanCompletableFuture.join();
+            ALogger.info("Finished saving messages on main thread");
             return;
         }
         booleanCompletableFuture.whenComplete((result, throwable) -> {
@@ -85,9 +90,13 @@ public class ChatLogHandler {
                 ALogger.error("Failed to save chat messages.");
             }
             savingToDatabase(false);
+            if (!chatLogQueue.isEmpty()) {
+                ALogger.info("Adding back messages from queue to chatLogs map");
+            }
             while (!chatLogQueue.isEmpty()) {
                 addLog(chatLogQueue.remove());
             }
+            ALogger.info("Finished saving messages");
         });
     }
 

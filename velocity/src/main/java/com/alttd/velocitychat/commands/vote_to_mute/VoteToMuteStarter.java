@@ -73,19 +73,19 @@ public class VoteToMuteStarter {
     }
 
     public void showPage(int page) {
-        List<Component> collect = parsedChatLogs.stream().skip(page * 10L).limit(page).toList();
+        List<Component> collect = parsedChatLogs.stream().skip((page - 1) * 10L).limit(10L).toList();
         Component chatLogsComponent = Component.join(JoinConfiguration.newlines(), collect);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<prefix> ChatLogs for <player>\n<logs>\n");
-        if (page != 0) {
-            stringBuilder.append("<click:run_command:/votetomute page ")
+        if (page > 1) {
+            stringBuilder.append("<click:run_command:/votetomutehelper page ")
                     .append(page - 1)
                     .append("><hover:show_text:'<gold>Click to go to previous page'><gold><previous page></gold></hover></click> ");
         }
         if (parsedChatLogs.size() > page * 10) {
-            stringBuilder.append("<click:run_command:/votetomute page ")
+            stringBuilder.append("<click:run_command:/votetomutehelper page ")
                     .append(page + 1)
-                    .append("><hover:show_text:'<gold>Click to go to next page'><gold><previous page></gold></hover></click> ");
+                    .append("><hover:show_text:'<gold>Click to go to next page'><gold><next page></gold></hover></click> ");
         }
         commandSource.sendMessage(Utility.parseMiniMessage(stringBuilder.toString(),
                 Placeholder.parsed("player", votedPlayer.getUsername()),
