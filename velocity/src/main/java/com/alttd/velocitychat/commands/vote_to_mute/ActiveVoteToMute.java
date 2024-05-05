@@ -28,6 +28,7 @@ public class ActiveVoteToMute {
     private static final Component prefix = Utility.parseMiniMessage("<gold>[VoteMute]</gold>");
 
     private final Player votedPlayer;
+    private final Player startedByPlayer;
     private HashSet<UUID> votedFor = new HashSet<>();
     private HashSet<UUID> votedAgainst = new HashSet<>();
     private int totalEligibleVoters;
@@ -74,7 +75,7 @@ public class ActiveVoteToMute {
     }
 
     public ActiveVoteToMute(@NotNull Player votedPlayer, @NotNull RegisteredServer server, ProxyServer proxyServer, Duration duration,
-                            int totalEligibleVoters, boolean countLowerRanks, Component chatLogs) {
+                            int totalEligibleVoters, boolean countLowerRanks, Component chatLogs, @NotNull Player startedByPlayer) {
         this.chatLogs = chatLogs;
         this.votedPlayer = votedPlayer;
         this.totalEligibleVoters = totalEligibleVoters;
@@ -85,6 +86,7 @@ public class ActiveVoteToMute {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.schedule(this::endVote,
                 duration.toMinutes(), TimeUnit.MINUTES);
+        this.startedByPlayer = startedByPlayer;
     }
 
     private RegisteredServer getServer() {
@@ -151,7 +153,7 @@ public class ActiveVoteToMute {
                 .filter(player -> countLowerRanks ? player.hasPermission("chat.backup-vote-to-mute") : player.hasPermission("chat.vote-to-mute"))
                 .forEach(player -> player.sendMessage(message));
         proxyServer.getCommandManager().executeAsync(proxyServer.getConsoleCommandSource(),
-                String.format("tempmute %s 1h Muted by the community - under review.", votedPlayer.getUsername()));
+                String.format("tempmute %s 1h Muted by the community - under review. -p", votedPlayer.getUsername()));
 
 
         String chatLogsString = PlainTextComponentSerializer.plainText().serialize(chatLogs);
@@ -179,7 +181,10 @@ public class ActiveVoteToMute {
                 false);
         embedBuilder.addField("Server",
                 server.getServerInfo().getName().substring(0, 1).toUpperCase() + server.getServerInfo().getName().substring(1),
-                false);
+                true);
+        embedBuilder.addField("Started by",
+                String.format("Username: %s\nUUID: %s", startedByPlayer.getUsername(), startedByPlayer.getUniqueId().toString()),
+                true);
         return embedBuilder;
     }
 
@@ -217,5 +222,17 @@ public class ActiveVoteToMute {
                 Placeholder.component("prefix", prefix),
                 Placeholder.parsed("player", votedPlayer.getUsername()),
                 Placeholder.component("logs", chatLogs));
+    }
+
+    public Player getVotedPlayer() {
+        return votedPlayer;
+    }
+
+    public int getVotedFor() {
+        return votedFor.size();
+    }
+
+    public int getTotalEligibleVoters() {
+        return totalEligibleVoters;
     }
 }

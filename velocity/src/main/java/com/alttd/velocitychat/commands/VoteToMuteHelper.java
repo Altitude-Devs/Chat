@@ -16,6 +16,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import jdk.jshell.execution.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class VoteToMuteHelper {
+
+    private static final Component prefix = Utility.parseMiniMessage("<gold>[VoteMute]</gold>");
 
     public VoteToMuteHelper(ProxyServer proxyServer) {
         RequiredArgumentBuilder<CommandSource, String> playerNode = RequiredArgumentBuilder
@@ -162,7 +165,7 @@ public class VoteToMuteHelper {
                             RegisteredServer server = currentServer.get().getServer();
                             long count = getTotalEligiblePlayers(server, voteToMuteStarter.countLowerRanks());
                             new ActiveVoteToMute(voteToMuteStarter.getVotedPlayer(), server, proxyServer, Duration.ofMinutes(5),
-                                    (int) count, voteToMuteStarter.countLowerRanks(), chatLogs)
+                                    (int) count, voteToMuteStarter.countLowerRanks(), chatLogs, player)
                                     .start();
                             return 1;
                         })
@@ -176,11 +179,11 @@ public class VoteToMuteHelper {
                 .then(playerNode
                         .then(yesNoNode
                                 .executes(commandContext -> {
-                                    if (!(commandContext.getSource() instanceof Player)) {
+                                    if (!(commandContext.getSource() instanceof Player player)) {
                                         commandContext.getSource().sendMessage(Utility.parseMiniMessage(
                                                 "<red>Only players are allowed to vote</red>"));
+                                        return 1;
                                     }
-                                    Player source = (Player) commandContext.getSource();
                                     String playerName = commandContext.getArgument("player", String.class);
                                     Optional<ActiveVoteToMute> optionalActiveVoteToMute = ActiveVoteToMute.getInstance(playerName);
                                     if (optionalActiveVoteToMute.isEmpty()) {
@@ -191,8 +194,8 @@ public class VoteToMuteHelper {
                                     ActiveVoteToMute activeVoteToMute = optionalActiveVoteToMute.get();
 
                                     if (!activeVoteToMute.countLowerRanks()) {
-                                        if (!source.hasPermission("chat.vote-to-mute")) {
-                                            source.sendMessage(Utility.parseMiniMessage("<red>You are not eligible to vote.</red>"));
+                                        if (!player.hasPermission("chat.vote-to-mute")) {
+                                            player.sendMessage(Utility.parseMiniMessage("<red>You are not eligible to vote.</red>"));
                                             return 1;
                                         }
                                     }
@@ -200,12 +203,13 @@ public class VoteToMuteHelper {
                                     String vote = commandContext.getArgument("yesNo", String.class);
                                     switch (vote.toLowerCase()) {
                                         case "yes" -> {
-                                            activeVoteToMute.vote(source.getUniqueId(), true);
+                                            activeVoteToMute.vote(player.getUniqueId(), true);
                                             commandContext.getSource().sendMessage(Utility.parseMiniMessage(
                                                     "<green>You voted to mute. Thanks for voting, staff will be online soon to review!</green>"));
+                                            player.getCurrentServer().ifPresent(serverConnection -> notifyEligiblePlayers(serverConnection.getServer(), activeVoteToMute));
                                         }
                                         case "no" -> {
-                                            activeVoteToMute.vote(source.getUniqueId(), false);
+                                            activeVoteToMute.vote(player.getUniqueId(), false);
                                             commandContext.getSource().sendMessage(Utility.parseMiniMessage(
                                                     "<green>You voted <red>not</red> to mute. Thanks for voting, staff will be online soon to review!</green>"));
                                         }
@@ -247,6 +251,18 @@ public class VoteToMuteHelper {
         return (int) server.getPlayersConnected().stream()
                 .filter(player -> countLowerRanks ? player.hasPermission("chat.backup-vote-to-mute") : player.hasPermission("chat.vote-to-mute"))
                 .count();
+    }
+
+    private void notifyEligiblePlayers(RegisteredServer server, ActiveVoteToMute activeVoteToMute) {
+        Component message = Utility.parseMiniMessage("<prefix><green><voted_for> out of <total_votes> players have voted to mute <player></green>",
+                Placeholder.component("prefix", prefix),
+                Placeholder.parsed("voted_for", String.valueOf(activeVoteToMute.getVotedFor())),
+                Placeholder.parsed("total_votes", String.valueOf(activeVoteToMute.getTotalEligibleVoters())),
+                Placeholder.parsed("player", activeVoteToMute.getVotedPlayer().getUsername()));
+        boolean countLowerRanks = activeVoteToMute.countLowerRanks();
+        server.getPlayersConnected().stream()
+                .filter(player ->  countLowerRanks ? player.hasPermission("chat.backup-vote-to-mute") : player.hasPermission("chat.vote-to-mute"))
+                .forEach(player -> player.sendMessage(message));
     }
 
     private void sendHelpMessage(CommandSource commandSource) {

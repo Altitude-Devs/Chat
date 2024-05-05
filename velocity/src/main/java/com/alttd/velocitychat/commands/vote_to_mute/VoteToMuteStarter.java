@@ -42,7 +42,7 @@ public class VoteToMuteStarter {
     }
 
     public void start() {
-        chatLogHandler.retrieveChatLogs(votedPlayer.getUniqueId(), Duration.ofMinutes(5), serverName).whenCompleteAsync((chatLogs, throwable) -> {
+        chatLogHandler.retrieveChatLogs(votedPlayer.getUniqueId(), Duration.ofMinutes(10), serverName).whenCompleteAsync((chatLogs, throwable) -> {
             if (throwable != null) {
                 commandSource.sendMessage(Utility.parseMiniMessage("<prefix> <red>Unable to retrieve messages</red> for player <player>",
                         Placeholder.component("prefix", prefix),
@@ -59,14 +59,15 @@ public class VoteToMuteStarter {
 
     private void parseChatLogs(List<ChatLog> chatLogs) {
         TagResolver.Single playerTag = Placeholder.parsed("player", votedPlayer.getUsername());
+        TagResolver.Single prefixTag = Placeholder.component("prefix", prefix);
         chatLogs.sort(Comparator.comparing(ChatLog::getTimestamp));
         parsedChatLogs = IntStream.range(0, chatLogs.size())
                 .mapToObj(i -> Utility.parseMiniMessage(
-                        "<number>. [ChatLog] <player>: <message>",
+                        "<number>. <prefix> <player>: <message>",
                         TagResolver.resolver(
                                 Placeholder.unparsed("message", chatLogs.get(i).getMessage()),
                                 Placeholder.parsed("number", String.valueOf(i + 1)),
-                                playerTag
+                                playerTag, prefixTag
                         ))
                 )
                 .toList();
