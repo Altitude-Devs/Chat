@@ -110,10 +110,10 @@ public class VoteToMute {
                             }
                             boolean countLowerRanks = false;
                             long count = getTotalEligiblePlayers(server, false);
-                            if (count < 10) {
+                            if (count < 6) {
                                 countLowerRanks = true;
                                 count = getTotalEligiblePlayers(server, true);
-                                if (count < 10) {
+                                if (count < 6) {
                                     commandContext.getSource().sendMessage(Utility.parseMiniMessage("<red>Not enough eligible players online to vote.</red>"));
                                     return 1;
                                 }

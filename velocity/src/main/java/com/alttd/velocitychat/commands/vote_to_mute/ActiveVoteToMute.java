@@ -35,6 +35,7 @@ public class ActiveVoteToMute {
     private final RegisteredServer server;
     private final ProxyServer proxyServer;
     private final Component chatLogs;
+    private boolean endedVote = false;
 
     public static Optional<ActiveVoteToMute> getInstance(String username) {
         if (!instances.containsKey(username))
@@ -91,6 +92,8 @@ public class ActiveVoteToMute {
     }
 
     private void endVote() {
+        if (endedVote)
+            return;
         instances.remove(votedPlayer.getUsername());
         if (votePassed()) {
             mutePlayer();
@@ -117,6 +120,7 @@ public class ActiveVoteToMute {
             if (!votePassed()) {
                 return;
             }
+            endedVote = true;
             instances.remove(votedPlayer.getUsername());
             mutePlayer();
         } else {
@@ -206,7 +210,7 @@ public class ActiveVoteToMute {
     private Component getVoteStartMessage() {
         return Utility.parseMiniMessage(
                 String.format("""
-                        <prefix> <gold>[VoteMute]</gold> <green>A vote to mute <player> for one hour has been started, please read the logs below before voting.</green>
+                        <prefix> <green>A vote to mute <player> for one hour has been started, please read the logs below before voting.</green>
                         <logs>
                         <prefix> Click: <click:run_command:'/votetomutehelper vote %s yes'><red>Mute</red></click> --- <click:run_command:'/votetomutehelper vote %s no'><yellow>Don't mute</yellow></click>""",
                         votedPlayer.getUsername(), votedPlayer.getUsername()),

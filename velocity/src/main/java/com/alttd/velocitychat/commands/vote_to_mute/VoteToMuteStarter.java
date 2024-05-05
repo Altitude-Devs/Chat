@@ -52,8 +52,8 @@ public class VoteToMuteStarter {
             parseChatLogs(chatLogs);
             commandSource.sendMessage(Utility.parseMiniMessage(
                     "<prefix> <green>Please select up to 10 messages other players should see to decide their vote, seperated by comma's. " +
-                            "Example: <gold>/votetomutehelper messages 1, 2, 5, 8</gold></green>"));
-            showPage(0);
+                            "Example: <gold>/votetomutehelper messages 1, 2, 5, 8</gold></green>", Placeholder.component("prefix", prefix)));
+            showPage(1);
         });
     }
 

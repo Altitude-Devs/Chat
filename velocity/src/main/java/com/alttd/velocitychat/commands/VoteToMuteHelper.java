@@ -116,7 +116,7 @@ public class VoteToMuteHelper {
                     return 1;
                 });
 
-        LiteralArgumentBuilder<CommandSource> enterPageNode = LiteralArgumentBuilder
+        LiteralArgumentBuilder<CommandSource> enterMessagesNode = LiteralArgumentBuilder
                 .<CommandSource>literal("messages")
                 .requires(commandSource -> commandSource.hasPermission("chat.vote-to-mute"))
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("list of messages", StringArgumentType.greedyString())
@@ -199,8 +199,16 @@ public class VoteToMuteHelper {
 
                                     String vote = commandContext.getArgument("yesNo", String.class);
                                     switch (vote.toLowerCase()) {
-                                        case "yes" -> activeVoteToMute.vote(source.getUniqueId(), true);
-                                        case "no" -> activeVoteToMute.vote(source.getUniqueId(), false);
+                                        case "yes" -> {
+                                            activeVoteToMute.vote(source.getUniqueId(), true);
+                                            commandContext.getSource().sendMessage(Utility.parseMiniMessage(
+                                                    "<green>You voted to mute. Thanks for voting, staff will be online soon to review!</green>"));
+                                        }
+                                        case "no" -> {
+                                            activeVoteToMute.vote(source.getUniqueId(), false);
+                                            commandContext.getSource().sendMessage(Utility.parseMiniMessage(
+                                                    "<green>You voted <red>not</red> to mute. Thanks for voting, staff will be online soon to review!</green>"));
+                                        }
                                         default -> commandContext.getSource().sendMessage(Utility.parseMiniMessage(
                                                 "<red><vote> is not a valid vote option</red>", Placeholder.parsed("vote", vote)));
                                     }
@@ -219,7 +227,7 @@ public class VoteToMuteHelper {
                 .requires(commandSource -> commandSource instanceof Player)
                 .then(voteNode)
                 .then(pageNode)
-                .then(enterPageNode)
+                .then(enterMessagesNode)
                 .executes(context -> {
                     sendHelpMessage(context.getSource());
                     return 1;
