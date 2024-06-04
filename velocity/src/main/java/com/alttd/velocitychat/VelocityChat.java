@@ -5,6 +5,7 @@ import com.alttd.chat.ChatImplementation;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.PartyManager;
 import com.alttd.chat.objects.ChatUser;
+import com.alttd.chat.objects.chat_log.ChatLogHandler;
 import com.alttd.velocitychat.commands.*;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.DatabaseConnection;
@@ -23,6 +24,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -108,11 +110,14 @@ public class VelocityChat {
     }
 
     public void loadCommands() {
+        ChatLogHandler instance = ChatLogHandler.getInstance(false);
         new SilentJoinCommand(server);
         new GlobalAdminChat(server);
         new Reload(server);
         new MailCommand(server);
         new Report(server);
+        new VoteToMute(server, instance);
+        new VoteToMuteHelper(server);
         server.getCommandManager().register("party", new PartyCommand());
         // all (proxy)commands go here
     }

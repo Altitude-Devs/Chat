@@ -21,6 +21,7 @@ public class Queries {
         tables.add("CREATE TABLE IF NOT EXISTS mails (`id` INT NOT NULL AUTO_INCREMENT, `uuid` VARCHAR(36) NOT NULL, `sender` VARCHAR(36) NOT NULL, `message` VARCHAR(256) NOT NULL, `sendtime` BIGINT default 0, `readtime` BIGINT default 0, PRIMARY KEY (`id`))");
         createNicknamesTable();
         createRequestedNicknamesTable();
+        ChatLogQueries.createChatLogTable();
         try {
             Connection connection = DatabaseConnection.getConnection();
 
