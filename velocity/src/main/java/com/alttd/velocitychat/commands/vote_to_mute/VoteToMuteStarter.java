@@ -60,7 +60,7 @@ public class VoteToMuteStarter {
     private void parseChatLogs(List<ChatLog> chatLogs) {
         TagResolver.Single playerTag = Placeholder.parsed("player", votedPlayer.getUsername());
         TagResolver.Single prefixTag = Placeholder.component("prefix", prefix);
-        chatLogs.sort(Comparator.comparing(ChatLog::getTimestamp));
+        chatLogs.sort(Comparator.comparing(ChatLog::getTimestamp).reversed());
         parsedChatLogs = IntStream.range(0, chatLogs.size())
                 .mapToObj(i -> Utility.parseMiniMessage(
                         "<number>. <prefix> <player>: <message>",

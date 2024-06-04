@@ -150,7 +150,7 @@ public class VoteToMuteHelper {
                             }
                             int highestLogEntry = max.get();
 
-                            if (voteToMuteStarter.getTotalLogEntries() > highestLogEntry) {
+                            if (voteToMuteStarter.getTotalLogEntries() < highestLogEntry) {
                                 commandContext.getSource().sendMessage(Utility.parseMiniMessage("<red>Some of your selected messages do not exist.</red>"));
                                 return 1;
                             }
