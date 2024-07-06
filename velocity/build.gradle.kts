@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation(project(":api")) // API
-    compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
     implementation("mysql:mysql-connector-java:8.0.27") // mysql
     implementation("org.spongepowered", "configurate-yaml", "4.1.2")
     compileOnly("net.kyori:adventure-text-minimessage:4.10.1")
