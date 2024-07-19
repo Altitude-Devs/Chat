@@ -1,11 +1,11 @@
 plugins {
     `java-library`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 allprojects {
     group = "com.alttd.chat"
-    version = "2.0.1-SNAPSHOT"
+    version = "2.0.0-SNAPSHOT"
     description = "All in one minecraft chat plugin"
 
 //    repositories {
@@ -27,7 +27,7 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 

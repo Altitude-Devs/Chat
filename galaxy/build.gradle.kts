@@ -4,14 +4,12 @@ import java.net.URL
 plugins {
     `maven-publish`
     id("com.github.johnrengelman.shadow")
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "1.0.6"
 }
 
 dependencies {
     implementation(project(":api")) // API
-    compileOnly("com.alttd:Galaxy-API:1.21-R0.1-SNAPSHOT")  {
-        isChanging = true
-    }
+    compileOnly("com.alttd:Galaxy-API:1.20.4-R0.1-SNAPSHOT") // Galaxy
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5") // move to proxy
     compileOnly("org.apache.commons:commons-lang3:3.12.0") // needs an alternative, already removed from upstream api and will be removed in server
     compileOnly("net.luckperms:api:5.3") // Luckperms
@@ -47,7 +45,7 @@ tasks {
             download("https://repo.destro.xyz/snapshots/com/alttd/Galaxy-Server/Galaxy-paperclip-1.19.2-R0.1-SNAPSHOT-reobf.jar", file)
         }
         serverJar(file)
-        minecraftVersion("1.21")
+        minecraftVersion("1.19.2")
     }
 }
 
