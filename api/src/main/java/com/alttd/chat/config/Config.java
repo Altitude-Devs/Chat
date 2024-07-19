@@ -32,7 +32,7 @@ public final class Config {
 
     public static File CONFIGPATH;
     public static void init() {
-        CONFIGPATH = new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "ChatPlugin");
+        CONFIGPATH = new File(File.separator + "mnt" + File.separator + "configs" + File.separator + "ChatPlugin");
         CONFIG_FILE = new File(CONFIGPATH, "config.yml");
         configLoader = YamlConfigurationLoader.builder()
                 .file(CONFIG_FILE)
