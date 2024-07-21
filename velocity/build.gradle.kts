@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
 }
 
 dependencies {

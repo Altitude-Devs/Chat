@@ -3,7 +3,7 @@ import java.net.URL
 
 plugins {
     `maven-publish`
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("xyz.jpenilla.run-paper") version "1.0.6"
 }
 
