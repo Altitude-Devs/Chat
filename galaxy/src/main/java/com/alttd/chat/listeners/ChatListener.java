@@ -6,6 +6,7 @@ import com.alttd.chat.handler.ChatHandler;
 import com.alttd.chat.managers.ChatUserManager;
 import com.alttd.chat.managers.RegexManager;
 import com.alttd.chat.objects.*;
+import com.alttd.chat.objects.chat_log.ChatLogHandler;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
@@ -37,6 +38,11 @@ import java.util.stream.Collectors;
 public class ChatListener implements Listener {
 
     private final PlainTextComponentSerializer plainTextComponentSerializer = PlainTextComponentSerializer.plainText();
+    private final ChatLogHandler chatLogHandler;
+
+    public ChatListener(ChatLogHandler chatLogHandler) {
+        this.chatLogHandler = chatLogHandler;
+    }
 
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -97,6 +103,7 @@ public class ChatListener implements Listener {
             GalaxyUtility.sendBlockedNotification("Language", player,
                     modifiableString.component(),
                     "");
+            chatLogHandler.addChatLog(player.getUniqueId(), player.getServer().getServerName(), PlainTextComponentSerializer.plainText().serialize(input), true);
             return; // the message was blocked
         }
 
@@ -115,6 +122,7 @@ public class ChatListener implements Listener {
         for (Player pingPlayer : playersToPing) {
             pingPlayer.playSound(pingPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
         }
+        chatLogHandler.addChatLog(player.getUniqueId(), player.getServer().getServerName(), modifiableString.string(), false);
         ALogger.info(PlainTextComponentSerializer.plainText().serialize(input));
     }
 

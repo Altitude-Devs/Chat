@@ -5,14 +5,12 @@ import com.alttd.chat.config.Config;
 import com.alttd.chat.config.ServerConfig;
 import com.alttd.chat.database.DatabaseConnection;
 import com.alttd.chat.handler.ChatHandler;
-import com.alttd.chat.listeners.BookListener;
-import com.alttd.chat.listeners.ChatListener;
-import com.alttd.chat.listeners.PlayerListener;
-import com.alttd.chat.listeners.PluginMessage;
+import com.alttd.chat.listeners.*;
 import com.alttd.chat.nicknames.Nicknames;
 import com.alttd.chat.nicknames.NicknamesEvents;
 import com.alttd.chat.objects.channels.Channel;
 import com.alttd.chat.objects.channels.CustomChannel;
+import com.alttd.chat.objects.chat_log.ChatLogHandler;
 import com.alttd.chat.util.ALogger;
 import com.alttd.chat.util.Utility;
 import org.bukkit.Bukkit;
@@ -41,7 +39,8 @@ public class ChatPlugin extends JavaPlugin {
         chatHandler = new ChatHandler();
         DatabaseConnection.initialize();
         serverConfig = new ServerConfig(Bukkit.getServerName());
-        registerListener(new PlayerListener(serverConfig), new ChatListener(), new BookListener());
+        ChatLogHandler chatLogHandler = ChatLogHandler.getInstance(true);
+        registerListener(new PlayerListener(serverConfig), new ChatListener(chatLogHandler), new BookListener(), new ShutdownListener(chatLogHandler, this));
         if(serverConfig.GLOBALCHAT) {
             registerCommand("globalchat", new GlobalChat());
             registerCommand("toggleglobalchat", new ToggleGlobalChat());

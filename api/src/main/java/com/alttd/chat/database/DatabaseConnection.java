@@ -2,7 +2,6 @@ package com.alttd.chat.database;
 
 
 import com.alttd.chat.config.Config;
-import com.alttd.chat.util.ALogger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -63,6 +62,21 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
 
+        return connection;
+    }
+
+    /**
+     * Creates a transactional database connection.
+     *
+     * @return A {@code Connection} object representing the transactional database connection.
+     * @throws SQLException If there is an error creating the database connection.
+     */
+    public static Connection createTransactionConnection() throws SQLException {
+        connection = DriverManager.getConnection(
+                "jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?autoReconnect=true"+
+                        "&useSSL=false",
+                Config.USERNAME, Config.PASSWORD);
+        connection.setAutoCommit(false);
         return connection;
     }
 

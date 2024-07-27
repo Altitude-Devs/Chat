@@ -11,6 +11,7 @@ import com.alttd.chat.objects.Toggleable;
 import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -111,15 +112,29 @@ public class PlayerListener implements Listener {
         if (playerDeathsStack.size() > Config.DEATH_MESSAGES_MAX_PER_PERIOD || serverConfig.MUTED) {
             event.deathMessage(Component.empty());
             return;
-        } else {
-            Component component = event.deathMessage();
-            if (component != null) {
-                component = Component.text("* ").append(component);
-                component = component.style(Style.style(TextColor.color(82, 80, 77), TextDecoration.ITALIC));
-                event.deathMessage(component);
-            }
         }
+            Component component = event.deathMessage();
+
         playerDeathsStack.push(Instant.now());
+        if (component == null) {
+            return;
+        }
+        TextReplacementConfig playerReplacement = TextReplacementConfig.builder()
+                .match(event.getPlayer().getName())
+                .replacement(event.getPlayer().displayName())
+                .build();
+        component = component.replaceText(playerReplacement);
+        Player killer = event.getPlayer().getKiller();
+        if (killer != null) {
+            TextReplacementConfig killerReplacement = TextReplacementConfig.builder()
+                    .match(killer.getName())
+                    .replacement(killer.displayName())
+                    .build();
+            component = component.replaceText(killerReplacement);
+        }
+        component = MiniMessage.miniMessage().deserialize("<dark_red>[</dark_red><red>☠</red><dark_red>]</dark_red> ").append(component);
+        component = component.style(Style.style(TextColor.color(255, 155, 48), TextDecoration.ITALIC));
+        event.deathMessage(component);
     }
 
 }
