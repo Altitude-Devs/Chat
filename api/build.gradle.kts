@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.alttd:Galaxy-API:1.19.2-R0.1-SNAPSHOT") {
+    compileOnly("com.alttd:Galaxy-API:1.21-R0.1-SNAPSHOT") {
 //        exclude("net.kyori")
     }
     compileOnly("org.spongepowered:configurate-yaml:4.1.2") // Configurate
