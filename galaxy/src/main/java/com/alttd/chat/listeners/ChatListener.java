@@ -52,11 +52,6 @@ public class ChatListener implements Listener {
 
         Player player = event.getPlayer();
 
-        Set<Player> receivers = event.viewers().stream().filter(audience -> audience instanceof Player)
-                .map(audience -> (Player) audience)
-                .filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
-                .collect(Collectors.toSet());
-
         Component input = event.message().colorIfAbsent(NamedTextColor.WHITE);
 
         ModifiableString modifiableString = new ModifiableString(input);
@@ -80,6 +75,11 @@ public class ChatListener implements Listener {
                     "");
             return; // the message was blocked
         }
+
+        Set<Player> receivers = event.viewers().stream().filter(audience -> audience instanceof Player)
+                .map(audience -> (Player) audience)
+                .filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                .collect(Collectors.toSet());
 
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
