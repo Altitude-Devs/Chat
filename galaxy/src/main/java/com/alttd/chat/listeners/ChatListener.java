@@ -11,8 +11,6 @@ import com.alttd.chat.util.GalaxyUtility;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import io.papermc.paper.event.player.AsyncChatCommandDecorateEvent;
-import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -25,7 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,27 +34,6 @@ import java.util.stream.Collectors;
 public class ChatListener implements Listener {
 
     private final PlainTextComponentSerializer plainTextComponentSerializer = PlainTextComponentSerializer.plainText();
-
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onChatCommandDecorate(AsyncChatCommandDecorateEvent event) {
-        if (event.player() == null) return;
-
-        Component formatComponent = Component.text("%message%");
-        Component message = parseMessageContent(event.player(), plainTextComponentSerializer.serialize(event.originalMessage()));
-
-        event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onChatDecorate(AsyncChatDecorateEvent event) {
-        if (event.player() == null) return;
-
-        Component formatComponent = Component.text("%message%");
-        Component message = parseMessageContent(event.player(), plainTextComponentSerializer.serialize(event.originalMessage()));
-
-        event.result(formatComponent.replaceText(TextReplacementConfig.builder().match("%message%").replacement(message).build()));
-    }
 
     private final Component mention = MiniMessage.miniMessage().deserialize(Config.MENTIONPLAYERTAG);
     @EventHandler(ignoreCancelled = true)
