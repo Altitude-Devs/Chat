@@ -1,12 +1,8 @@
 package com.alttd.chat.nicknames;
 
-import com.Zrips.CMI.commands.list.colorlimits;
-import com.Zrips.CMI.utils.Util;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
 import com.alttd.chat.database.Queries;
-import com.alttd.chat.managers.ChatUserManager;
-import com.alttd.chat.objects.ChatUser;
 import com.alttd.chat.objects.Nick;
 import com.alttd.chat.util.ALogger;
 import com.google.common.io.ByteArrayDataInput;

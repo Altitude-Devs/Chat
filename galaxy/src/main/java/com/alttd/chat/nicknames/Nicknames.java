@@ -1,7 +1,5 @@
 package com.alttd.chat.nicknames;
 
-import com.Zrips.CMI.CMI;
-import com.Zrips.CMI.Containers.CMIUser;
 import com.alttd.chat.ChatAPI;
 import com.alttd.chat.ChatPlugin;
 import com.alttd.chat.config.Config;
@@ -13,7 +11,6 @@ import com.alttd.chat.objects.Nick;
 import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
@@ -384,7 +381,7 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setDisplayName(player.getName());
         player.displayName(user.getDisplayName());
-        updateCMIUser(player, null);
+//        updateCMIUser(player, null);
     }
 
     public String getNick(final Player player) {
@@ -399,25 +396,25 @@ public class Nicknames implements CommandExecutor, TabCompleter {
         ChatUser user = ChatUserManager.getChatUser(player.getUniqueId());
         user.setDisplayName(nickName);
         player.displayName(user.getDisplayName());
-        updateCMIUser(player, nickName);
+//        updateCMIUser(player, nickName);
     }
 
 //    public static String format(final String m) {
 //        return NickUtilities.applyColor(m);
 //    }
 
-    public void updateCMIUser(Player player, String nickName) {
-        if (!isCMIEnabled())
-            return;
-
-        CMIUser cmiUser = CMI.getInstance().getPlayerManager().getUser(player);
-        if (nickName == null){
-            cmiUser.setNickName(null, true);
-        } else {
-            cmiUser.setNickName(NickUtilities.applyColor(nickName), true);
-        }
-        cmiUser.updateDisplayName();
-    }
+//    public void updateCMIUser(Player player, String nickName) {
+//        if (!isCMIEnabled())
+//            return;
+//
+//        CMIUser cmiUser = CMI.getInstance().getPlayerManager().getUser(player);
+//        if (nickName == null){
+//            cmiUser.setNickName(null, true);
+//        } else {
+//            cmiUser.setNickName(NickUtilities.applyColor(nickName), true);
+//        }
+//        cmiUser.updateDisplayName();
+//    }
 
     private Boolean isCMIEnabled = null;
     private Boolean isCMIEnabled() {

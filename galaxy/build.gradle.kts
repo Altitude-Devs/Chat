@@ -13,7 +13,7 @@ dependencies {
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.3.5") // move to proxy
     compileOnly("org.apache.commons:commons-lang3:3.12.0") // needs an alternative, already removed from upstream api and will be removed in server
     compileOnly("net.luckperms:api:5.3") // Luckperms
-    compileOnly(files("../libs/CMI.jar"))
+//    compileOnly(files("../libs/CMI.jar"))
 }
 
 tasks {
