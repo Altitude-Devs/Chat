@@ -41,6 +41,7 @@ public class ToggleableForCustomChannel extends Toggleable {
         new BukkitRunnable() {
             @Override
             public void run() {
+                ALogger.info(String.format("%s sent %s message: %s", player.getName(), customChannel.getChannelName(), message));
                 ChatPlugin.getInstance().getChatHandler().chatChannel(player, customChannel, message);
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
