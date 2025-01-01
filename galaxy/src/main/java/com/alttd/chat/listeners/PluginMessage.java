@@ -15,7 +15,6 @@ import com.alttd.chat.util.Utility;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -46,7 +45,7 @@ public class PluginMessage implements PluginMessageListener {
                     break;
                 }
                 ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-                if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
+                if (isTargetNotIgnored(chatUser, targetuuid)) {
                     player.sendMessage(GsonComponentSerializer.gson().deserialize(message));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
                     ChatUser user = ChatUserManager.getChatUser(uuid);
@@ -64,7 +63,7 @@ public class PluginMessage implements PluginMessageListener {
                     break;
                 }
                 ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-                if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
+                if (isTargetNotIgnored(chatUser, targetuuid)) {
                     chatUser.setReplyTarget(target);
                     player.sendMessage(GsonComponentSerializer.gson().deserialize(message));
 //                        ChatUser user = ChatUserManager.getChatUser(uuid);
@@ -80,7 +79,7 @@ public class PluginMessage implements PluginMessageListener {
 
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(Config.GCPERMISSION)).forEach(p -> {
                     ChatUser chatUser = ChatUserManager.getChatUser(p.getUniqueId());
-                    if (!chatUser.getIgnoredPlayers().contains(uuid)) {
+                    if (isTargetNotIgnored(chatUser, uuid)) {
                         p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
                     }
                 });
@@ -216,6 +215,17 @@ public class PluginMessage implements PluginMessageListener {
                         .forEach(p -> p.sendMessage(finalComponent));
             }
         }.runTaskAsynchronously(ChatPlugin.getInstance());
+    }
+
+    private boolean isTargetNotIgnored(ChatUser chatUser, UUID targetUUID) {
+        if (!chatUser.getIgnoredPlayers().contains(targetUUID)) {
+            return true;
+        }
+        Player target = Bukkit.getPlayer(targetUUID);
+        if (target == null) {
+            return true;
+        }
+        return target.hasPermission("chat.ignorebypass");
     }
 
 }

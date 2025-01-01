@@ -32,8 +32,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ChatListener implements Listener {
 
@@ -81,13 +83,14 @@ public class ChatListener implements Listener {
         }
 
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
 
         Component input = event.message().colorIfAbsent(NamedTextColor.WHITE);
 
         ModifiableString modifiableString = new ModifiableString(input);
 
          // todo a better way for this
-        if(!RegexManager.filterText(player.getName(), player.getUniqueId(), modifiableString, true, "chat", filterType -> {
+        if(!RegexManager.filterText(player.getName(), uuid, modifiableString, true, "chat", filterType -> {
             if (!filterType.equals(FilterType.PUNISH)) {
                 ALogger.warn("Received another FilterType than punish when filtering chat and executing a filter action");
                 return;
@@ -95,7 +98,7 @@ public class ChatListener implements Listener {
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             out.writeUTF("punish");
             out.writeUTF(player.getName());
-            out.writeUTF(player.getUniqueId().toString());
+            out.writeUTF(uuid.toString());
             out.writeUTF(modifiableString.string());
             player.sendPluginMessage(ChatPlugin.getInstance(), Config.MESSAGECHANNEL, out.toByteArray());
         })) {
@@ -103,14 +106,18 @@ public class ChatListener implements Listener {
             GalaxyUtility.sendBlockedNotification("Language", player,
                     modifiableString.component(),
                     "");
-            chatLogHandler.addChatLog(player.getUniqueId(), player.getServer().getServerName(), PlainTextComponentSerializer.plainText().serialize(input), true);
+            chatLogHandler.addChatLog(uuid, player.getServer().getServerName(), PlainTextComponentSerializer.plainText().serialize(input), true);
             return; // the message was blocked
         }
 
-        Set<Player> receivers = event.viewers().stream().filter(audience -> audience instanceof Player)
-                .map(audience -> (Player) audience)
-                .filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
-                .collect(Collectors.toSet());
+        Stream<Player> stream = event.viewers().stream().filter(audience -> audience instanceof Player)
+                .map(audience -> (Player) audience);
+
+        if (!player.hasPermission("chat.ignorebypass")) {
+            stream = stream.filter(receiver -> !ChatUserManager.getChatUser(receiver.getUniqueId()).getIgnoredPlayers().contains(uuid)
+                                               && !receiver.hasPermission("chat.ignorebypass"));
+        }
+        Set<Player> receivers = stream.collect(Collectors.toSet());
 
         Set<Player> playersToPing = new HashSet<>();
         pingPlayers(playersToPing, modifiableString, player);
@@ -122,7 +129,7 @@ public class ChatListener implements Listener {
         for (Player pingPlayer : playersToPing) {
             pingPlayer.playSound(pingPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
         }
-        chatLogHandler.addChatLog(player.getUniqueId(), player.getServer().getServerName(), modifiableString.string(), false);
+        chatLogHandler.addChatLog(uuid, player.getServer().getServerName(), modifiableString.string(), false);
         ALogger.info(PlainTextComponentSerializer.plainText().serialize(input));
     }
 
@@ -150,7 +157,8 @@ public class ChatListener implements Listener {
 //                            String substring = a.group().substring(1);
 //                            return ;
 //                        });
-                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId())
+                    && !player.hasPermission("chat.ignorebypass"))
                     playersToPing.add(onlinePlayer);
             } else if (nickPattern.matcher(modifiableString.string()).find()) {
                 modifiableString.replace(TextReplacementConfig.builder()
@@ -158,7 +166,8 @@ public class ChatListener implements Listener {
                         .match(nickPattern)
                         .replacement(mention.append(onlinePlayer.displayName()))
                         .build());
-                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId()))
+                if (!ChatUserManager.getChatUser(onlinePlayer.getUniqueId()).getIgnoredPlayers().contains(player.getUniqueId())
+                    && !player.hasPermission("chat.ignorebypass"))
                     playersToPing.add(onlinePlayer);
             }
         }
