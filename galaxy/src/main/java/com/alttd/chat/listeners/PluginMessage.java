@@ -22,13 +22,14 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class PluginMessage implements PluginMessageListener {
 
     @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] bytes) {
+    public void onPluginMessageReceived(String channel, @NotNull Player ignored, byte[] bytes) {
         if (!channel.equals(Config.MESSAGECHANNEL)) {
             return;
         }
@@ -38,35 +39,36 @@ public class PluginMessage implements PluginMessageListener {
             case "privatemessagein": {
                 UUID uuid = UUID.fromString(in.readUTF());
                 String target = in.readUTF();
-                Player p = Bukkit.getPlayer(uuid);
+                Player player = Bukkit.getPlayer(uuid);
                 String message = in.readUTF();
                 UUID targetuuid = UUID.fromString(in.readUTF());
-                if (p != null) {
-                    ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-                    if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
-                        p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
-                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
-                        ChatUser user = ChatUserManager.getChatUser(uuid);
-                        if (!user.getReplyContinueTarget().equalsIgnoreCase(target))
-                            user.setReplyTarget(target);
-                    }
+                if (player == null) {
+                    break;
                 }
-                break;
+                ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
+                    player.sendMessage(GsonComponentSerializer.gson().deserialize(message));
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1); // todo load this from config
+                    ChatUser user = ChatUserManager.getChatUser(uuid);
+                    if (!user.getReplyContinueTarget().equalsIgnoreCase(target))
+                        user.setReplyTarget(target);
+                }
             }
             case "privatemessageout": {
                 UUID uuid = UUID.fromString(in.readUTF());
                 String target = in.readUTF();
-                Player p = Bukkit.getPlayer(uuid);
+                Player player = Bukkit.getPlayer(uuid);
                 String message = in.readUTF();
                 UUID targetuuid = UUID.fromString(in.readUTF());
-                if (p != null) {
-                    ChatUser chatUser = ChatUserManager.getChatUser(uuid);
-                    if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
-                        chatUser.setReplyTarget(target);
-                        p.sendMessage(GsonComponentSerializer.gson().deserialize(message));
+                if (player == null) {
+                    break;
+                }
+                ChatUser chatUser = ChatUserManager.getChatUser(uuid);
+                if (!chatUser.getIgnoredPlayers().contains(targetuuid)) {
+                    chatUser.setReplyTarget(target);
+                    player.sendMessage(GsonComponentSerializer.gson().deserialize(message));
 //                        ChatUser user = ChatUserManager.getChatUser(uuid);
 //                        user.setReplyTarget(target);
-                    }
                 }
                 break;
             }
