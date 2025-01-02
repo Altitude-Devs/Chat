@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class ChatHandler {
 
@@ -239,10 +240,17 @@ public class ChatHandler {
     private void sendChatChannelMessage(CustomChannel chatChannel, UUID uuid, Component component) {
         if (!chatChannel.getServers().contains(Bukkit.getServerName())) return;
 
-        Bukkit.getServer().getOnlinePlayers().stream()
-                .filter(p -> p.hasPermission(chatChannel.getPermission()))
-                .filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid))
-                .forEach(p -> p.sendMessage(component));
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) {
+            return;
+        }
+
+        Stream<? extends Player> stream = Bukkit.getServer().getOnlinePlayers().stream()
+                .filter(p -> p.hasPermission(chatChannel.getPermission()));
+        if (!player.hasPermission("chat.ignorebypass")) {
+            stream = stream.filter(p -> !ChatUserManager.getChatUser(p.getUniqueId()).getIgnoredPlayers().contains(uuid) && !p.hasPermission("chat.ignorebypass"));
+        }
+        stream.forEach(p -> p.sendMessage(component));
     }
 
     private void sendPluginMessage(Player player, String channel, Component component) {
